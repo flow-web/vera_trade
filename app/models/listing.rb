@@ -2,6 +2,8 @@ class Listing < ApplicationRecord
   belongs_to :user
   belongs_to :vehicle
   
+  has_many_attached :photos
+  
   validates :title, :description, :status, presence: true
   
   enum :status, { active: 'active', pending: 'pending', sold: 'sold' }, default: 'active'

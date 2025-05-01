@@ -10,68 +10,118 @@
   <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
     <!-- Main Content -->
     <div class="col-span-2">
-      <h1 class="text-3xl font-bold mb-1"><%= @listing.title %></h1>
-      <h2 class="text-xl text-neutral-content mb-6">
-        <%= @listing.vehicle.make %> <%= @listing.vehicle.model %> (<%= @listing.vehicle.year %>)
-      </h2>
-
-      <!-- Vehicle Details Card -->
-      <div class="card bg-base-100 shadow-sm mb-8">
-        <div class="card-body">
-          <!-- Description Section -->
-          <div class="mb-6">
-            <h3 class="text-lg font-medium mb-2">Description</h3>
-            <div class="prose max-w-none">
-              <%= simple_format(@listing.description) %>
-            </div>
-          </div>
-          
-          <!-- Vehicle Characteristics Section -->
-          <div>
-            <h3 class="text-lg font-medium mb-2">Caractéristiques du véhicule</h3>
-            <% if @listing.vehicle.description.present? %>
-              <div class="prose max-w-none mb-4">
-                <%= simple_format(@listing.vehicle.description) %>
+      <div class="container mt-5">
+        <div class="row">
+          <div class="col-md-8 mb-4">
+            <h1 class="h2 mb-3"><%= @listing.title %></h1>
+            
+            <% if @listing.photos.attached? %>
+              <div id="listingCarousel" class="carousel slide mb-4" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                  <% @listing.photos.each_with_index do |photo, index| %>
+                    <div class="carousel-item <%= index == 0 ? 'active' : '' %>">
+                      <div style="height: 400px; background-color: #f8f9fa; display: flex; justify-content: center; align-items: center;">
+                        <%= image_tag photo, style: "max-height: 100%; max-width: 100%; object-fit: contain;" %>
+                      </div>
+                    </div>
+                  <% end %>
+                </div>
+                <% if @listing.photos.count > 1 %>
+                  <button class="carousel-control-prev" type="button" data-bs-target="#listingCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Précédent</span>
+                  </button>
+                  <button class="carousel-control-next" type="button" data-bs-target="#listingCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Suivant</span>
+                  </button>
+                <% end %>
+              </div>
+              
+              <% if @listing.photos.count > 1 %>
+                <div class="row mb-4">
+                  <% @listing.photos.each_with_index do |photo, index| %>
+                    <div class="col-3 col-md-2 mb-2">
+                      <a href="#" data-bs-target="#listingCarousel" data-bs-slide-to="<%= index %>" class="d-block">
+                        <%= image_tag photo, class: "img-thumbnail", style: "height: 60px; width: 100%; object-fit: cover;" %>
+                      </a>
+                    </div>
+                  <% end %>
+                </div>
+              <% end %>
+            <% else %>
+              <div class="card mb-4">
+                <div class="card-body text-center py-5">
+                  <i class="bi bi-camera fs-1 text-muted"></i>
+                  <p class="text-muted mt-2">Aucune photo disponible</p>
+                </div>
               </div>
             <% end %>
             
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-              <div>
-                <div class="flex flex-col space-y-2">
-                  <div class="flex justify-between">
-                    <span class="font-medium">Marque:</span>
-                    <span><%= @listing.vehicle.make %></span>
-                  </div>
-                  <div class="flex justify-between">
-                    <span class="font-medium">Modèle:</span>
-                    <span><%= @listing.vehicle.model %></span>
-                  </div>
-                  <div class="flex justify-between">
-                    <span class="font-medium">Année:</span>
-                    <span><%= @listing.vehicle.year %></span>
+            <h2 class="text-xl text-neutral-content mb-6">
+              <%= @listing.vehicle.make %> <%= @listing.vehicle.model %> (<%= @listing.vehicle.year %>)
+            </h2>
+
+            <!-- Vehicle Details Card -->
+            <div class="card bg-base-100 shadow-sm mb-8">
+              <div class="card-body">
+                <!-- Description Section -->
+                <div class="mb-6">
+                  <h3 class="text-lg font-medium mb-2">Description</h3>
+                  <div class="prose max-w-none">
+                    <%= simple_format(@listing.description) %>
                   </div>
                 </div>
-              </div>
-              <div>
-                <div class="flex flex-col space-y-2">
-                  <% if @listing.vehicle.kilometers.present? %>
-                    <div class="flex justify-between">
-                      <span class="font-medium">Kilométrage:</span>
-                      <span><%= number_with_delimiter(@listing.vehicle.kilometers) %> km</span>
+                
+                <!-- Vehicle Characteristics Section -->
+                <div>
+                  <h3 class="text-lg font-medium mb-2">Caractéristiques du véhicule</h3>
+                  <% if @listing.vehicle.description.present? %>
+                    <div class="prose max-w-none mb-4">
+                      <%= simple_format(@listing.vehicle.description) %>
                     </div>
                   <% end %>
-                  <% if @listing.vehicle.fuel_type.present? %>
-                    <div class="flex justify-between">
-                      <span class="font-medium">Carburant:</span>
-                      <span><%= @listing.vehicle.fuel_type %></span>
+                  
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                    <div>
+                      <div class="flex flex-col space-y-2">
+                        <div class="flex justify-between">
+                          <span class="font-medium">Marque:</span>
+                          <span><%= @listing.vehicle.make %></span>
+                        </div>
+                        <div class="flex justify-between">
+                          <span class="font-medium">Modèle:</span>
+                          <span><%= @listing.vehicle.model %></span>
+                        </div>
+                        <div class="flex justify-between">
+                          <span class="font-medium">Année:</span>
+                          <span><%= @listing.vehicle.year %></span>
+                        </div>
+                      </div>
                     </div>
-                  <% end %>
-                  <% if @listing.vehicle.transmission.present? %>
-                    <div class="flex justify-between">
-                      <span class="font-medium">Transmission:</span>
-                      <span><%= @listing.vehicle.transmission %></span>
+                    <div>
+                      <div class="flex flex-col space-y-2">
+                        <% if @listing.vehicle.kilometers.present? %>
+                          <div class="flex justify-between">
+                            <span class="font-medium">Kilométrage:</span>
+                            <span><%= number_with_delimiter(@listing.vehicle.kilometers) %> km</span>
+                          </div>
+                        <% end %>
+                        <% if @listing.vehicle.fuel_type.present? %>
+                          <div class="flex justify-between">
+                            <span class="font-medium">Carburant:</span>
+                            <span><%= @listing.vehicle.fuel_type %></span>
+                          </div>
+                        <% end %>
+                        <% if @listing.vehicle.transmission.present? %>
+                          <div class="flex justify-between">
+                            <span class="font-medium">Transmission:</span>
+                            <span><%= @listing.vehicle.transmission %></span>
+                          </div>
+                        <% end %>
+                      </div>
                     </div>
-                  <% end %>
+                  </div>
                 </div>
               </div>
             </div>

@@ -27,6 +27,11 @@ class ListingsController < ApplicationController
       @listing.vehicle = @vehicle
       
       if @listing.save
+        # Gérer les photos après la sauvegarde de l'annonce
+        if params[:listing][:photos].present?
+          @listing.photos.attach(params[:listing][:photos])
+        end
+        
         redirect_to @listing, notice: 'Votre annonce a été créée avec succès.'
       else
         render :new, status: :unprocessable_entity
@@ -38,12 +43,27 @@ class ListingsController < ApplicationController
   end
 
   def edit
+    @vehicle = @listing.vehicle
   end
 
   def update
+    # Gérer la suppression des photos existantes
+    if params[:delete_photos].present?
+      params[:delete_photos].each do |photo_id|
+        photo = @listing.photos.find_by(id: photo_id)
+        photo.purge if photo
+      end
+    end
+    
+    # Gérer l'ajout de nouvelles photos
+    if params[:listing][:photos].present?
+      @listing.photos.attach(params[:listing][:photos])
+    end
+    
     if @listing.vehicle.update(vehicle_params) && @listing.update(listing_params)
       redirect_to @listing, notice: 'Votre annonce a été mise à jour avec succès.'
     else
+      @vehicle = @listing.vehicle
       render :edit, status: :unprocessable_entity
     end
   end
