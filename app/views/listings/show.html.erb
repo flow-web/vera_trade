@@ -1,83 +1,124 @@
-<div class="container mt-5">
-  <nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-      <li class="breadcrumb-item"><%= link_to "Annonces", listings_path %></li>
-      <li class="breadcrumb-item active" aria-current="page"><%= @listing.title %></li>
-    </ol>
-  </nav>
+<div class="container mx-auto px-4 py-8 max-w-5xl">
+  <!-- Breadcrumb -->
+  <div class="text-sm breadcrumbs mb-6">
+    <ul>
+      <li><%= link_to "Annonces", listings_path, class: "link link-hover" %></li>
+      <li class="font-medium"><%= @listing.title %></li>
+    </ul>
+  </div>
 
-  <div class="row">
-    <div class="col-md-8">
-      <h1><%= @listing.title %></h1>
-      <h3 class="text-muted">
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <!-- Main Content -->
+    <div class="col-span-2">
+      <h1 class="text-3xl font-bold mb-1"><%= @listing.title %></h1>
+      <h2 class="text-xl text-neutral-content mb-6">
         <%= @listing.vehicle.make %> <%= @listing.vehicle.model %> (<%= @listing.vehicle.year %>)
-      </h3>
+      </h2>
 
-      <div class="card mb-4">
+      <!-- Vehicle Details Card -->
+      <div class="card bg-base-100 shadow-sm mb-8">
         <div class="card-body">
-          <h5>Description</h5>
-          <p><%= simple_format(@listing.description) %></p>
-          
-          <h5>Caractéristiques du véhicule</h5>
-          <p><%= simple_format(@listing.vehicle.description) if @listing.vehicle.description.present? %></p>
-          
-          <div class="row mt-4">
-            <div class="col-md-6">
-              <ul class="list-unstyled">
-                <li><strong>Marque:</strong> <%= @listing.vehicle.make %></li>
-                <li><strong>Modèle:</strong> <%= @listing.vehicle.model %></li>
-                <li><strong>Année:</strong> <%= @listing.vehicle.year %></li>
-              </ul>
+          <!-- Description Section -->
+          <div class="mb-6">
+            <h3 class="text-lg font-medium mb-2">Description</h3>
+            <div class="prose max-w-none">
+              <%= simple_format(@listing.description) %>
             </div>
-            <div class="col-md-6">
-              <ul class="list-unstyled">
-                <% if @listing.vehicle.kilometers.present? %>
-                  <li><strong>Kilométrage:</strong> <%= number_with_delimiter(@listing.vehicle.kilometers) %> km</li>
-                <% end %>
-                <% if @listing.vehicle.fuel_type.present? %>
-                  <li><strong>Carburant:</strong> <%= @listing.vehicle.fuel_type %></li>
-                <% end %>
-                <% if @listing.vehicle.transmission.present? %>
-                  <li><strong>Transmission:</strong> <%= @listing.vehicle.transmission %></li>
-                <% end %>
-              </ul>
+          </div>
+          
+          <!-- Vehicle Characteristics Section -->
+          <div>
+            <h3 class="text-lg font-medium mb-2">Caractéristiques du véhicule</h3>
+            <% if @listing.vehicle.description.present? %>
+              <div class="prose max-w-none mb-4">
+                <%= simple_format(@listing.vehicle.description) %>
+              </div>
+            <% end %>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+              <div>
+                <div class="flex flex-col space-y-2">
+                  <div class="flex justify-between">
+                    <span class="font-medium">Marque:</span>
+                    <span><%= @listing.vehicle.make %></span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="font-medium">Modèle:</span>
+                    <span><%= @listing.vehicle.model %></span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="font-medium">Année:</span>
+                    <span><%= @listing.vehicle.year %></span>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div class="flex flex-col space-y-2">
+                  <% if @listing.vehicle.kilometers.present? %>
+                    <div class="flex justify-between">
+                      <span class="font-medium">Kilométrage:</span>
+                      <span><%= number_with_delimiter(@listing.vehicle.kilometers) %> km</span>
+                    </div>
+                  <% end %>
+                  <% if @listing.vehicle.fuel_type.present? %>
+                    <div class="flex justify-between">
+                      <span class="font-medium">Carburant:</span>
+                      <span><%= @listing.vehicle.fuel_type %></span>
+                    </div>
+                  <% end %>
+                  <% if @listing.vehicle.transmission.present? %>
+                    <div class="flex justify-between">
+                      <span class="font-medium">Transmission:</span>
+                      <span><%= @listing.vehicle.transmission %></span>
+                    </div>
+                  <% end %>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="col-md-4">
-      <div class="card mb-4">
+    <!-- Sidebar with Price and Contact Info -->
+    <div class="col-span-1">
+      <div class="card bg-base-100 shadow-sm sticky top-4">
         <div class="card-body">
-          <h4 class="card-title text-primary mb-4">
+          <h3 class="card-title text-2xl text-primary mb-4">
             <%= number_to_currency(@listing.vehicle.price, unit: "€", precision: 0) %>
-          </h4>
+          </h3>
           
-          <p>
-            <i class="bi bi-person"></i> Vendu par: <%= @listing.user.email %>
-          </p>
+          <div class="flex items-center gap-2 mb-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 opacity-70" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+            <span>Vendu par: <%= @listing.user.email %></span>
+          </div>
           
-          <p>
-            <i class="bi bi-calendar"></i> Publiée le: <%= @listing.created_at.strftime("%d/%m/%Y") %>
-          </p>
+          <div class="flex items-center gap-2 mb-6">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 opacity-70" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            <span>Publiée le: <%= @listing.created_at.strftime("%d/%m/%Y") %></span>
+          </div>
           
-          <hr>
+          <div class="divider"></div>
           
           <% if user_signed_in? %>
             <% if current_user == @listing.user %>
-              <div class="d-grid gap-2">
-                <%= link_to "Modifier l'annonce", edit_listing_path(@listing), class: "btn btn-outline-primary" %>
-                <%= button_to "Supprimer l'annonce", @listing, method: :delete, class: "btn btn-outline-danger mt-2", form: { data: { turbo_confirm: "Êtes-vous sûr de vouloir supprimer cette annonce?" } } %>
+              <div class="space-y-2">
+                <%= link_to "Modifier l'annonce", edit_listing_path(@listing), class: "btn btn-outline btn-primary w-full" %>
+                <%= button_to "Supprimer l'annonce", @listing, method: :delete, class: "btn btn-outline btn-error w-full", form: { data: { turbo_confirm: "Êtes-vous sûr de vouloir supprimer cette annonce?" } } %>
               </div>
             <% else %>
-              <div class="d-grid gap-2">
-                <a href="mailto:<%= @listing.user.email %>" class="btn btn-primary">Contacter le vendeur</a>
-              </div>
+              <a href="mailto:<%= @listing.user.email %>" class="btn btn-primary w-full">Contacter le vendeur</a>
             <% end %>
           <% else %>
-            <div class="alert alert-info">
-              <%= link_to "Connectez-vous", new_user_session_path %> pour contacter le vendeur.
+            <div class="alert alert-info shadow-sm">
+              <div>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <span><%= link_to "Connectez-vous", new_user_session_path, class: "link link-hover font-medium" %> pour contacter le vendeur.</span>
+              </div>
             </div>
           <% end %>
         </div>

@@ -4,7 +4,7 @@ class Listing < ApplicationRecord
   
   validates :title, :description, :status, presence: true
   
-  enum status: { active: 'active', pending: 'pending', sold: 'sold' }
+  enum :status, { active: 'active', pending: 'pending', sold: 'sold' }, default: 'active'
   
   before_validation :set_default_status, on: :create
   
