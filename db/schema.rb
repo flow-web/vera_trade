@@ -10,9 +10,21 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_01_130807) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_01_132012) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "listings", force: :cascade do |t|
+    t.string "title"
+    t.text "description"
+    t.bigint "user_id", null: false
+    t.bigint "vehicle_id", null: false
+    t.string "status"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_listings_on_user_id"
+    t.index ["vehicle_id"], name: "index_listings_on_vehicle_id"
+  end
 
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
@@ -25,4 +37,20 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_01_130807) do
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
+
+  create_table "vehicles", force: :cascade do |t|
+    t.string "make"
+    t.string "model"
+    t.integer "year"
+    t.text "description"
+    t.decimal "price"
+    t.integer "kilometers"
+    t.string "fuel_type"
+    t.string "transmission"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_foreign_key "listings", "users"
+  add_foreign_key "listings", "vehicles"
 end

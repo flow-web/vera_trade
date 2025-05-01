@@ -1,0 +1,52 @@
+<div class="container mt-5">
+  <h1>Mes annonces</h1>
+  
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <p><%= pluralize(@listings.count, "annonce") %> trouvée(s)</p>
+    <%= link_to "Publier une nouvelle annonce", new_listing_path, class: "btn btn-primary" %>
+  </div>
+  
+  <% if @listings.any? %>
+    <div class="table-responsive">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Titre</th>
+            <th>Véhicule</th>
+            <th>Prix</th>
+            <th>Statut</th>
+            <th>Date de création</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @listings.each do |listing| %>
+            <tr>
+              <td><%= listing.title %></td>
+              <td><%= "#{listing.vehicle.make} #{listing.vehicle.model} (#{listing.vehicle.year})" %></td>
+              <td><%= number_to_currency(listing.vehicle.price, unit: "€", precision: 0) %></td>
+              <td>
+                <span class="badge <%= listing.status == 'active' ? 'bg-success' : (listing.status == 'pending' ? 'bg-warning' : 'bg-secondary') %>">
+                  <%= listing.status.humanize %>
+                </span>
+              </td>
+              <td><%= listing.created_at.strftime("%d/%m/%Y") %></td>
+              <td>
+                <div class="btn-group btn-group-sm" role="group">
+                  <%= link_to "Voir", listing_path(listing), class: "btn btn-outline-primary" %>
+                  <%= link_to "Modifier", edit_listing_path(listing), class: "btn btn-outline-secondary" %>
+                  <%= button_to "Supprimer", listing_path(listing), method: :delete, form: { data: { turbo_confirm: "Êtes-vous sûr de vouloir supprimer cette annonce?" } }, class: "btn btn-outline-danger" %>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <div class="alert alert-info">
+      Vous n'avez pas encore publié d'annonces.
+      <%= link_to "Publiez votre première annonce", new_listing_path, class: "alert-link" %>.
+    </div>
+  <% end %>
+</div> 

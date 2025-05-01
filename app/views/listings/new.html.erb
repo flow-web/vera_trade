@@ -1,0 +1,112 @@
+<div class="container mt-5">
+  <h1>Publier une annonce de véhicule</h1>
+  
+  <%= form_with(model: @listing, local: true) do |form| %>
+    <% if @listing.errors.any? %>
+      <div class="alert alert-danger">
+        <h4><%= pluralize(@listing.errors.count, "erreur") %> ont empêché l'enregistrement de cette annonce :</h4>
+        <ul>
+          <% @listing.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+    
+    <% if @vehicle.errors.any? %>
+      <div class="alert alert-danger">
+        <h4><%= pluralize(@vehicle.errors.count, "erreur") %> ont empêché l'enregistrement de ce véhicule :</h4>
+        <ul>
+          <% @vehicle.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+    
+    <div class="card mb-4">
+      <div class="card-header">
+        <h5>Informations de l'annonce</h5>
+      </div>
+      <div class="card-body">
+        <div class="mb-3">
+          <%= form.label :title, "Titre de l'annonce", class: "form-label" %>
+          <%= form.text_field :title, class: "form-control", placeholder: "Ex: BMW Serie 3 en excellent état" %>
+        </div>
+        
+        <div class="mb-3">
+          <%= form.label :description, "Description de l'annonce", class: "form-label" %>
+          <%= form.text_area :description, rows: 5, class: "form-control", placeholder: "Décrivez votre véhicule, son état, ses options, etc." %>
+        </div>
+      </div>
+    </div>
+    
+    <div class="card mb-4">
+      <div class="card-header">
+        <h5>Détails du véhicule</h5>
+      </div>
+      <div class="card-body">
+        <%= fields_for :vehicle do |v| %>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <%= v.label :make, "Marque", class: "form-label" %>
+              <%= v.text_field :make, class: "form-control", placeholder: "Ex: BMW" %>
+            </div>
+            
+            <div class="col-md-6 mb-3">
+              <%= v.label :model, "Modèle", class: "form-label" %>
+              <%= v.text_field :model, class: "form-control", placeholder: "Ex: Serie 3" %>
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <%= v.label :year, "Année", class: "form-label" %>
+              <%= v.number_field :year, class: "form-control", min: 1900, max: Time.current.year, placeholder: "Ex: 2020" %>
+            </div>
+            
+            <div class="col-md-6 mb-3">
+              <%= v.label :price, "Prix (€)", class: "form-label" %>
+              <%= v.number_field :price, class: "form-control", min: 0, step: 100, placeholder: "Ex: 15000" %>
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <%= v.label :kilometers, "Kilométrage", class: "form-label" %>
+              <%= v.number_field :kilometers, class: "form-control", min: 0, placeholder: "Ex: 50000" %>
+            </div>
+            
+            <div class="col-md-6 mb-3">
+              <%= v.label :fuel_type, "Type de carburant", class: "form-label" %>
+              <%= v.select :fuel_type, 
+                ['Essence', 'Diesel', 'Hybride', 'Électrique', 'GPL', 'Autre'],
+                { include_blank: "Sélectionnez un type de carburant" },
+                { class: "form-select" } 
+              %>
+            </div>
+          </div>
+          
+          <div class="mb-3">
+            <%= v.label :transmission, "Transmission", class: "form-label" %>
+            <%= v.select :transmission, 
+              ['Manuelle', 'Automatique', 'Semi-automatique'],
+              { include_blank: "Sélectionnez un type de transmission" },
+              { class: "form-select" } 
+            %>
+          </div>
+          
+          <div class="mb-3">
+            <%= v.label :description, "Détails supplémentaires du véhicule", class: "form-label" %>
+            <%= v.text_area :description, rows: 3, class: "form-control", placeholder: "Options, équipements, etc." %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+    
+    <div class="d-grid gap-2 d-md-flex justify-content-md-end mb-5">
+      <%= link_to "Annuler", listings_path, class: "btn btn-outline-secondary me-md-2" %>
+      <%= form.submit "Publier l'annonce", class: "btn btn-primary" %>
+    </div>
+  <% end %>
+</div>

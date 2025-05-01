@@ -1,0 +1,50 @@
+<div class="container mt-5">
+  <h1>Annonces de véhicules</h1>
+  
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <p><%= @listings.count %> annonces trouvées</p>
+    <%= link_to "Publier une annonce", new_listing_path, class: "btn btn-primary" if user_signed_in? %>
+  </div>
+  
+  <% if @listings.any? %>
+    <div class="row">
+      <% @listings.each do |listing| %>
+        <div class="col-md-4 mb-4">
+          <div class="card h-100">
+            <div class="card-body">
+              <h5 class="card-title"><%= listing.title %></h5>
+              <h6 class="card-subtitle mb-2 text-muted">
+                <%= listing.vehicle.make %> <%= listing.vehicle.model %> (<%= listing.vehicle.year %>)
+              </h6>
+              <p class="card-text">
+                <strong><%= number_to_currency(listing.vehicle.price, unit: "€", precision: 0) %></strong>
+              </p>
+              <p class="card-text text-truncate"><%= listing.description %></p>
+              <ul class="list-unstyled">
+                <% if listing.vehicle.kilometers.present? %>
+                  <li><small class="text-muted"><%= number_with_delimiter(listing.vehicle.kilometers) %> km</small></li>
+                <% end %>
+                <% if listing.vehicle.fuel_type.present? %>
+                  <li><small class="text-muted"><%= listing.vehicle.fuel_type %></small></li>
+                <% end %>
+                <% if listing.vehicle.transmission.present? %>
+                  <li><small class="text-muted"><%= listing.vehicle.transmission %></small></li>
+                <% end %>
+              </ul>
+              <div class="mt-3">
+                <%= link_to "Voir l'annonce", listing, class: "btn btn-outline-primary btn-sm" %>
+              </div>
+            </div>
+            <div class="card-footer text-muted">
+              <small>Publié par <%= listing.user.email %> le <%= listing.created_at.strftime("%d/%m/%Y") %></small>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="alert alert-info">
+      Aucune annonce n'est disponible pour le moment.
+    </div>
+  <% end %>
+</div>

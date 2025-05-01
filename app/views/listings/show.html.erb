@@ -1,0 +1,87 @@
+<div class="container mt-5">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><%= link_to "Annonces", listings_path %></li>
+      <li class="breadcrumb-item active" aria-current="page"><%= @listing.title %></li>
+    </ol>
+  </nav>
+
+  <div class="row">
+    <div class="col-md-8">
+      <h1><%= @listing.title %></h1>
+      <h3 class="text-muted">
+        <%= @listing.vehicle.make %> <%= @listing.vehicle.model %> (<%= @listing.vehicle.year %>)
+      </h3>
+
+      <div class="card mb-4">
+        <div class="card-body">
+          <h5>Description</h5>
+          <p><%= simple_format(@listing.description) %></p>
+          
+          <h5>Caractéristiques du véhicule</h5>
+          <p><%= simple_format(@listing.vehicle.description) if @listing.vehicle.description.present? %></p>
+          
+          <div class="row mt-4">
+            <div class="col-md-6">
+              <ul class="list-unstyled">
+                <li><strong>Marque:</strong> <%= @listing.vehicle.make %></li>
+                <li><strong>Modèle:</strong> <%= @listing.vehicle.model %></li>
+                <li><strong>Année:</strong> <%= @listing.vehicle.year %></li>
+              </ul>
+            </div>
+            <div class="col-md-6">
+              <ul class="list-unstyled">
+                <% if @listing.vehicle.kilometers.present? %>
+                  <li><strong>Kilométrage:</strong> <%= number_with_delimiter(@listing.vehicle.kilometers) %> km</li>
+                <% end %>
+                <% if @listing.vehicle.fuel_type.present? %>
+                  <li><strong>Carburant:</strong> <%= @listing.vehicle.fuel_type %></li>
+                <% end %>
+                <% if @listing.vehicle.transmission.present? %>
+                  <li><strong>Transmission:</strong> <%= @listing.vehicle.transmission %></li>
+                <% end %>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card mb-4">
+        <div class="card-body">
+          <h4 class="card-title text-primary mb-4">
+            <%= number_to_currency(@listing.vehicle.price, unit: "€", precision: 0) %>
+          </h4>
+          
+          <p>
+            <i class="bi bi-person"></i> Vendu par: <%= @listing.user.email %>
+          </p>
+          
+          <p>
+            <i class="bi bi-calendar"></i> Publiée le: <%= @listing.created_at.strftime("%d/%m/%Y") %>
+          </p>
+          
+          <hr>
+          
+          <% if user_signed_in? %>
+            <% if current_user == @listing.user %>
+              <div class="d-grid gap-2">
+                <%= link_to "Modifier l'annonce", edit_listing_path(@listing), class: "btn btn-outline-primary" %>
+                <%= button_to "Supprimer l'annonce", @listing, method: :delete, class: "btn btn-outline-danger mt-2", form: { data: { turbo_confirm: "Êtes-vous sûr de vouloir supprimer cette annonce?" } } %>
+              </div>
+            <% else %>
+              <div class="d-grid gap-2">
+                <a href="mailto:<%= @listing.user.email %>" class="btn btn-primary">Contacter le vendeur</a>
+              </div>
+            <% end %>
+          <% else %>
+            <div class="alert alert-info">
+              <%= link_to "Connectez-vous", new_user_session_path %> pour contacter le vendeur.
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

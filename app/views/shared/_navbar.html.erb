@@ -6,7 +6,11 @@
       </div>
       <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
         <li><a href="/">Home</a></li>
-        <li><a>Inventory</a></li>
+        <li><a href="<%= listings_path %>">Annonces</a></li>
+        <% if user_signed_in? %>
+          <li><a href="<%= my_listings_path %>">Mes annonces</a></li>
+          <li><a href="<%= new_listing_path %>">Publier une annonce</a></li>
+        <% end %>
         <li><a>Services</a></li>
         <li><a>About Us</a></li>
         <li><a>Contact</a></li>
@@ -17,7 +21,11 @@
   <div class="navbar-center hidden lg:flex">
     <ul class="menu menu-horizontal px-1">
       <li><a href="/">Home</a></li>
-      <li><a>Inventory</a></li>
+      <li><a href="<%= listings_path %>">Annonces</a></li>
+      <% if user_signed_in? %>
+        <li><a href="<%= my_listings_path %>">Mes annonces</a></li>
+        <li><a href="<%= new_listing_path %>">Publier une annonce</a></li>
+      <% end %>
       <li><a>Services</a></li>
       <li><a>About Us</a></li>
       <li><a>Contact</a></li>
@@ -42,4 +50,17 @@
       <%= link_to "Register", new_user_registration_path, class: "btn btn-primary" %>
     <% end %>
   </div>
-</div> 
+</div>
+
+<li class="nav-item">
+  <%= link_to "Annonces", listings_path, class: "nav-link" %>
+</li>
+
+<% if user_signed_in? %>
+  <li class="nav-item">
+    <%= link_to "Mes annonces", my_listings_path, class: "nav-link" %>
+  </li>
+  <li class="nav-item">
+    <%= link_to "Publier une annonce", new_listing_path, class: "nav-link" %>
+  </li>
+<% end %> 
