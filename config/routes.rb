@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
+  get "messages/index"
+  get "messages/show"
+  get "messages/create"
   devise_for :users
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
@@ -12,6 +15,9 @@ Rails.application.routes.draw do
 
   resources :listings
   resources :vehicles
+  
+  resources :messages, only: [:index, :create]
+  get 'conversations/:user_id', to: 'messages#show', as: 'conversation'
 
   # Defines the root path route ("/")
   root "pages#home"

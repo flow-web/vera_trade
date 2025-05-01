@@ -10,6 +10,7 @@
         <% if user_signed_in? %>
           <li><a href="<%= my_listings_path %>">Mes annonces</a></li>
           <li><a href="<%= new_listing_path %>">Publier une annonce</a></li>
+          <li><a href="<%= messages_path %>">Messages</a></li>
         <% end %>
         <li><a>Services</a></li>
         <li><a>About Us</a></li>
@@ -25,6 +26,7 @@
       <% if user_signed_in? %>
         <li><a href="<%= my_listings_path %>">Mes annonces</a></li>
         <li><a href="<%= new_listing_path %>">Publier une annonce</a></li>
+        <li><a href="<%= messages_path %>">Messages</a></li>
       <% end %>
       <li><a>Services</a></li>
       <li><a>About Us</a></li>
@@ -62,5 +64,8 @@
   </li>
   <li class="nav-item">
     <%= link_to "Publier une annonce", new_listing_path, class: "nav-link" %>
+  </li>
+  <li class="nav-item">
+    <%= link_to "Messages", messages_path, class: "nav-link" %>
   </li>
 <% end %> 
