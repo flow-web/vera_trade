@@ -1,4 +1,4 @@
-<div class="navbar bg-base-100 shadow-md">
+<div class="navbar shadow-md" style="background-color: #011f3b; color: white;">
   <div class="navbar-start">
     <div class="dropdown">
       <div tabindex="0" role="button" class="btn btn-ghost lg:hidden">
@@ -17,23 +17,29 @@
         <li><a>Contact</a></li>
       </ul>
     </div>
-    <a href="/" class="btn btn-ghost text-xl">Vera Trade Real</a>
-  </div>
-  <div class="navbar-center hidden lg:flex">
-    <ul class="menu menu-horizontal px-1">
+    <ul class="menu menu-horizontal px-1 hidden lg:flex">
       <li><a href="/">Home</a></li>
       <li><a href="<%= listings_path %>">Annonces</a></li>
       <% if user_signed_in? %>
         <li><a href="<%= my_listings_path %>">Mes annonces</a></li>
+      <% end %>
+    </ul>
+  </div>
+  
+  <div class="navbar-center">
+    <a href="/" class="btn btn-ghost">
+      <img src="/vta_logo.png" alt="VTA Logo" class="h-12" />
+    </a>
+  </div>
+  
+  <div class="navbar-end">
+    <ul class="menu menu-horizontal px-1 hidden lg:flex">
+      <% if user_signed_in? %>
         <li><a href="<%= new_listing_path %>">Publier une annonce</a></li>
         <li><a href="<%= messages_path %>">Messages</a></li>
       <% end %>
       <li><a>Services</a></li>
-      <li><a>About Us</a></li>
-      <li><a>Contact</a></li>
     </ul>
-  </div>
-  <div class="navbar-end">
     <% if user_signed_in? %>
       <div class="dropdown dropdown-end">
         <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
@@ -52,20 +58,4 @@
       <%= link_to "Register", new_user_registration_path, class: "btn btn-primary" %>
     <% end %>
   </div>
-</div>
-
-<li class="nav-item">
-  <%= link_to "Annonces", listings_path, class: "nav-link" %>
-</li>
-
-<% if user_signed_in? %>
-  <li class="nav-item">
-    <%= link_to "Mes annonces", my_listings_path, class: "nav-link" %>
-  </li>
-  <li class="nav-item">
-    <%= link_to "Publier une annonce", new_listing_path, class: "nav-link" %>
-  </li>
-  <li class="nav-item">
-    <%= link_to "Messages", messages_path, class: "nav-link" %>
-  </li>
-<% end %> 
+</div> 
