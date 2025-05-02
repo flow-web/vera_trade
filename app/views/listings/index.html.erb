@@ -11,6 +11,9 @@
         <li><a class="dropdown-item" href="#">Date: plus récentes</a></li>
         <li><a class="dropdown-item" href="#">Date: plus anciennes</a></li>
         <li><a class="dropdown-item" href="#">Kilométrage: croissant</a></li>
+        <li><a class="dropdown-item" href="#">Date d'immatriculation: récentes</a></li>
+        <li><a class="dropdown-item" href="#">Date d'immatriculation: anciennes</a></li>
+        <li><a class="dropdown-item" href="#">Consommation: économique</a></li>
       </ul>
     </div>
   </div>
@@ -24,8 +27,8 @@
               <!-- Image section - côté gauche -->
               <div class="col-4 col-md-3">
                 <% if listing.photos.attached? %>
-                  <div class="listing-image position-relative rounded" style="height: 140px; overflow: hidden;">
-                    <%= image_tag listing.photos.first, class: "w-100 h-100", style: "object-fit: cover;" %>
+                  <div class="listing-image position-relative rounded bg-light" style="height: 150px; display: flex; align-items: center; justify-content: center;">
+                    <%= image_tag listing.photos.first, style: "max-height: 100%; max-width: 100%; object-fit: contain;" %>
                     <% if listing.vehicle.non_smoker.present? && listing.vehicle.non_smoker %>
                       <div class="position-absolute bottom-0 end-0 m-1">
                         <span class="badge bg-success rounded-pill">
@@ -35,7 +38,7 @@
                     <% end %>
                   </div>
                 <% else %>
-                  <div class="listing-image bg-light d-flex justify-content-center align-items-center rounded" style="height: 140px;">
+                  <div class="listing-image bg-light d-flex justify-content-center align-items-center rounded" style="height: 150px;">
                     <i class="bi bi-camera fs-4 text-muted"></i>
                   </div>
                 <% end %>
@@ -47,14 +50,14 @@
                   <div class="row">
                     <div class="col-md-8">
                       <h5 class="listing-title text-dark fw-bold mb-1 text-truncate"><%= listing.title %></h5>
-                      <div class="listing-category text-muted mb-2">
+                      <div class="listing-category text-dark mb-2">
                         <%= listing.vehicle.make %> <%= listing.vehicle.model %> (<%= listing.vehicle.year %>)
                         <% if listing.vehicle.finition.present? %>
                           - <%= listing.vehicle.finition %>
                         <% end %>
                       </div>
                       
-                      <!-- Caractéristiques principales - badges -->
+                      <!-- Caractéristiques du véhicule - badges -->
                       <div class="listing-details d-flex flex-wrap gap-2 mb-2">
                         <% if listing.vehicle.kilometers.present? %>
                           <span class="badge bg-light text-dark"><i class="bi bi-speedometer2 me-1"></i><%= number_with_delimiter(listing.vehicle.kilometers) %> km</span>
@@ -76,7 +79,7 @@
                         <% end %>
                       </div>
 
-                      <!-- Seconde ligne de badges pour autres caractéristiques -->
+                      <!-- Seconde ligne de badges -->
                       <div class="listing-details d-flex flex-wrap gap-2 mb-2">
                         <% if listing.vehicle.previous_owners.present? %>
                           <span class="badge bg-light text-dark"><i class="bi bi-people me-1"></i><%= listing.vehicle.previous_owners %> prop.</span>
@@ -90,13 +93,10 @@
                         <% if listing.vehicle.has_service_history.present? && listing.vehicle.has_service_history %>
                           <span class="badge bg-light text-dark"><i class="bi bi-journal-check me-1"></i>Carnet</span>
                         <% end %>
-                        <% if listing.vehicle.location.present? %>
-                          <span class="badge bg-light text-dark"><i class="bi bi-geo-alt me-1"></i><%= listing.vehicle.location %></span>
-                        <% end %>
                       </div>
                       
-                      <!-- Informations supplémentaires en format desktop -->
-                      <div class="d-none d-md-block text-muted mt-2">
+                      <!-- Description en format desktop -->
+                      <div class="d-none d-md-block text-dark mt-2">
                         <div class="text-truncate-2" style="max-height: 40px; overflow: hidden;">
                           <%= listing.description %>
                         </div>
@@ -111,10 +111,16 @@
                         </div>
                       </div>
                       
-                      <!-- Date de publication -->
-                      <div class="text-muted small mt-2">
-                        <i class="bi bi-clock"></i>
-                        <%= time_ago_in_words(listing.created_at) %>
+                      <!-- Localisation et date -->
+                      <div class="d-flex flex-column align-items-end mt-auto">
+                        <% if listing.vehicle.location.present? %>
+                          <div class="text-muted small mb-1">
+                            <i class="bi bi-geo-alt"></i> <%= listing.vehicle.location %>
+                          </div>
+                        <% end %>
+                        <div class="text-muted small">
+                          <i class="bi bi-clock"></i> <%= time_ago_in_words(listing.created_at) %>
+                        </div>
                       </div>
                     </div>
                   </div>
