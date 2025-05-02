@@ -91,6 +91,13 @@ class ListingsController < ApplicationController
 
   def vehicle_params
     params.require(:vehicle).permit(:make, :model, :year, :description, :price, 
-                                   :kilometers, :fuel_type, :transmission)
+                                   :kilometers, :fuel_type, :transmission,
+                                   :finition, :doors, :exterior_color, :interior_material, 
+                                   :interior_color, :previous_owners, :last_service_date, 
+                                   :next_ct_date, :ct_expiry_date, :has_service_history, 
+                                   :non_smoker, :location, :safety_features, :comfort_features, 
+                                   :multimedia_features, :exterior_features, :other_features, 
+                                   :body_condition, :interior_condition, :tire_condition, 
+                                   :recent_works, :issues, :expected_costs)
   end
 end

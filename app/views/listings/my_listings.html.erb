@@ -8,9 +8,10 @@
   
   <% if @listings.any? %>
     <div class="table-responsive">
-      <table class="table table-striped">
+      <table class="table table-striped align-middle">
         <thead>
           <tr>
+            <th>Photo</th>
             <th>Titre</th>
             <th>Véhicule</th>
             <th>Prix</th>
@@ -22,6 +23,15 @@
         <tbody>
           <% @listings.each do |listing| %>
             <tr>
+              <td style="width: 80px;">
+                <% if listing.photos.attached? %>
+                  <%= image_tag listing.photos.first, class: "img-thumbnail", style: "width: 70px; height: 50px; object-fit: cover;" %>
+                <% else %>
+                  <div class="bg-light d-flex justify-content-center align-items-center" style="width: 70px; height: 50px;">
+                    <i class="bi bi-camera text-muted" style="font-size: 1.2rem;"></i>
+                  </div>
+                <% end %>
+              </td>
               <td><%= listing.title %></td>
               <td><%= "#{listing.vehicle.make} #{listing.vehicle.model} (#{listing.vehicle.year})" %></td>
               <td><%= number_to_currency(listing.vehicle.price, unit: "€", precision: 0) %></td>

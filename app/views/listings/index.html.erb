@@ -7,36 +7,47 @@
   </div>
   
   <% if @listings.any? %>
-    <div class="row">
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-5">
       <% @listings.each do |listing| %>
-        <div class="col-md-4 mb-4">
-          <div class="card h-100">
-            <div class="card-body">
-              <h5 class="card-title"><%= listing.title %></h5>
+        <div class="col mb-4">
+          <div class="card h-100 shadow-sm">
+            <% if listing.photos.attached? %>
+              <%= image_tag listing.photos.first, class: "card-img-top", style: "height: 120px; object-fit: cover;" %>
+            <% else %>
+              <div class="card-img-top bg-light d-flex justify-content-center align-items-center" style="height: 120px;">
+                <i class="bi bi-camera fs-1 text-muted"></i>
+              </div>
+            <% end %>
+            <div class="card-body p-3">
+              <h5 class="card-title fw-bold"><%= listing.title %></h5>
               <h6 class="card-subtitle mb-2 text-muted">
                 <%= listing.vehicle.make %> <%= listing.vehicle.model %> (<%= listing.vehicle.year %>)
               </h6>
-              <p class="card-text">
-                <strong><%= number_to_currency(listing.vehicle.price, unit: "€", precision: 0) %></strong>
+              <p class="card-text mb-2">
+                <strong class="text-primary fs-5"><%= number_to_currency(listing.vehicle.price, unit: "€", precision: 0) %></strong>
               </p>
               <p class="card-text text-truncate"><%= listing.description %></p>
-              <ul class="list-unstyled">
+              <hr class="my-2">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <small class="text-muted">Caractéristiques:</small>
+              </div>
+              <ul class="list-unstyled mb-3">
                 <% if listing.vehicle.kilometers.present? %>
-                  <li><small class="text-muted"><%= number_with_delimiter(listing.vehicle.kilometers) %> km</small></li>
+                  <li><small class="text-muted"><i class="bi bi-speedometer2 me-1"></i><%= number_with_delimiter(listing.vehicle.kilometers) %> km</small></li>
                 <% end %>
                 <% if listing.vehicle.fuel_type.present? %>
-                  <li><small class="text-muted"><%= listing.vehicle.fuel_type %></small></li>
+                  <li><small class="text-muted"><i class="bi bi-fuel-pump me-1"></i><%= listing.vehicle.fuel_type %></small></li>
                 <% end %>
                 <% if listing.vehicle.transmission.present? %>
-                  <li><small class="text-muted"><%= listing.vehicle.transmission %></small></li>
+                  <li><small class="text-muted"><i class="bi bi-gear me-1"></i><%= listing.vehicle.transmission %></small></li>
                 <% end %>
               </ul>
-              <div class="mt-3">
-                <%= link_to "Voir l'annonce", listing, class: "btn btn-outline-primary btn-sm" %>
+              <div class="mt-auto">
+                <%= link_to "Voir l'annonce", listing, class: "btn btn-outline-primary w-100" %>
               </div>
             </div>
-            <div class="card-footer text-muted">
-              <small>Publié par <%= listing.user.email %> le <%= listing.created_at.strftime("%d/%m/%Y") %></small>
+            <div class="card-footer text-muted bg-light py-2">
+              <small>Publié le <%= listing.created_at.strftime("%d/%m/%Y") %></small>
             </div>
           </div>
         </div>
