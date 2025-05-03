@@ -1,4 +1,198 @@
 <div class="container pt-3">
+  <!-- Barre de recherche avancée -->
+  <div class="filter-section mb-4">
+    <div class="card mb-3">
+      <div class="card-body">
+        <h5 class="card-title mb-3">Filtrer les annonces</h5>
+        <%= form_with url: listings_path, method: :get, data: { controller: "search-form" } do |f| %>
+          <div class="row g-3 mb-4">
+            <!-- Filtre par catégorie -->
+            <div class="col-md-6">
+              <div class="form-floating">
+                <%= f.select :category_id, 
+                  @categories.map { |c| [c.name, c.id] },
+                  { include_blank: "Toutes les catégories" },
+                  { class: "form-select", data: { action: "change->search-form#loadSubcategories" } } 
+                %>
+                <label for="category_id">Catégorie</label>
+              </div>
+            </div>
+            
+            <!-- Filtre par sous-catégorie (dynamique) -->
+            <div class="col-md-6">
+              <div class="form-floating">
+                <%= f.select :subcategory, 
+                  @subcategories.map(&:name),
+                  { include_blank: "Tous les types" },
+                  { class: "form-select", disabled: @subcategories.empty?, data: { search_form_target: "subcategorySelect" } } 
+                %>
+                <label for="subcategory">Type de véhicule</label>
+              </div>
+            </div>
+            
+            <!-- Filtres de base -->
+            <div class="col-md-6">
+              <div class="form-floating">
+                <%= f.text_field :make, class: "form-control", placeholder: "Ex: BMW, Peugeot..." %>
+                <label for="make">Marque</label>
+              </div>
+            </div>
+            
+            <div class="col-md-6">
+              <div class="form-floating">
+                <%= f.text_field :model, class: "form-control", placeholder: "Ex: 308, Série 3..." %>
+                <label for="model">Modèle</label>
+              </div>
+            </div>
+            
+            <!-- Filtres de prix -->
+            <div class="col-md-6">
+              <div class="row g-2">
+                <div class="col-6">
+                  <div class="form-floating">
+                    <%= f.number_field :price_min, class: "form-control", placeholder: "Min" %>
+                    <label for="price_min">Prix min (€)</label>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="form-floating">
+                    <%= f.number_field :price_max, class: "form-control", placeholder: "Max" %>
+                    <label for="price_max">Prix max (€)</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Filtres de kilométrage -->
+            <div class="col-md-6">
+              <div class="row g-2">
+                <div class="col-6">
+                  <div class="form-floating">
+                    <%= f.number_field :km_min, class: "form-control", placeholder: "Min" %>
+                    <label for="km_min">Km min</label>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="form-floating">
+                    <%= f.number_field :km_max, class: "form-control", placeholder: "Max" %>
+                    <label for="km_max">Km max</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Filtres d'année -->
+            <div class="col-md-6">
+              <div class="row g-2">
+                <div class="col-6">
+                  <div class="form-floating">
+                    <%= f.number_field :year_min, class: "form-control", placeholder: "Min", min: 1900, max: Time.current.year %>
+                    <label for="year_min">Année min</label>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="form-floating">
+                    <%= f.number_field :year_max, class: "form-control", placeholder: "Max", min: 1900, max: Time.current.year %>
+                    <label for="year_max">Année max</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Filtres de carburant et transmission -->
+            <div class="col-md-6">
+              <div class="row g-2">
+                <div class="col-6">
+                  <div class="form-floating">
+                    <%= f.select :fuel_type, 
+                      ['Essence', 'Diesel', 'Hybride', 'Électrique', 'GPL', 'Autre'],
+                      { include_blank: "Tous les carburants" },
+                      { class: "form-select" } 
+                    %>
+                    <label for="fuel_type">Carburant</label>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="form-floating">
+                    <%= f.select :transmission, 
+                      ['Manuelle', 'Automatique', 'Semi-automatique'],
+                      { include_blank: "Toutes" },
+                      { class: "form-select" } 
+                    %>
+                    <label for="transmission">Transmission</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Filtre par équipements -->
+          <div class="row mb-3">
+            <div class="col-12">
+              <h6 class="mb-2">Équipements</h6>
+              
+              <div class="accordion" id="equipmentAccordion">
+                <% @equipment_categories.each_with_index do |(category, equipment_list), index| %>
+                  <div class="accordion-item">
+                    <h2 class="accordion-header" id="heading<%= category.to_s.parameterize %>">
+                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse<%= category.to_s.parameterize %>" aria-expanded="false" aria-controls="collapse<%= category.to_s.parameterize %>">
+                        <%= category %>
+                      </button>
+                    </h2>
+                    <div id="collapse<%= category.to_s.parameterize %>" class="accordion-collapse collapse" aria-labelledby="heading<%= category.to_s.parameterize %>" data-bs-parent="#equipmentAccordion">
+                      <div class="accordion-body">
+                        <div class="row">
+                          <% equipment_list.each do |equipment| %>
+                            <div class="col-md-4 mb-2">
+                              <div class="form-check">
+                                <%= f.check_box :equipment, { multiple: true, class: "form-check-input", id: "equipment_#{equipment.parameterize}" }, equipment, nil %>
+                                <label class="form-check-label" for="equipment_<%= equipment.parameterize %>"><%= equipment %></label>
+                              </div>
+                            </div>
+                          <% end %>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Filtres spécifiques (s'affichent dynamiquement selon la catégorie) -->
+          <div class="specific-filters mb-3" data-search-form-target="specificFilters">
+            <!-- Les filtres spécifiques seront ajoutés ici dynamiquement -->
+          </div>
+          
+          <!-- Tri et boutons de soumission -->
+          <div class="d-flex justify-content-between align-items-center">
+            <div class="form-floating" style="width: 200px;">
+              <%= f.select :sort, 
+                [
+                  ['Plus récentes', 'date_desc'],
+                  ['Plus anciennes', 'date_asc'],
+                  ['Prix croissant', 'price_asc'],
+                  ['Prix décroissant', 'price_desc'],
+                  ['Kilométrage croissant', 'km_asc'],
+                  ['Année: plus récentes', 'year_desc'],
+                  ['Année: plus anciennes', 'year_asc']
+                ],
+                { selected: params[:sort] || 'date_desc' },
+                { class: "form-select" } 
+              %>
+              <label for="sort">Trier par</label>
+            </div>
+            
+            <div>
+              <%= link_to "Réinitialiser", listings_path, class: "btn btn-outline-secondary me-2" %>
+              <%= f.submit "Filtrer", class: "btn btn-primary" %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
   <div class="d-flex justify-content-between align-items-center mb-3">
     <h5 class="m-0"><span class="badge bg-primary"><%= @listings.count %></span> annonces trouvées</h5>
     <div class="dropdown">
@@ -54,6 +248,12 @@
                         <%= listing.vehicle.make %> <%= listing.vehicle.model %> (<%= listing.vehicle.year %>)
                         <% if listing.vehicle.finition.present? %>
                           - <%= listing.vehicle.finition %>
+                        <% end %>
+                        <% if listing.vehicle.category %>
+                          <span class="badge bg-light text-dark ms-2"><%= listing.vehicle.category.name %></span>
+                        <% end %>
+                        <% if listing.vehicle.subcategory.present? %>
+                          <span class="badge bg-light text-dark"><%= listing.vehicle.subcategory %></span>
                         <% end %>
                       </div>
                       
@@ -163,3 +363,243 @@
     font-weight: normal;
   }
 </style>
+
+<script>
+  window.addEventListener("turbo:load", function() {
+    // Controller pour le formulaire de recherche
+    class SearchForm {
+      static targets = ["subcategorySelect", "specificFilters"];
+      
+      initialize() {
+        this.loadSpecificFilters();
+      }
+      
+      loadSubcategories(event) {
+        const categoryId = event.target.value;
+        const subcategorySelect = this.subcategorySelectTarget;
+        
+        if (!categoryId) {
+          subcategorySelect.innerHTML = '<option value="">Tous les types</option>';
+          subcategorySelect.disabled = true;
+          this.specificFiltersTarget.innerHTML = '';
+          return;
+        }
+        
+        // Appel AJAX pour charger les sous-catégories
+        fetch(`/vehicles/subcategories/${categoryId}`)
+          .then(response => response.json())
+          .then(data => {
+            // Vider et réactiver le select des sous-catégories
+            subcategorySelect.innerHTML = '<option value="">Tous les types</option>';
+            
+            // Ajouter les options pour les sous-catégories
+            if (data && data.length > 0) {
+              data.forEach(subcategory => {
+                const option = document.createElement('option');
+                option.value = subcategory.name;
+                option.textContent = subcategory.name;
+                subcategorySelect.appendChild(option);
+              });
+              
+              subcategorySelect.disabled = false;
+            } else {
+              subcategorySelect.disabled = true;
+            }
+            
+            // Charger les filtres spécifiques pour cette catégorie
+            const categoryText = event.target.options[event.target.selectedIndex].text;
+            this.loadSpecificFilters(categoryText);
+          })
+          .catch(error => {
+            console.error('Erreur lors du chargement des sous-catégories:', error);
+          });
+      }
+      
+      loadSpecificFilters(categoryText) {
+        const specificFiltersContainer = this.specificFiltersTarget;
+        specificFiltersContainer.innerHTML = '';
+        
+        if (!categoryText) {
+          return;
+        }
+        
+        // Créer des filtres spécifiques en fonction de la catégorie
+        const categoryFilters = document.createElement('div');
+        categoryFilters.className = 'row g-3 mb-3';
+        categoryFilters.innerHTML = '<h6>Filtres spécifiques pour ' + categoryText + '</h6>';
+        
+        switch(categoryText) {
+          case 'Voiture':
+            categoryFilters.innerHTML += `
+              <div class="col-md-6">
+                <div class="form-floating">
+                  <select name="doors" class="form-select">
+                    <option value="">Toutes</option>
+                    <option value="3">3 portes</option>
+                    <option value="5">5 portes</option>
+                  </select>
+                  <label for="doors">Nombre de portes</label>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-floating">
+                  <select name="interior_material" class="form-select">
+                    <option value="">Tous</option>
+                    <option value="Tissu">Tissu</option>
+                    <option value="Cuir">Cuir</option>
+                    <option value="Alcantara">Alcantara</option>
+                    <option value="Simili cuir">Simili cuir</option>
+                    <option value="Mixte">Mixte</option>
+                  </select>
+                  <label for="interior_material">Matière intérieure</label>
+                </div>
+              </div>
+            `;
+            break;
+          case 'Moto':
+            categoryFilters.innerHTML += `
+              <div class="col-md-6">
+                <div class="row g-2">
+                  <div class="col-6">
+                    <div class="form-floating">
+                      <input type="number" name="cylinder_capacity_min" class="form-control" placeholder="Min">
+                      <label for="cylinder_capacity_min">Cylindrée min (cm³)</label>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="form-floating">
+                      <input type="number" name="cylinder_capacity_max" class="form-control" placeholder="Max">
+                      <label for="cylinder_capacity_max">Cylindrée max (cm³)</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="row g-2">
+                  <div class="col-6">
+                    <div class="form-floating">
+                      <select name="engine_type" class="form-select">
+                        <option value="">Tous</option>
+                        <option value="4 temps">4 temps</option>
+                        <option value="2 temps">2 temps</option>
+                        <option value="Electrique">Électrique</option>
+                      </select>
+                      <label for="engine_type">Type de moteur</label>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="form-floating">
+                      <select name="license_type" class="form-select">
+                        <option value="">Tous</option>
+                        <option value="A">A</option>
+                        <option value="A1">A1</option>
+                        <option value="A2">A2</option>
+                        <option value="B">B</option>
+                        <option value="AM">AM</option>
+                      </select>
+                      <label for="license_type">Type de permis</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            `;
+            break;
+          case 'Bateau':
+            categoryFilters.innerHTML += `
+              <div class="col-md-6">
+                <div class="row g-2">
+                  <div class="col-6">
+                    <div class="form-floating">
+                      <input type="number" name="length_min" class="form-control" placeholder="Min" step="0.1">
+                      <label for="length_min">Longueur min (m)</label>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="form-floating">
+                      <input type="number" name="length_max" class="form-control" placeholder="Max" step="0.1">
+                      <label for="length_max">Longueur max (m)</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="row g-2">
+                  <div class="col-6">
+                    <div class="form-floating">
+                      <select name="hull_material" class="form-select">
+                        <option value="">Tous</option>
+                        <option value="Fibre de verre">Fibre de verre</option>
+                        <option value="Polyester">Polyester</option>
+                        <option value="Bois">Bois</option>
+                        <option value="Aluminium">Aluminium</option>
+                        <option value="Acier">Acier</option>
+                      </select>
+                      <label for="hull_material">Matériau de coque</label>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="form-floating">
+                      <input type="number" name="number_of_cabins_min" class="form-control" placeholder="Min">
+                      <label for="number_of_cabins_min">Cabines (min)</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            `;
+            break;
+          case 'Avion':
+            categoryFilters.innerHTML += `
+              <div class="col-md-6">
+                <div class="form-floating">
+                  <input type="number" name="flight_hours_max" class="form-control" placeholder="Max">
+                  <label for="flight_hours_max">Heures de vol max</label>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-floating">
+                  <input type="number" name="number_of_seats_min" class="form-control" placeholder="Min">
+                  <label for="number_of_seats_min">Nombre de places min</label>
+                </div>
+              </div>
+            `;
+            break;
+          case 'Véhicule de chantier':
+            categoryFilters.innerHTML += `
+              <div class="col-md-6">
+                <div class="form-floating">
+                  <input type="number" name="operating_hours_max" class="form-control" placeholder="Max">
+                  <label for="operating_hours_max">Heures de fonctionnement max</label>
+                </div>
+              </div>
+            `;
+            break;
+        }
+        
+        specificFiltersContainer.appendChild(categoryFilters);
+      }
+    }
+    
+    // Enregistrer le contrôleur
+    window.SearchForm = SearchForm;
+    
+    // Initialiser le contrôleur si nécessaire
+    if (document.querySelector('[data-controller="search-form"]')) {
+      const form = document.querySelector('[data-controller="search-form"]');
+      const controller = new SearchForm();
+      controller.subcategorySelectTarget = form.querySelector('[data-search-form-target="subcategorySelect"]');
+      controller.specificFiltersTarget = form.querySelector('[data-search-form-target="specificFilters"]');
+      
+      // Ajouter les écouteurs d'événements
+      form.querySelector('select[name="category_id"]').addEventListener('change', (event) => {
+        controller.loadSubcategories(event);
+      });
+      
+      // Charger les filtres spécifiques si une catégorie est déjà sélectionnée
+      const categorySelect = form.querySelector('select[name="category_id"]');
+      if (categorySelect.value) {
+        const categoryText = categorySelect.options[categorySelect.selectedIndex].text;
+        controller.loadSpecificFilters(categoryText);
+      }
+    }
+  });
+</script>

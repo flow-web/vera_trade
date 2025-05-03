@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  title: MyString
+  context: MyString
+  content_type: MyString
+  media_folder: one
+  listing: one
+  private: false
+
+two:
+  title: MyString
+  context: MyString
+  content_type: MyString
+  media_folder: two
+  listing: two
+  private: false

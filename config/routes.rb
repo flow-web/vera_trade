@@ -13,8 +13,29 @@ Rails.application.routes.draw do
   # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
-  resources :listings
-  resources :vehicles
+  # Suppression des routes automatiques pour MediaItems et MediaFolders
+  delete "media_items/create"
+  delete "media_items/destroy"
+  delete "media_folders/create"
+  delete "media_folders/destroy"
+
+  resources :listings do
+    resources :media_items, only: [:create, :destroy]
+    resources :media_folders, only: [:create, :destroy]
+  end
+  
+  resources :media_items, only: [:destroy]
+  resources :media_folders, only: [:destroy]
+  
+  resources :vehicles, only: [:index, :show] do
+    collection do
+      get 'categories'
+      get 'subcategories/:category_id', to: 'vehicles#subcategories', as: 'subcategories'
+      get 'vehicle_types'
+      get 'specific_fields'
+      get 'equipment_categories'
+    end
+  end
   
   resources :messages, only: [:index, :create]
   get 'conversations/:user_id', to: 'messages#show', as: 'conversation'

@@ -15,40 +15,54 @@
           <div class="col-md-8 mb-4">
             <h1 class="h2 mb-3"><%= @listing.title %></h1>
             
-            <% if @listing.photos.attached? %>
-              <div id="listingCarousel" class="carousel slide mb-4" data-bs-ride="carousel">
-                <div class="carousel-inner">
-                  <% @listing.photos.each_with_index do |photo, index| %>
-                    <div class="carousel-item <%= index == 0 ? 'active' : '' %>">
-                      <div style="height: 400px; background-color: #f8f9fa; display: flex; justify-content: center; align-items: center;">
-                        <%= image_tag photo, style: "max-height: 100%; max-width: 100%; object-fit: contain;" %>
+            <% if @public_media.any? %>
+              <!-- Galerie de médias -->
+              <div class="mb-8">
+                <div class="carousel w-full rounded-lg overflow-hidden mb-4" id="mediaCarousel">
+                  <% @public_media.each_with_index do |media_item, index| %>
+                    <div id="slide-<%= index %>" class="carousel-item relative w-full <%= index == 0 ? 'active' : 'hidden' %>">
+                      <% if media_item.content_type == 'image' %>
+                        <%= image_tag url_for(media_item.media), class: "w-full h-96 object-contain bg-base-200" %>
+                      <% elsif media_item.content_type == 'video' %>
+                        <video class="w-full h-96 bg-base-200" controls>
+                          <source src="<%= url_for(media_item.media) %>" type="<%= media_item.media.content_type %>">
+                          Votre navigateur ne supporte pas la lecture vidéo.
+                        </video>
+                      <% end %>
+                      
+                      <div class="absolute left-0 right-0 bottom-0 bg-black bg-opacity-50 p-2 text-white">
+                        <div class="flex justify-between items-center">
+                          <span class="text-xs"><%= media_item.title %></span>
+                          <span class="badge badge-primary"><%= media_item.context.presence || 'Sans contexte' %></span>
+                        </div>
+                      </div>
+                      
+                      <div class="absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2">
+                        <a href="#slide-<%= (index - 1) % @public_media.count %>" class="btn btn-circle">❮</a> 
+                        <a href="#slide-<%= (index + 1) % @public_media.count %>" class="btn btn-circle">❯</a>
                       </div>
                     </div>
                   <% end %>
                 </div>
-                <% if @listing.photos.count > 1 %>
-                  <button class="carousel-control-prev" type="button" data-bs-target="#listingCarousel" data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Précédent</span>
-                  </button>
-                  <button class="carousel-control-next" type="button" data-bs-target="#listingCarousel" data-bs-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Suivant</span>
-                  </button>
-                <% end %>
-              </div>
-              
-              <% if @listing.photos.count > 1 %>
-                <div class="row mb-4">
-                  <% @listing.photos.each_with_index do |photo, index| %>
-                    <div class="col-3 col-md-2 mb-2">
-                      <a href="#" data-bs-target="#listingCarousel" data-bs-slide-to="<%= index %>" class="d-block">
-                        <%= image_tag photo, class: "img-thumbnail", style: "height: 60px; width: 100%; object-fit: cover;" %>
-                      </a>
+                
+                <!-- Thumbnails -->
+                <div class="grid grid-cols-4 md:grid-cols-6 gap-2">
+                  <% @public_media.each_with_index do |media_item, index| %>
+                    <div class="carousel-thumbnail cursor-pointer" data-target="slide-<%= index %>">
+                      <% if media_item.content_type == 'image' %>
+                        <%= image_tag url_for(media_item.media), class: "w-full h-20 object-cover rounded-md" %>
+                      <% elsif media_item.content_type == 'video' %>
+                        <div class="w-full h-20 flex items-center justify-center bg-base-200 rounded-md relative">
+                          <i class="bi bi-film text-3xl text-primary"></i>
+                          <div class="absolute bottom-1 right-1">
+                            <div class="badge badge-xs badge-primary">Vidéo</div>
+                          </div>
+                        </div>
+                      <% end %>
                     </div>
                   <% end %>
                 </div>
-              <% end %>
+              </div>
             <% else %>
               <div class="card mb-4">
                 <div class="card-body text-center py-5">
@@ -69,18 +83,18 @@
                 <div class="mb-6">
                   <h3 class="text-lg font-medium mb-2">Description</h3>
                   <div class="prose max-w-none">
-                    <%= simple_format(@listing.description) %>
+                    <% combined_description = @listing.description.to_s %>
+                    <% if @listing.vehicle.description.present? %>
+                      <% combined_description += "\n\n" + @listing.vehicle.description if @listing.description.present? %>
+                      <% combined_description = @listing.vehicle.description if combined_description.blank? %>
+                    <% end %>
+                    <%= simple_format(combined_description) %>
                   </div>
                 </div>
                 
                 <!-- Vehicle Characteristics Section -->
                 <div>
                   <h3 class="text-lg font-medium mb-2">Caractéristiques du véhicule</h3>
-                  <% if @listing.vehicle.description.present? %>
-                    <div class="prose max-w-none mb-4">
-                      <%= simple_format(@listing.vehicle.description) %>
-                    </div>
-                  <% end %>
                   
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                     <div>
@@ -326,6 +340,176 @@
                 </div>
               </div>
             </div>
+
+            <!-- Équipements Section -->
+            <% 
+            safety_features = @listing.vehicle.safety_features.present? ? @listing.vehicle.safety_features.split("\n").reject(&:blank?) : []
+            comfort_features = @listing.vehicle.comfort_features.present? ? @listing.vehicle.comfort_features.split("\n").reject(&:blank?) : []
+            multimedia_features = @listing.vehicle.multimedia_features.present? ? @listing.vehicle.multimedia_features.split("\n").reject(&:blank?) : []
+            exterior_features = @listing.vehicle.exterior_features.present? ? @listing.vehicle.exterior_features.split("\n").reject(&:blank?) : []
+            other_features = @listing.vehicle.other_features.present? ? @listing.vehicle.other_features.split("\n").reject(&:blank?) : []
+            
+            has_any_features = safety_features.any? || comfort_features.any? || multimedia_features.any? || exterior_features.any? || other_features.any?
+            %>
+            
+            <% if has_any_features %>
+              <div class="mt-8">
+                <h3 class="text-lg font-medium mb-4">Équipements et options</h3>
+                
+                <div class="tabs tabs-boxed mb-4">
+                  <% if safety_features.any? %>
+                    <a class="tab tab-active" data-target="safety-tab">Sécurité</a>
+                  <% end %>
+                  <% if comfort_features.any? %>
+                    <a class="tab <%= 'tab-active' if !safety_features.any? %>" data-target="comfort-tab">Confort</a>
+                  <% end %>
+                  <% if multimedia_features.any? %>
+                    <a class="tab <%= 'tab-active' if !safety_features.any? && !comfort_features.any? %>" data-target="multimedia-tab">Multimédia</a>
+                  <% end %>
+                  <% if exterior_features.any? %>
+                    <a class="tab <%= 'tab-active' if !safety_features.any? && !comfort_features.any? && !multimedia_features.any? %>" data-target="exterior-tab">Extérieur</a>
+                  <% end %>
+                  <% if other_features.any? %>
+                    <a class="tab <%= 'tab-active' if !safety_features.any? && !comfort_features.any? && !multimedia_features.any? && !exterior_features.any? %>" data-target="other-tab">Autre</a>
+                  <% end %>
+                </div>
+                
+                <div class="features-content px-2">
+                  <% if safety_features.any? %>
+                    <div id="safety-tab" class="tab-content">
+                      <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <% safety_features.each do |feature| %>
+                          <div class="flex items-center">
+                            <span class="text-primary mr-2"><i class="bi bi-check-circle-fill"></i></span>
+                            <span><%= feature %></span>
+                          </div>
+                        <% end %>
+                      </div>
+                    </div>
+                  <% end %>
+                  
+                  <% if comfort_features.any? %>
+                    <div id="comfort-tab" class="tab-content <%= 'hidden' if safety_features.any? %>">
+                      <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <% comfort_features.each do |feature| %>
+                          <div class="flex items-center">
+                            <span class="text-primary mr-2"><i class="bi bi-check-circle-fill"></i></span>
+                            <span><%= feature %></span>
+                          </div>
+                        <% end %>
+                      </div>
+                    </div>
+                  <% end %>
+                  
+                  <% if multimedia_features.any? %>
+                    <div id="multimedia-tab" class="tab-content <%= 'hidden' if safety_features.any? || comfort_features.any? %>">
+                      <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <% multimedia_features.each do |feature| %>
+                          <div class="flex items-center">
+                            <span class="text-primary mr-2"><i class="bi bi-check-circle-fill"></i></span>
+                            <span><%= feature %></span>
+                          </div>
+                        <% end %>
+                      </div>
+                    </div>
+                  <% end %>
+                  
+                  <% if exterior_features.any? %>
+                    <div id="exterior-tab" class="tab-content <%= 'hidden' if safety_features.any? || comfort_features.any? || multimedia_features.any? %>">
+                      <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <% exterior_features.each do |feature| %>
+                          <div class="flex items-center">
+                            <span class="text-primary mr-2"><i class="bi bi-check-circle-fill"></i></span>
+                            <span><%= feature %></span>
+                          </div>
+                        <% end %>
+                      </div>
+                    </div>
+                  <% end %>
+                  
+                  <% if other_features.any? %>
+                    <div id="other-tab" class="tab-content <%= 'hidden' if safety_features.any? || comfort_features.any? || multimedia_features.any? || exterior_features.any? %>">
+                      <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <% other_features.each do |feature| %>
+                          <div class="flex items-center">
+                            <span class="text-primary mr-2"><i class="bi bi-check-circle-fill"></i></span>
+                            <span><%= feature %></span>
+                          </div>
+                        <% end %>
+                      </div>
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
+            
+            <!-- Caractéristiques spécifiques selon le type de véhicule -->
+            <% if @listing.vehicle.category.present? %>
+              <% 
+              # Récupérer les champs spécifiques remplis en fonction de la catégorie
+              specific_fields = []
+              
+              case @listing.vehicle.category.name
+              when "Voiture"
+                # Déjà affichés dans les caractéristiques standards
+              when "Moto"
+                specific_fields << ["Cylindrée", "#{@listing.vehicle.cylinder_capacity} cm³"] if @listing.vehicle.cylinder_capacity.present?
+                specific_fields << ["Type de moteur", @listing.vehicle.engine_type] if @listing.vehicle.engine_type.present?
+                specific_fields << ["Refroidissement", @listing.vehicle.cooling_type] if @listing.vehicle.cooling_type.present?
+                specific_fields << ["Démarrage", @listing.vehicle.starter_type] if @listing.vehicle.starter_type.present?
+                specific_fields << ["Permis requis", @listing.vehicle.license_type] if @listing.vehicle.license_type.present?
+              when "Bateau"
+                specific_fields << ["Longueur", "#{@listing.vehicle.length} m"] if @listing.vehicle.length.present?
+                specific_fields << ["Largeur", "#{@listing.vehicle.width} m"] if @listing.vehicle.width.present?
+                specific_fields << ["Tirant d'eau", "#{@listing.vehicle.draft} m"] if @listing.vehicle.draft.present?
+                specific_fields << ["Matériau de coque", @listing.vehicle.hull_material] if @listing.vehicle.hull_material.present?
+                specific_fields << ["Nombre de cabines", @listing.vehicle.number_of_cabins] if @listing.vehicle.number_of_cabins.present?
+                specific_fields << ["Nombre de couchettes", @listing.vehicle.number_of_berths] if @listing.vehicle.number_of_berths.present?
+                specific_fields << ["Heures moteur", @listing.vehicle.engine_hours] if @listing.vehicle.engine_hours.present?
+              when "Quad"
+                specific_fields << ["Cylindrée", "#{@listing.vehicle.cylinder_capacity} cm³"] if @listing.vehicle.cylinder_capacity.present?
+                specific_fields << ["Type de moteur", @listing.vehicle.engine_type] if @listing.vehicle.engine_type.present?
+                specific_fields << ["Refroidissement", @listing.vehicle.cooling_type] if @listing.vehicle.cooling_type.present?
+                specific_fields << ["Transmission", @listing.vehicle.transmission_type] if @listing.vehicle.transmission_type.present?
+                specific_fields << ["Entraînement", @listing.vehicle.drive_type] if @listing.vehicle.drive_type.present?
+                specific_fields << ["Démarrage", @listing.vehicle.starter_type] if @listing.vehicle.starter_type.present?
+              when "Avion"
+                specific_fields << ["Nombre de places", @listing.vehicle.number_of_seats] if @listing.vehicle.number_of_seats.present?
+                specific_fields << ["Heures de vol", @listing.vehicle.flight_hours] if @listing.vehicle.flight_hours.present?
+                specific_fields << ["Heures moteur", @listing.vehicle.engine_hours] if @listing.vehicle.engine_hours.present?
+                specific_fields << ["Nombre de moteurs", @listing.vehicle.number_of_engines] if @listing.vehicle.number_of_engines.present?
+                specific_fields << ["Plafond", "#{@listing.vehicle.ceiling} pieds"] if @listing.vehicle.ceiling.present?
+                specific_fields << ["Autonomie", "#{@listing.vehicle.range} km"] if @listing.vehicle.range.present?
+              when "Véhicule de chantier"
+                specific_fields << ["Heures de fonctionnement", @listing.vehicle.operating_hours] if @listing.vehicle.operating_hours.present?
+                specific_fields << ["Capacité de levage", "#{@listing.vehicle.lifting_capacity} tonnes"] if @listing.vehicle.lifting_capacity.present?
+                specific_fields << ["Portée maximale", "#{@listing.vehicle.maximum_reach} m"] if @listing.vehicle.maximum_reach.present?
+                specific_fields << ["Capacité du godet", "#{@listing.vehicle.bucket_capacity} m³"] if @listing.vehicle.bucket_capacity.present?
+                specific_fields << ["Équipements additionnels", @listing.vehicle.additional_equipment] if @listing.vehicle.additional_equipment.present?
+              when "Camion"
+                specific_fields << ["Capacité de charge", "#{@listing.vehicle.loading_capacity} tonnes"] if @listing.vehicle.loading_capacity.present?
+                specific_fields << ["Capacité de remorquage", "#{@listing.vehicle.towing_capacity} tonnes"] if @listing.vehicle.towing_capacity.present?
+                specific_fields << ["Nombre d'essieux", @listing.vehicle.axles] if @listing.vehicle.axles.present?
+                specific_fields << ["Cabine couchette", @listing.vehicle.sleeping_cab ? "Oui" : "Non"] if @listing.vehicle.sleeping_cab.present?
+                specific_fields << ["Norme d'émission", @listing.vehicle.emission_standard] if @listing.vehicle.emission_standard.present?
+              end
+              %>
+              
+              <% if specific_fields.any? %>
+                <div class="mt-8">
+                  <h3 class="text-lg font-medium mb-4">Caractéristiques spécifiques - <%= @listing.vehicle.category.name %></h3>
+                  
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <% specific_fields.each do |label, value| %>
+                      <div class="flex justify-between">
+                        <span class="font-medium"><%= label %>:</span>
+                        <span><%= value %></span>
+                      </div>
+                    <% end %>
+                  </div>
+                </div>
+              <% end %>
+            <% end %>
           </div>
         </div>
       </div>
@@ -377,3 +561,125 @@
     </div>
   </div>
 </div>
+
+<script>
+  document.addEventListener('turbo:load', function() {
+    initializeTabs();
+    initializeMediaGallery();
+  });
+  
+  document.addEventListener('DOMContentLoaded', function() {
+    initializeTabs();
+    initializeMediaGallery();
+  });
+  
+  function initializeTabs() {
+    const tabs = document.querySelectorAll('.tabs-boxed .tab');
+    
+    if (tabs.length) {
+      tabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+          // Désactiver tous les onglets
+          tabs.forEach(t => t.classList.remove('tab-active'));
+          
+          // Activer l'onglet cliqué
+          this.classList.add('tab-active');
+          
+          // Masquer tous les contenus d'onglets
+          const tabContents = document.querySelectorAll('.tab-content');
+          tabContents.forEach(content => {
+            content.classList.add('hidden');
+          });
+          
+          // Afficher le contenu d'onglet correspondant
+          const target = this.getAttribute('data-target');
+          const targetContent = document.getElementById(target);
+          if (targetContent) {
+            targetContent.classList.remove('hidden');
+          }
+        });
+      });
+    }
+    
+    // Initialiser le carrousel des photos
+    if (document.getElementById('listingCarousel')) {
+      const thumbnails = document.querySelectorAll('[data-bs-slide-to]');
+      thumbnails.forEach(thumbnail => {
+        thumbnail.addEventListener('click', function(e) {
+          e.preventDefault();
+          const index = this.getAttribute('data-bs-slide-to');
+          const carousel = document.getElementById('listingCarousel');
+          
+          // Masquer tous les éléments du carrousel
+          const carouselItems = carousel.querySelectorAll('.carousel-item');
+          carouselItems.forEach(item => {
+            item.classList.remove('active');
+          });
+          
+          // Afficher l'élément correspondant à l'index
+          if (carouselItems[index]) {
+            carouselItems[index].classList.add('active');
+          }
+        });
+      });
+      
+      // Gérer les boutons précédent/suivant
+      const prevButton = document.querySelector('.carousel-control-prev');
+      const nextButton = document.querySelector('.carousel-control-next');
+      
+      if (prevButton && nextButton) {
+        prevButton.addEventListener('click', function() {
+          navigateCarousel(-1);
+        });
+        
+        nextButton.addEventListener('click', function() {
+          navigateCarousel(1);
+        });
+      }
+      
+      function navigateCarousel(direction) {
+        const carouselItems = document.querySelectorAll('#listingCarousel .carousel-item');
+        let activeIndex = -1;
+        
+        carouselItems.forEach((item, index) => {
+          if (item.classList.contains('active')) {
+            activeIndex = index;
+          }
+        });
+        
+        if (activeIndex !== -1) {
+          carouselItems[activeIndex].classList.remove('active');
+          
+          let newIndex = activeIndex + direction;
+          if (newIndex < 0) newIndex = carouselItems.length - 1;
+          if (newIndex >= carouselItems.length) newIndex = 0;
+          
+          carouselItems[newIndex].classList.add('active');
+        }
+      }
+    }
+  }
+  
+  function initializeMediaGallery() {
+    const thumbnails = document.querySelectorAll('.carousel-thumbnail');
+    
+    thumbnails.forEach(thumb => {
+      thumb.addEventListener('click', function() {
+        const targetId = this.dataset.target;
+        
+        // Hide all carousel items
+        document.querySelectorAll('.carousel-item').forEach(item => {
+          item.classList.add('hidden');
+          item.classList.remove('active');
+        });
+        
+        // Show the target item
+        const target = document.getElementById(targetId);
+        if (target) {
+          target.classList.remove('hidden');
+          target.classList.add('active');
+        }
+      });
+    });
+  }
+</script>

@@ -7,3 +7,11 @@
 #   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
+
+# Ce fichier contient les données initiales nécessaires à l'application
+# db/seeds.rb
+
+# Charger les seeds pour les catégories
+require_relative 'seeds/categories'
+
+puts "Toutes les seeds ont été chargées avec succès !"
