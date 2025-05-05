@@ -24,6 +24,11 @@ gem "devise"
 # Cloudinary gem for image storage
 gem "cloudinary"
 
+# Payment processing
+gem "stripe"
+gem "coinbase_commerce", require: "coinbase_commerce"
+gem "money-rails", "~> 1.15"
+
 # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
 # gem "bcrypt", "~> 3.1.7"
 
@@ -56,6 +61,9 @@ group :development, :test do
 
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
+  
+  # Environment variables management
+  gem "dotenv-rails"
 end
 
 group :development do

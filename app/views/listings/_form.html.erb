@@ -1,0 +1,78 @@
+<%= form_with(model: listing, local: true, data: { controller: "vehicle-autocomplete", vehicle_autocomplete_url_value: api_vehicles_lookup_path }) do |f| %>
+  // ... existing code ...
+  
+  <div class="mb-4">
+    <h3 class="text-lg font-medium mb-2">Informations du véhicule</h3>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        <%= f.label :registration, "Immatriculation", class: "block text-sm font-medium text-gray-700" %>
+        <%= f.text_field :registration, 
+            class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500",
+            data: { vehicle_autocomplete_target: "registration", action: "input->vehicle-autocomplete#lookupByRegistration" } %>
+      </div>
+      
+      <div>
+        <%= f.label :vin, "Numéro de série (VIN)", class: "block text-sm font-medium text-gray-700" %>
+        <%= f.text_field :vin, 
+            class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500",
+            data: { vehicle_autocomplete_target: "vin", action: "input->vehicle-autocomplete#lookupByVin" } %>
+      </div>
+      
+      <div>
+        <%= f.label :make, "Marque", class: "block text-sm font-medium text-gray-700" %>
+        <%= f.text_field :make, 
+            class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500",
+            data: { vehicle_autocomplete_target: "make" } %>
+      </div>
+      
+      <div>
+        <%= f.label :model, "Modèle", class: "block text-sm font-medium text-gray-700" %>
+        <%= f.text_field :model, 
+            class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500",
+            data: { vehicle_autocomplete_target: "model" } %>
+      </div>
+      
+      <div>
+        <%= f.label :year, "Année", class: "block text-sm font-medium text-gray-700" %>
+        <%= f.number_field :year, 
+            class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500",
+            data: { vehicle_autocomplete_target: "year" } %>
+      </div>
+      
+      <div>
+        <%= f.label :fuel_type, "Type de carburant", class: "block text-sm font-medium text-gray-700" %>
+        <%= f.select :fuel_type, 
+            options_for_select(Vehicle.fuel_types.map { |k, v| [k.humanize, k] }), 
+            { include_blank: true },
+            class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500",
+            data: { vehicle_autocomplete_target: "fuelType" } %>
+      </div>
+      
+      <div>
+        <%= f.label :transmission, "Transmission", class: "block text-sm font-medium text-gray-700" %>
+        <%= f.select :transmission, 
+            options_for_select(Vehicle.transmissions.map { |k, v| [k.humanize, k] }), 
+            { include_blank: true },
+            class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500",
+            data: { vehicle_autocomplete_target: "transmission" } %>
+      </div>
+      
+      <div>
+        <%= f.label :doors, "Nombre de portes", class: "block text-sm font-medium text-gray-700" %>
+        <%= f.number_field :doors, 
+            class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500",
+            data: { vehicle_autocomplete_target: "doors" } %>
+      </div>
+      
+      <div>
+        <%= f.label :seats, "Nombre de places", class: "block text-sm font-medium text-gray-700" %>
+        <%= f.number_field :seats, 
+            class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500",
+            data: { vehicle_autocomplete_target: "seats" } %>
+      </div>
+    </div>
+  </div>
+  
+  // ... existing code ...
+<% end %> 

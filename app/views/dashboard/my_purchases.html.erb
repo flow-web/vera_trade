@@ -1,0 +1,106 @@
+<div class="mb-6">
+  <h1 class="font-poppins text-2xl font-semibold text-[#0C1E3B]">Mes Achats</h1>
+  <p class="text-[#1A1A1A]">Suivez vos achats et locations de véhicules</p>
+</div>
+
+<!-- Purchases List -->
+<% if @purchases.any? %>
+  <div class="grid grid-cols-1 gap-4">
+    <% @purchases.each do |listing| %>
+      <div class="bg-white rounded-xl shadow-md overflow-hidden">
+        <div class="flex flex-col md:flex-row">
+          <!-- Image -->
+          <div class="w-full md:w-1/4 h-48 md:h-auto">
+            <% if listing.main_photo&.file.present? %>
+              <%= image_tag listing.main_photo.file, class: "w-full h-full object-cover" %>
+            <% else %>
+              <div class="w-full h-full flex items-center justify-center bg-[#D9D9D9]">
+                <i class="bi bi-image text-[#0C1E3B] text-4xl"></i>
+              </div>
+            <% end %>
+          </div>
+          
+          <!-- Content -->
+          <div class="flex-1 p-4 flex flex-col">
+            <div class="flex flex-col md:flex-row justify-between">
+              <div>
+                <h3 class="font-poppins font-medium text-[#0C1E3B] text-lg mb-1"><%= listing.title %></h3>
+                <p class="text-sm text-[#1A1A1A] opacity-75 mb-3"><%= listing.vehicle.make %> <%= listing.vehicle.model %> - <%= listing.vehicle.year %></p>
+                
+                <!-- Sold date -->
+                <p class="text-xs text-[#1A1A1A] opacity-75 mb-4">
+                  <i class="bi bi-calendar-check text-[#B18B43] mr-1"></i>
+                  Acheté le <%= l listing.updated_at.to_date, format: :long %>
+                </p>
+              </div>
+              
+              <div class="md:text-right">
+                <p class="text-xl font-semibold text-[#B18B43]">
+                  <%= number_to_currency(listing.vehicle.price, precision: 0, unit: "€", delimiter: " ") %>
+                </p>
+                <p class="text-xs mb-4">
+                  Vendu par: <span class="font-medium"><%= listing.user.email %></span>
+                </p>
+              </div>
+            </div>
+            
+            <!-- Specs -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
+              <div class="flex items-center text-sm text-[#1A1A1A]">
+                <i class="bi bi-speedometer2 text-[#B18B43] mr-1"></i>
+                <%= number_with_delimiter(listing.vehicle.mileage) %> km
+              </div>
+              <div class="flex items-center text-sm text-[#1A1A1A]">
+                <i class="bi bi-fuel-pump text-[#B18B43] mr-1"></i>
+                <%= listing.vehicle.fuel_type %>
+              </div>
+              <div class="flex items-center text-sm text-[#1A1A1A]">
+                <i class="bi bi-gear-wide-connected text-[#B18B43] mr-1"></i>
+                <%= listing.vehicle.transmission %>
+              </div>
+              <div class="flex items-center text-sm text-[#1A1A1A]">
+                <i class="bi bi-file-earmark-text text-[#B18B43] mr-1"></i>
+                <% if listing.certified? %>
+                  <span class="text-green-600">Certifié</span>
+                <% else %>
+                  <span class="text-gray-500">Non certifié</span>
+                <% end %>
+              </div>
+            </div>
+            
+            <!-- Actions -->
+            <div class="flex flex-wrap gap-2 mt-auto">
+              <%= link_to listing_path(listing), class: "btn btn-sm bg-[#F2E8D8] hover:bg-[#D9D9D9] border-none text-[#0C1E3B]" do %>
+                <i class="bi bi-eye mr-1"></i> Voir détails
+              <% end %>
+              
+              <% seller = listing.user %>
+              <% if seller.present? %>
+                <%= link_to conversation_path(seller), class: "btn btn-sm bg-[#F2E8D8] hover:bg-[#D9D9D9] border-none text-[#0C1E3B]" do %>
+                  <i class="bi bi-chat-left-text mr-1"></i> Contacter vendeur
+                <% end %>
+              <% end %>
+              
+              <button class="btn btn-sm bg-[#F2E8D8] hover:bg-[#D9D9D9] border-none text-[#0C1E3B]">
+                <i class="bi bi-file-earmark-pdf mr-1"></i> Documents
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+<% else %>
+  <div class="bg-white rounded-xl shadow-md p-8 text-center">
+    <div class="flex flex-col items-center gap-4">
+      <div class="p-4 bg-[#F2E8D8] rounded-full">
+        <i class="bi bi-basket text-[#B18B43] text-4xl"></i>
+      </div>
+      <h3 class="font-poppins text-lg font-medium text-[#0C1E3B]">Aucun achat pour le moment</h3>
+      <p class="text-[#1A1A1A] opacity-75 mb-4">Vous n'avez pas encore acheté ou loué de véhicule sur Vera Trade.</p>
+      <a href="<%= listings_path %>" class="btn bg-[#B18B43] hover:bg-[#A0782D] text-white border-none">
+        <i class="bi bi-search mr-2"></i> Parcourir les annonces
+      </a>
+    </div>
+  </div>
+<% end %> 

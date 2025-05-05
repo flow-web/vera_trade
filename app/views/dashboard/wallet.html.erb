@@ -1,0 +1,231 @@
+<div class="min-h-screen bg-[#F2E8D8] text-[#1A1A1A]">
+  <div class="max-w-[1280px] mx-auto px-4 md:px-8 py-8">
+    <div class="flex flex-col md:flex-row gap-8">
+      <!-- Sidebar -->
+      <div class="w-full md:w-64 bg-[#0C1E3B] rounded-xl shadow-md p-4 text-white">
+        <h3 class="font-poppins text-lg font-semibold mb-6 text-[#B18B43]">DASHBOARD</h3>
+        
+        <ul class="space-y-2">
+          <li class="dashboard-nav-item">
+            <a href="<%= dashboard_path %>" class="flex items-center py-2 px-4 rounded-lg hover:bg-[#B18B43] hover:bg-opacity-20">
+              <i class="bi bi-speedometer2 text-[#B18B43] mr-3"></i>
+              <span>Vue d'ensemble</span>
+            </a>
+          </li>
+          <li class="dashboard-nav-item">
+            <a href="<%= dashboard_my_listings_path %>" class="flex items-center py-2 px-4 rounded-lg hover:bg-[#B18B43] hover:bg-opacity-20">
+              <i class="bi bi-car-front text-[#B18B43] mr-3"></i>
+              <span>Mes Annonces</span>
+            </a>
+          </li>
+          <li class="dashboard-nav-item">
+            <a href="<%= dashboard_my_purchases_path %>" class="flex items-center py-2 px-4 rounded-lg hover:bg-[#B18B43] hover:bg-opacity-20">
+              <i class="bi bi-bag-check text-[#B18B43] mr-3"></i>
+              <span>Mes Achats</span>
+            </a>
+          </li>
+          <li class="dashboard-nav-item">
+            <a href="<%= dashboard_wallet_path %>" class="flex items-center py-2 px-4 rounded-lg bg-[#B18B43] bg-opacity-20">
+              <i class="bi bi-wallet2 text-[#B18B43] mr-3"></i>
+              <span>Mon Portefeuille</span>
+            </a>
+          </li>
+          <li class="dashboard-nav-item">
+            <a href="<%= dashboard_messages_path %>" class="flex items-center py-2 px-4 rounded-lg hover:bg-[#B18B43] hover:bg-opacity-20">
+              <i class="bi bi-chat-left-text text-[#B18B43] mr-3"></i>
+              <span>Messagerie</span>
+            </a>
+          </li>
+          <li class="dashboard-nav-item">
+            <a href="<%= dashboard_transport_path %>" class="flex items-center py-2 px-4 rounded-lg hover:bg-[#B18B43] hover:bg-opacity-20">
+              <i class="bi bi-truck text-[#B18B43] mr-3"></i>
+              <span>Transport</span>
+            </a>
+          </li>
+          <li class="dashboard-nav-item">
+            <a href="<%= dashboard_services_path %>" class="flex items-center py-2 px-4 rounded-lg hover:bg-[#B18B43] hover:bg-opacity-20">
+              <i class="bi bi-wrench text-[#B18B43] mr-3"></i>
+              <span>Services Mécaniques</span>
+            </a>
+          </li>
+          <li class="dashboard-nav-item">
+            <a href="<%= dashboard_profile_path %>" class="flex items-center py-2 px-4 rounded-lg hover:bg-[#B18B43] hover:bg-opacity-20">
+              <i class="bi bi-person-circle text-[#B18B43] mr-3"></i>
+              <span>Profil</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+      
+      <!-- Main content -->
+      <div class="flex-1">
+        <div class="mb-6">
+          <h1 class="font-poppins text-2xl font-semibold text-[#0C1E3B]">Mon Portefeuille</h1>
+          <p class="text-[#1A1A1A]">Gérez vos fonds, rechargez votre compte et suivez vos transactions</p>
+        </div>
+        
+        <!-- Wallet Balance Card -->
+        <div class="bg-white rounded-xl shadow-md p-6 mb-8">
+          <div class="flex flex-col md:flex-row justify-between items-center">
+            <div>
+              <h3 class="font-poppins text-lg font-medium mb-1">Solde disponible</h3>
+              <p class="text-4xl font-semibold text-[#0C1E3B]"><%= number_to_currency(@wallet.balance, precision: 2, unit: "€", separator: ",", delimiter: " ") %></p>
+            </div>
+            
+            <div class="mt-4 md:mt-0 flex gap-3">
+              <button type="button" class="bg-[#B18B43] hover:bg-[#A0782D] text-white py-2 px-4 rounded-lg" onclick="document.getElementById('rechargeModal').classList.remove('hidden')">
+                Recharger
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Transactions History -->
+        <div class="bg-white rounded-xl shadow-md p-6">
+          <div class="flex justify-between items-center mb-6">
+            <h3 class="font-poppins text-lg font-semibold text-[#0C1E3B]">Historique des transactions</h3>
+            
+            <div class="flex">
+              <div class="dropdown dropdown-end">
+                <div tabindex="0" role="button" class="btn btn-sm btn-outline border-[#D9D9D9] text-[#1A1A1A]">
+                  <i class="bi bi-filter mr-2"></i> Filtrer
+                </div>
+                <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
+                  <li><a href="<%= dashboard_wallet_path %>">Toutes</a></li>
+                  <li><a href="<%= dashboard_wallet_path(filter: 'deposit') %>">Dépôts</a></li>
+                  <li><a href="<%= dashboard_wallet_path(filter: 'payment') %>">Paiements</a></li>
+                  <li><a href="<%= dashboard_wallet_path(filter: 'withdraw') %>">Retraits</a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          
+          <% if @transactions.any? %>
+            <div class="overflow-x-auto">
+              <table class="w-full">
+                <thead>
+                  <tr class="border-b border-[#D9D9D9]">
+                    <th class="py-3 px-4 text-left font-medium">Date</th>
+                    <th class="py-3 px-4 text-left font-medium">Type</th>
+                    <th class="py-3 px-4 text-left font-medium">Référence</th>
+                    <th class="py-3 px-4 text-left font-medium">Statut</th>
+                    <th class="py-3 px-4 text-right font-medium">Montant</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% @transactions.each do |transaction| %>
+                    <tr class="border-b border-[#D9D9D9] hover:bg-[#F2E8D8]">
+                      <td class="py-3 px-4 text-left"><%= l transaction.created_at, format: :short %></td>
+                      <td class="py-3 px-4 text-left">
+                        <div class="flex items-center gap-2">
+                          <div class="p-1 rounded-full <%= transaction_type_color(transaction.transaction_type) %>">
+                            <i class="bi <%= transaction_type_icon(transaction.transaction_type) %> text-xs"></i>
+                          </div>
+                          <%= transaction.transaction_type.humanize %>
+                        </div>
+                      </td>
+                      <td class="py-3 px-4 text-left text-xs text-[#0C1E3B] opacity-75">
+                        <%= transaction.reference.present? ? transaction.reference[0..12] + "..." : "-" %>
+                      </td>
+                      <td class="py-3 px-4 text-left">
+                        <span class="px-2 py-1 rounded-full text-xs <%= transaction_status_color(transaction.status) %>">
+                          <%= transaction.status.humanize %>
+                        </span>
+                      </td>
+                      <td class="py-3 px-4 text-right font-medium <%= transaction.amount_cents >= 0 ? 'text-green-600' : 'text-red-600' %>">
+                        <%= number_to_currency(transaction.amount, precision: 2, unit: "€", separator: ",", delimiter: " ") %>
+                      </td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+            
+            <div class="mt-6">
+              <%= paginate @transactions %>
+            </div>
+          <% else %>
+            <div class="text-center py-8">
+              <p class="text-[#0C1E3B] opacity-75 mb-4">Aucune transaction pour le moment</p>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Recharge Modal -->
+  <div id="rechargeModal" class="modal hidden">
+    <div class="fixed inset-0 bg-black bg-opacity-50 z-40 flex items-center justify-center">
+      <div class="bg-white rounded-xl shadow-lg p-6 w-full max-w-md mx-4">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="font-poppins text-lg font-semibold text-[#0C1E3B]">Recharger mon portefeuille</h3>
+          <button type="button" class="text-[#1A1A1A] hover:text-[#0C1E3B]" onclick="document.getElementById('rechargeModal').classList.add('hidden')">
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </div>
+        
+        <div class="mb-6">
+          <div class="tabs tabs-boxed bg-[#F2E8D8] p-1">
+            <a class="tab tab-active" data-tab="stripe">Carte bancaire</a>
+            <a class="tab" data-tab="crypto">Crypto</a>
+          </div>
+        </div>
+        
+        <div id="stripeTab" class="tab-content">
+          <%= form_with url: payments_create_checkout_path, method: :post, data: { turbo: false } do |f| %>
+            <div class="mb-4">
+              <label class="block text-[#1A1A1A] mb-2" for="amount">Montant à recharger (€)</label>
+              <%= f.number_field :amount, min: 10, step: 10, class: "w-full p-3 border border-[#D9D9D9] rounded-lg", placeholder: "Minimum 10€", required: true %>
+            </div>
+            
+            <div class="flex justify-end">
+              <button type="submit" class="bg-[#B18B43] hover:bg-[#A0782D] text-white py-2 px-6 rounded-lg">
+                Payer avec Stripe
+              </button>
+            </div>
+          <% end %>
+        </div>
+        
+        <div id="cryptoTab" class="tab-content hidden">
+          <%= form_with url: payments_create_crypto_charge_path, method: :post, data: { turbo: false } do |f| %>
+            <div class="mb-4">
+              <label class="block text-[#1A1A1A] mb-2" for="amount">Montant à recharger (€)</label>
+              <%= f.number_field :amount, min: 10, step: 10, class: "w-full p-3 border border-[#D9D9D9] rounded-lg", placeholder: "Minimum 10€", required: true %>
+            </div>
+            
+            <div class="text-sm text-[#1A1A1A] opacity-75 mb-4">
+              <p>Le montant sera converti en crypto-monnaie au taux de change actuel.</p>
+            </div>
+            
+            <div class="flex justify-end">
+              <button type="submit" class="bg-[#B18B43] hover:bg-[#A0782D] text-white py-2 px-6 rounded-lg">
+                Payer avec Crypto
+              </button>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% content_for :head do %>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Tab switching in the recharge modal
+      document.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', function() {
+          document.querySelectorAll('.tab').forEach(t => t.classList.remove('tab-active'));
+          this.classList.add('tab-active');
+          
+          const tabId = this.getAttribute('data-tab');
+          document.querySelectorAll('.tab-content').forEach(content => {
+            content.classList.add('hidden');
+          });
+          document.getElementById(tabId + 'Tab').classList.remove('hidden');
+        });
+      });
+    });
+  </script>
+<% end %> 

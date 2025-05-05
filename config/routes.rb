@@ -2,7 +2,9 @@ Rails.application.routes.draw do
   get "messages/index"
   get "messages/show"
   get "messages/create"
-  devise_for :users
+  devise_for :users, controllers: {
+    registrations: 'users/registrations'
+  }
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
@@ -22,6 +24,7 @@ Rails.application.routes.draw do
   resources :listings do
     resources :media_items, only: [:create, :destroy]
     resources :media_folders, only: [:create, :destroy]
+    resources :messages, only: [:create, :index]
   end
   
   resources :media_items, only: [:destroy]
@@ -37,11 +40,38 @@ Rails.application.routes.draw do
     end
   end
   
+  resources :categories
+  
   resources :messages, only: [:index, :create]
   get 'conversations/:user_id', to: 'messages#show', as: 'conversation'
+
+  # Dashboard routes
+  get 'dashboard', to: 'dashboard#index'
+  get 'dashboard/my_listings', to: 'dashboard#my_listings'
+  get 'dashboard/my_purchases', to: 'dashboard#my_purchases'
+  get 'dashboard/wallet', to: 'dashboard#wallet'
+  get 'dashboard/messages', to: 'dashboard#messages'
+  get 'dashboard/transport', to: 'dashboard#transport'
+  get 'dashboard/services', to: 'dashboard#services'
+  get 'dashboard/profile', to: 'dashboard#profile'
+  
+  # Payment routes
+  post 'payments/create_checkout', to: 'payments#create_checkout'
+  post 'payments/create_crypto_charge', to: 'payments#create_crypto_charge'
+  post 'webhooks/stripe', to: 'payments#stripe_webhook'
+  post 'webhooks/coinbase', to: 'payments#coinbase_webhook'
 
   # Defines the root path route ("/")
   root "pages#home"
   
   get 'my_listings', to: 'listings#my_listings'
+
+  # Routes pour l'administration
+  namespace :admin do
+    root to: 'dashboard#index'
+    resources :users
+    resources :listings
+    resources :vehicles
+    resources :categories
+  end
 end

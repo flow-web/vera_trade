@@ -1,0 +1,112 @@
+<div class="space-y-6">
+  <h1 class="text-3xl font-bold">Tableau de bord</h1>
+
+  <!-- Statistiques -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div class="stat bg-base-100 shadow rounded-lg">
+      <div class="stat-figure text-primary">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+        </svg>
+      </div>
+      <div class="stat-title">Utilisateurs</div>
+      <div class="stat-value text-primary"><%= @total_users %></div>
+    </div>
+
+    <div class="stat bg-base-100 shadow rounded-lg">
+      <div class="stat-figure text-secondary">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+        </svg>
+      </div>
+      <div class="stat-title">Annonces</div>
+      <div class="stat-value text-secondary"><%= @total_listings %></div>
+      <div class="stat-desc">
+        <%= @pending_listings %> en attente, <%= @active_listings %> actives
+      </div>
+    </div>
+
+    <div class="stat bg-base-100 shadow rounded-lg">
+      <div class="stat-figure text-accent">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+        </svg>
+      </div>
+      <div class="stat-title">Véhicules</div>
+      <div class="stat-value text-accent"><%= @total_vehicles %></div>
+    </div>
+  </div>
+
+  <!-- Dernières activités -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- Derniers utilisateurs -->
+    <div class="card bg-base-100 shadow-xl">
+      <div class="card-body">
+        <h2 class="card-title">Derniers utilisateurs</h2>
+        <div class="overflow-x-auto">
+          <table class="table w-full">
+            <thead>
+              <tr>
+                <th>Utilisateur</th>
+                <th>Date d'inscription</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @recent_users.each do |user| %>
+                <tr>
+                  <td>
+                    <div class="flex items-center space-x-3">
+                      <div class="avatar placeholder">
+                        <div class="bg-neutral text-neutral-content rounded-full w-8">
+                          <span><%= user.email.first.upcase %></span>
+                        </div>
+                      </div>
+                      <div>
+                        <div class="font-bold"><%= user.email %></div>
+                      </div>
+                    </div>
+                  </td>
+                  <td><%= l(user.created_at, format: :short) %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dernières annonces -->
+    <div class="card bg-base-100 shadow-xl">
+      <div class="card-body">
+        <h2 class="card-title">Dernières annonces</h2>
+        <div class="overflow-x-auto">
+          <table class="table w-full">
+            <thead>
+              <tr>
+                <th>Annonce</th>
+                <th>Utilisateur</th>
+                <th>Statut</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @recent_listings.each do |listing| %>
+                <tr>
+                  <td>
+                    <div class="font-bold"><%= listing.title %></div>
+                    <div class="text-sm opacity-50"><%= listing.vehicle.brand %> <%= listing.vehicle.model %></div>
+                  </td>
+                  <td><%= listing.user.email %></td>
+                  <td>
+                    <div class="badge badge-<%= listing.status == 'active' ? 'success' : 'warning' %>">
+                      <%= listing.status %>
+                    </div>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= content_for(:title) || "Dashboard - Vera Trade Real" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= yield :head %>
+
+    <link rel="icon" href="/icon.png" type="image/png">
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/icon.png">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
+  </head>
+
+  <body>
+    <%= render 'shared/navbar' %>
+    
+    <% if notice %><p class="notice"><%= notice %></p><% end %>
+    <% if alert %><p class="alert"><%= alert %></p><% end %>
+    
+    <div class="min-h-screen bg-[#F2E8D8] text-[#1A1A1A]">
+      <div class="max-w-[1280px] mx-auto px-4 md:px-8 py-8">
+        <div class="flex flex-col md:flex-row gap-8">
+          <!-- Sidebar -->
+          <div class="w-full md:w-64 bg-[#0C1E3B] rounded-xl shadow-md p-4 text-white">
+            <h3 class="font-poppins text-lg font-semibold mb-6 text-[#B18B43]">DASHBOARD</h3>
+            
+            <ul class="space-y-2">
+              <li class="dashboard-nav-item">
+                <a href="<%= dashboard_path %>" class="flex items-center py-2 px-4 rounded-lg <%= current_page?(dashboard_path) ? 'bg-[#B18B43] bg-opacity-20' : 'hover:bg-[#B18B43] hover:bg-opacity-20' %>">
+                  <i class="bi bi-speedometer2 text-[#B18B43] mr-3"></i>
+                  <span>Vue d'ensemble</span>
+                </a>
+              </li>
+              <li class="dashboard-nav-item">
+                <a href="<%= dashboard_my_listings_path %>" class="flex items-center py-2 px-4 rounded-lg <%= current_page?(dashboard_my_listings_path) ? 'bg-[#B18B43] bg-opacity-20' : 'hover:bg-[#B18B43] hover:bg-opacity-20' %>">
+                  <i class="bi bi-car-front text-[#B18B43] mr-3"></i>
+                  <span>Mes Annonces</span>
+                </a>
+              </li>
+              <li class="dashboard-nav-item">
+                <a href="<%= dashboard_my_purchases_path %>" class="flex items-center py-2 px-4 rounded-lg <%= current_page?(dashboard_my_purchases_path) ? 'bg-[#B18B43] bg-opacity-20' : 'hover:bg-[#B18B43] hover:bg-opacity-20' %>">
+                  <i class="bi bi-bag-check text-[#B18B43] mr-3"></i>
+                  <span>Mes Achats</span>
+                </a>
+              </li>
+              <li class="dashboard-nav-item">
+                <a href="<%= dashboard_wallet_path %>" class="flex items-center py-2 px-4 rounded-lg <%= current_page?(dashboard_wallet_path) ? 'bg-[#B18B43] bg-opacity-20' : 'hover:bg-[#B18B43] hover:bg-opacity-20' %>">
+                  <i class="bi bi-wallet2 text-[#B18B43] mr-3"></i>
+                  <span>Mon Portefeuille</span>
+                </a>
+              </li>
+              <li class="dashboard-nav-item">
+                <a href="<%= dashboard_messages_path %>" class="flex items-center py-2 px-4 rounded-lg <%= current_page?(dashboard_messages_path) ? 'bg-[#B18B43] bg-opacity-20' : 'hover:bg-[#B18B43] hover:bg-opacity-20' %>">
+                  <i class="bi bi-chat-left-text text-[#B18B43] mr-3"></i>
+                  <span>Messagerie</span>
+                </a>
+              </li>
+              <li class="dashboard-nav-item">
+                <a href="<%= dashboard_transport_path %>" class="flex items-center py-2 px-4 rounded-lg <%= current_page?(dashboard_transport_path) ? 'bg-[#B18B43] bg-opacity-20' : 'hover:bg-[#B18B43] hover:bg-opacity-20' %>">
+                  <i class="bi bi-truck text-[#B18B43] mr-3"></i>
+                  <span>Transport</span>
+                </a>
+              </li>
+              <li class="dashboard-nav-item">
+                <a href="<%= dashboard_services_path %>" class="flex items-center py-2 px-4 rounded-lg <%= current_page?(dashboard_services_path) ? 'bg-[#B18B43] bg-opacity-20' : 'hover:bg-[#B18B43] hover:bg-opacity-20' %>">
+                  <i class="bi bi-wrench text-[#B18B43] mr-3"></i>
+                  <span>Services Mécaniques</span>
+                </a>
+              </li>
+              <li class="dashboard-nav-item">
+                <a href="<%= dashboard_profile_path %>" class="flex items-center py-2 px-4 rounded-lg <%= current_page?(dashboard_profile_path) ? 'bg-[#B18B43] bg-opacity-20' : 'hover:bg-[#B18B43] hover:bg-opacity-20' %>">
+                  <i class="bi bi-person-circle text-[#B18B43] mr-3"></i>
+                  <span>Profil</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+          
+          <!-- Main content -->
+          <div class="flex-1">
+            <%= yield %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html> 

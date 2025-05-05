@@ -31,129 +31,117 @@
         </div>
       <% end %>
 
+      <!-- Barre de progression -->
+      <div class="w-full bg-gray-200 rounded-full h-2.5 mb-6">
+        <div class="bg-[#B18B43] h-2.5 rounded-full progress-bar" style="width: 20%"></div>
+      </div>
+
       <!-- Onglets pour les différentes sections du formulaire -->
       <div class="tabs tabs-boxed mb-6">
-        <a class="tab tab-active" data-target="infos-section">Informations</a>
-        <a class="tab" data-target="vehicle-section">Véhicule</a>
-        <a class="tab" data-target="vehicle-details-section">Détails</a>
-        <a class="tab" data-target="vehicle-features-section">Équipements</a>
-        <a class="tab" data-target="vehicle-condition-section">État</a>
-        <a class="tab" data-target="photos-section">Photos</a>
+        <a class="tab tab-active" data-target="vehicle-section" data-step="1"><span class="badge bg-[#B18B43] text-white mr-2">1</span> Détails véhicule</a>
+        <a class="tab" data-target="vehicle-features-section" data-step="2"><span class="badge bg-[#B18B43] text-white mr-2">2</span> Équipements</a>
+        <a class="tab" data-target="vehicle-condition-section" data-step="3"><span class="badge bg-[#B18B43] text-white mr-2">3</span> État</a>
+        <a class="tab" data-target="photos-section" data-step="4"><span class="badge bg-[#B18B43] text-white mr-2">4</span> Dossier multimédia</a>
+        <a class="tab" data-target="infos-section" data-step="5"><span class="badge bg-[#B18B43] text-white mr-2">5</span> Informations générales</a>
       </div>
 
-      <!-- Section Informations de l'annonce -->
-      <div id="infos-section" class="section-content">
-        <h2 class="text-xl font-semibold mb-4">Informations de l'annonce</h2>
-        
-        <div class="form-control w-full mb-4">
-          <%= form.label :title, "Titre de l'annonce", class: "label" %>
-          <%= form.text_field :title, class: "input input-bordered w-full", placeholder: "Ex: BMW Serie 3 en excellent état" %>
-          <label class="label">
-            <span class="label-text-alt text-neutral-content">Un titre concis et descriptif attirera plus d'acheteurs</span>
-          </label>
-        </div>
-        
-        <div class="form-control w-full mb-4">
-          <%= form.label :description, "Description de l'annonce", class: "label" %>
-          <%= form.text_area :description, rows: 5, class: "textarea textarea-bordered w-full", placeholder: "Décrivez votre véhicule, son état, ses options, etc." %>
-          <label class="label">
-            <span class="label-text-alt text-neutral-content">Soyez détaillé et honnête sur l'état du véhicule</span>
-          </label>
-        </div>
-      </div>
-
-      <!-- Section Détails du véhicule -->
-      <div id="vehicle-section" class="section-content hidden">
-        <h2 class="text-xl font-semibold mb-4">Détails du véhicule</h2>
-        
-        <%= fields_for :vehicle do |v| %>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-            <div class="form-control w-full">
-              <%= v.label :category_id, "Catégorie de véhicule", class: "label" %>
-              <%= v.select :category_id, 
-                Category.main_categories.order(:name).map { |c| [c.name, c.id] },
-                { include_blank: "Sélectionnez une catégorie" },
-                { class: "select select-bordered w-full", id: "vehicle_category_id" } 
-              %>
+      <!-- Section 1: Détails du véhicule -->
+      <div id="vehicle-section" class="section-content">
+        <div class="border border-[#D9D9D9] rounded-lg p-5 mb-6">
+          <h2 class="text-xl font-semibold mb-4 text-[#0C1E3B] flex items-center">
+            <span class="inline-flex justify-center items-center w-8 h-8 bg-[#B18B43] text-white rounded-full mr-3">1</span>
+            Détails du véhicule
+          </h2>
+          
+          <%= fields_for :vehicle do |v| %>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <div class="form-control w-full">
+                <%= v.label :category_id, "Catégorie de véhicule", class: "label" %>
+                <%= v.select :category_id, 
+                  Category.main_categories.order(:name).map { |c| [c.name, c.id] },
+                  { include_blank: "Sélectionnez une catégorie" },
+                  { class: "select select-bordered w-full", id: "vehicle_category_id" } 
+                %>
+              </div>
+              
+              <div class="form-control w-full">
+                <%= v.label :subcategory, "Type de véhicule", class: "label" %>
+                <%= v.select :subcategory, 
+                  [],
+                  { include_blank: "Sélectionnez d'abord une catégorie" },
+                  { class: "select select-bordered w-full", id: "vehicle_subcategory", disabled: true } 
+                %>
+              </div>
             </div>
             
-            <div class="form-control w-full">
-              <%= v.label :subcategory, "Type de véhicule", class: "label" %>
-              <%= v.select :subcategory, 
-                [],
-                { include_blank: "Sélectionnez d'abord une catégorie" },
-                { class: "select select-bordered w-full", id: "vehicle_subcategory", disabled: true } 
-              %>
-            </div>
-          </div>
-          
-          <div id="custom-type-container" class="form-control w-full mb-4 hidden">
-            <%= v.label :custom_type, "Précisez le type de véhicule", class: "label" %>
-            <%= v.text_field :custom_type, class: "input input-bordered w-full", placeholder: "Ex: Véhicule spécifique" %>
-          </div>
-          
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-            <div class="form-control w-full relative">
-              <%= v.label :make, "Marque de votre véhicule", class: "label" %>
-              <%= v.text_field :make, class: "input input-bordered w-full", placeholder: "Commencez à taper le nom d'une marque...", autocomplete: "off", id: "vehicle_make", list: "car-brands-list" %>
-              <datalist id="car-brands-list">
-                <!-- Les marques automobiles vont ici, générées automatiquement par JavaScript -->
-              </datalist>
+            <div id="custom-type-container" class="form-control w-full mb-4 hidden">
+              <%= v.label :custom_type, "Précisez le type de véhicule", class: "label" %>
+              <%= v.text_field :custom_type, class: "input input-bordered w-full", placeholder: "Ex: Véhicule spécifique" %>
             </div>
             
-            <div class="form-control w-full">
-              <%= v.label :model, "Modèle", class: "label" %>
-              <%= v.text_field :model, class: "input input-bordered w-full", placeholder: "Ex: Serie 3" %>
-            </div>
-          </div>
-          
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-            <div class="form-control w-full">
-              <%= v.label :year, "Année", class: "label" %>
-              <%= v.number_field :year, class: "input input-bordered w-full", min: 1900, max: Time.current.year, placeholder: "Ex: 2020" %>
-            </div>
-            
-            <div class="form-control w-full">
-              <%= v.label :price, "Prix (€)", class: "label" %>
-              <%= v.number_field :price, class: "input input-bordered w-full", min: 0, step: 100, placeholder: "Ex: 15000" %>
-            </div>
-          </div>
-          
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-            <div class="form-control w-full">
-              <%= v.label :kilometers, "Kilométrage", class: "label" %>
-              <%= v.number_field :kilometers, class: "input input-bordered w-full", min: 0, placeholder: "Ex: 50000" %>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <div class="form-control w-full relative">
+                <%= v.label :make, "Marque de votre véhicule", class: "label" %>
+                <%= v.text_field :make, class: "input input-bordered w-full", placeholder: "Commencez à taper le nom d'une marque...", autocomplete: "off", id: "vehicle_make", list: "car-brands-list" %>
+                <datalist id="car-brands-list">
+                  <!-- Les marques automobiles vont ici, générées automatiquement par JavaScript -->
+                </datalist>
+              </div>
+              
+              <div class="form-control w-full">
+                <%= v.label :model, "Modèle", class: "label" %>
+                <%= v.text_field :model, class: "input input-bordered w-full", placeholder: "Ex: Serie 3" %>
+              </div>
             </div>
             
-            <div class="form-control w-full" id="fuel-type-container">
-              <%= v.label :fuel_type, "Type de carburant", class: "label" %>
-              <%= v.select :fuel_type, 
-                ['Essence', 'Diesel', 'Hybride', 'Électrique', 'GPL', 'Autre'],
-                { include_blank: "Sélectionnez un type de carburant" },
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <div class="form-control w-full">
+                <%= v.label :year, "Année", class: "label" %>
+                <%= v.number_field :year, class: "input input-bordered w-full", min: 1900, max: Time.current.year, placeholder: "Ex: 2020" %>
+              </div>
+              
+              <div class="form-control w-full">
+                <%= v.label :price, "Prix (€)", class: "label" %>
+                <%= v.number_field :price, class: "input input-bordered w-full", min: 0, step: 100, placeholder: "Ex: 15000" %>
+              </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <div class="form-control w-full">
+                <%= v.label :kilometers, "Kilométrage", class: "label" %>
+                <%= v.number_field :kilometers, class: "input input-bordered w-full", min: 0, placeholder: "Ex: 50000" %>
+              </div>
+              
+              <div class="form-control w-full" id="fuel-type-container">
+                <%= v.label :fuel_type, "Type de carburant", class: "label" %>
+                <%= v.select :fuel_type, 
+                  ['Essence', 'Diesel', 'Hybride', 'Électrique', 'GPL', 'Autre'],
+                  { include_blank: "Sélectionnez un type de carburant" },
+                  { class: "select select-bordered w-full" } 
+                %>
+              </div>
+            </div>
+            
+            <div class="form-control w-full mb-4" id="transmission-container">
+              <%= v.label :transmission, "Transmission", class: "label" %>
+              <%= v.select :transmission, 
+                ['Manuelle', 'Automatique', 'Semi-automatique'],
+                { include_blank: "Sélectionnez un type de transmission" },
                 { class: "select select-bordered w-full" } 
               %>
             </div>
-          </div>
-          
-          <div class="form-control w-full mb-4" id="transmission-container">
-            <%= v.label :transmission, "Transmission", class: "label" %>
-            <%= v.select :transmission, 
-              ['Manuelle', 'Automatique', 'Semi-automatique'],
-              { include_blank: "Sélectionnez un type de transmission" },
-              { class: "select select-bordered w-full" } 
-            %>
-          </div>
-          
-          <!-- Conteneur pour les champs spécifiques à chaque catégorie de véhicule -->
-          <div id="specific-fields-container" class="mb-4">
-            <!-- Les champs spécifiques seront chargés dynamiquement ici -->
-          </div>
-          
-          <div class="form-control w-full mb-4">
-            <%= v.label :description, "Détails supplémentaires du véhicule", class: "label" %>
-            <%= v.text_area :description, rows: 3, class: "textarea textarea-bordered w-full", placeholder: "Options, équipements, etc." %>
-          </div>
-        <% end %>
+            
+            <!-- Conteneur pour les champs spécifiques à chaque catégorie de véhicule -->
+            <div id="specific-fields-container" class="mb-4">
+              <!-- Les champs spécifiques seront chargés dynamiquement ici -->
+            </div>
+            
+            <div class="form-control w-full mb-4">
+              <%= v.label :description, "Détails supplémentaires du véhicule", class: "label" %>
+              <%= v.text_area :description, rows: 3, class: "textarea textarea-bordered w-full", placeholder: "Options, équipements, etc." %>
+            </div>
+          <% end %>
+        </div>
       </div>
 
       <!-- Section Détails du véhicule supplémentaires -->
@@ -1748,3 +1736,103 @@
     }
   }
 </script>
+
+<% content_for :head do %>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Gestion des onglets et sections
+  const tabs = document.querySelectorAll('.tab');
+  const sections = document.querySelectorAll('.section-content');
+  const progressBar = document.querySelector('.progress-bar');
+  
+  // Add step data attributes to tabs if they don't have them
+  tabs.forEach((tab, index) => {
+    if (!tab.hasAttribute('data-step')) {
+      tab.setAttribute('data-step', index + 1);
+    }
+  });
+  
+  // Fonction pour mettre à jour la barre de progression
+  function updateProgressBar(step) {
+    const progress = (step / tabs.length) * 100;
+    progressBar.style.width = `${progress}%`;
+  }
+  
+  // Handle tab clicks
+  tabs.forEach(tab => {
+    tab.addEventListener('click', function() {
+      const targetId = this.getAttribute('data-target');
+      const step = parseInt(this.getAttribute('data-step'));
+      
+      // Masquer toutes les sections et désactiver tous les onglets
+      sections.forEach(section => section.classList.add('hidden'));
+      tabs.forEach(t => t.classList.remove('tab-active'));
+      
+      // Afficher la section cible et activer l'onglet
+      document.getElementById(targetId).classList.remove('hidden');
+      this.classList.add('tab-active');
+      
+      // Mettre à jour la barre de progression
+      updateProgressBar(step);
+    });
+  });
+  
+  // Initialize progress bar
+  const activeTab = document.querySelector('.tab.tab-active');
+  if (activeTab) {
+    const step = parseInt(activeTab.getAttribute('data-step')) || 1;
+    updateProgressBar(step);
+  }
+  
+  // Add next/previous buttons to sections
+  sections.forEach((section, index) => {
+    if (!section.querySelector('.section-navigation')) {
+      const sectionId = section.getAttribute('id');
+      const nav = document.createElement('div');
+      nav.className = 'section-navigation flex justify-between mt-6';
+      
+      // Prev button (except for first section)
+      if (index > 0) {
+        const prevTab = tabs[index - 1];
+        const prevTarget = prevTab.getAttribute('data-target');
+        const prevBtn = document.createElement('button');
+        prevBtn.type = 'button';
+        prevBtn.className = 'btn btn-outline';
+        prevBtn.innerHTML = '<i class="bi bi-arrow-left mr-2"></i> Retour';
+        prevBtn.addEventListener('click', function() {
+          document.querySelector(`.tab[data-target="${prevTarget}"]`).click();
+        });
+        nav.appendChild(prevBtn);
+      } else {
+        // Empty div for spacing
+        const spacer = document.createElement('div');
+        nav.appendChild(spacer);
+      }
+      
+      // Next button (except for last section)
+      if (index < sections.length - 1) {
+        const nextTab = tabs[index + 1];
+        const nextTarget = nextTab.getAttribute('data-target');
+        const nextBtn = document.createElement('button');
+        nextBtn.type = 'button';
+        nextBtn.className = 'btn bg-[#B18B43] hover:bg-[#A0782D] text-white border-none';
+        nextBtn.innerHTML = 'Continuer <i class="bi bi-arrow-right ml-2"></i>';
+        nextBtn.addEventListener('click', function() {
+          document.querySelector(`.tab[data-target="${nextTarget}"]`).click();
+        });
+        nav.appendChild(nextBtn);
+      } else {
+        // Submit button for last section
+        const submitBtn = document.createElement('button');
+        submitBtn.type = 'submit';
+        submitBtn.className = 'btn bg-[#B18B43] hover:bg-[#A0782D] text-white border-none';
+        submitBtn.textContent = 'Publier l\'annonce';
+        nav.appendChild(submitBtn);
+      }
+      
+      section.appendChild(nav);
+    }
+  });
+});
+</script>
+<% end %>

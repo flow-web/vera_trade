@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_03_060344) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_04_150103) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -62,6 +62,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_03_060344) do
     t.string "status"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "moderation_status"
+    t.text "moderation_reason"
+    t.bigint "buyer_id"
+    t.boolean "is_certified", default: false
+    t.index ["buyer_id"], name: "index_listings_on_buyer_id"
     t.index ["user_id"], name: "index_listings_on_user_id"
     t.index ["vehicle_id"], name: "index_listings_on_vehicle_id"
   end
@@ -97,6 +102,18 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_03_060344) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "reports", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.text "reason"
+    t.string "status"
+    t.string "reportable_type", null: false
+    t.bigint "reportable_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["reportable_type", "reportable_id"], name: "index_reports_on_reportable"
+    t.index ["user_id"], name: "index_reports_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -105,6 +122,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_03_060344) do
     t.datetime "remember_created_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "provider"
+    t.string "uid"
+    t.string "name"
+    t.string "avatar_url"
+    t.integer "role"
+    t.string "kyc_status"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
@@ -175,16 +198,46 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_03_060344) do
     t.integer "axles"
     t.boolean "sleeping_cab"
     t.string "emission_standard"
+    t.string "registration"
+    t.string "vin"
     t.index ["category_id"], name: "index_vehicles_on_category_id"
+  end
+
+  create_table "wallet_transactions", force: :cascade do |t|
+    t.bigint "wallet_id", null: false
+    t.integer "amount_cents", null: false
+    t.string "currency", default: "EUR", null: false
+    t.integer "transaction_type", default: 0, null: false
+    t.integer "status", default: 0, null: false
+    t.string "reference"
+    t.text "notes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["reference"], name: "index_wallet_transactions_on_reference"
+    t.index ["status"], name: "index_wallet_transactions_on_status"
+    t.index ["transaction_type"], name: "index_wallet_transactions_on_transaction_type"
+    t.index ["wallet_id"], name: "index_wallet_transactions_on_wallet_id"
+  end
+
+  create_table "wallets", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.integer "balance_cents", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_wallets_on_user_id"
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "categories", "categories", column: "parent_id"
   add_foreign_key "listings", "users"
+  add_foreign_key "listings", "users", column: "buyer_id"
   add_foreign_key "listings", "vehicles"
   add_foreign_key "media_folders", "listings"
   add_foreign_key "media_items", "listings"
   add_foreign_key "media_items", "media_folders"
+  add_foreign_key "reports", "users"
   add_foreign_key "vehicles", "categories"
+  add_foreign_key "wallet_transactions", "wallets"
+  add_foreign_key "wallets", "users"
 end

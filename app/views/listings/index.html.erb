@@ -1,605 +1,365 @@
-<div class="container pt-3">
-  <!-- Barre de recherche avancée -->
-  <div class="filter-section mb-4">
-    <div class="card mb-3">
-      <div class="card-body">
-        <h5 class="card-title mb-3">Filtrer les annonces</h5>
+<div class="min-h-screen bg-[#F2E8D8]">
+  <div class="max-w-[1280px] mx-auto px-4 md:px-8 py-8">
+    <div class="mb-8">
+      <h1 class="font-poppins text-3xl font-semibold text-[#0C1E3B] mb-2">Rechercher une annonce</h1>
+      <p class="text-[#1A1A1A]">Filtrez parmi nos annonces pour trouver le véhicule qui vous correspond.</p>
+    </div>
+    
+    <!-- Search Form -->
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-8 mb-6">
+      <!-- Filter Sidebar -->
+      <div class="lg:col-span-1">
+        <div class="bg-white rounded-xl shadow-md p-6 sticky top-24">
         <%= form_with url: listings_path, method: :get, data: { controller: "search-form" } do |f| %>
-          <div class="row g-3 mb-4">
-            <!-- Filtre par catégorie -->
-            <div class="col-md-6">
-              <div class="form-floating">
+            <h3 class="font-poppins font-semibold text-lg text-[#0C1E3B] mb-4">Filtres</h3>
+            
+            <!-- Type de véhicule -->
+            <div class="filter-group mb-6" data-controller="accordion">
+              <button type="button" class="filter-header w-full flex justify-between items-center pb-2 border-b border-[#D9D9D9]"
+                      data-action="accordion#toggle">
+                <h4 class="font-medium text-[#0C1E3B]">Type de véhicule</h4>
+                <i class="bi bi-chevron-down text-[#B18B43] transition-transform duration-300"
+                   data-accordion-target="icon"></i>
+              </button>
+              <div class="filter-content pt-3 space-y-3" data-accordion-target="content">
+                <div class="form-group">
                 <%= f.select :category_id, 
                   @categories.map { |c| [c.name, c.id] },
                   { include_blank: "Toutes les catégories" },
-                  { class: "form-select", data: { action: "change->search-form#loadSubcategories" } } 
-                %>
-                <label for="category_id">Catégorie</label>
+                    { class: "w-full p-2 border border-[#D9D9D9] rounded-lg bg-white", 
+                      data: { action: "change->search-form#loadSubcategories" }} %>
               </div>
-            </div>
-            
-            <!-- Filtre par sous-catégorie (dynamique) -->
-            <div class="col-md-6">
-              <div class="form-floating">
+                <div class="form-group">
                 <%= f.select :subcategory, 
                   @subcategories.map(&:name),
                   { include_blank: "Tous les types" },
-                  { class: "form-select", disabled: @subcategories.empty?, data: { search_form_target: "subcategorySelect" } } 
-                %>
-                <label for="subcategory">Type de véhicule</label>
+                    { class: "w-full p-2 border border-[#D9D9D9] rounded-lg bg-white", 
+                      disabled: @subcategories.empty?, 
+                      data: { search_form_target: "subcategorySelect" }} %>
+            </div>
               </div>
             </div>
             
-            <!-- Filtres de base -->
-            <div class="col-md-6">
-              <div class="form-floating">
-                <%= f.text_field :make, class: "form-control", placeholder: "Ex: BMW, Peugeot..." %>
-                <label for="make">Marque</label>
-              </div>
-            </div>
-            
-            <div class="col-md-6">
-              <div class="form-floating">
-                <%= f.text_field :model, class: "form-control", placeholder: "Ex: 308, Série 3..." %>
-                <label for="model">Modèle</label>
-              </div>
-            </div>
-            
-            <!-- Filtres de prix -->
-            <div class="col-md-6">
-              <div class="row g-2">
-                <div class="col-6">
-                  <div class="form-floating">
-                    <%= f.number_field :price_min, class: "form-control", placeholder: "Min" %>
-                    <label for="price_min">Prix min (€)</label>
+            <!-- Marque / Modèle -->
+            <div class="filter-group mb-6" data-controller="accordion">
+              <button type="button" class="filter-header w-full flex justify-between items-center pb-2 border-b border-[#D9D9D9]"
+                      data-action="accordion#toggle">
+                <h4 class="font-medium text-[#0C1E3B]">Marque / Modèle</h4>
+                <i class="bi bi-chevron-down text-[#B18B43] transition-transform duration-300"
+                   data-accordion-target="icon"></i>
+              </button>
+              <div class="filter-content pt-3 space-y-3" data-accordion-target="content">
+                <div class="form-group">
+                  <div class="relative">
+                    <i class="bi bi-car-front absolute left-3 top-2.5 text-[#B18B43]"></i>
+                    <%= f.text_field :make, class: "w-full p-2 pl-10 border border-[#D9D9D9] rounded-lg bg-white", 
+                                     placeholder: "Marque (BMW, Peugeot...)" %>
                   </div>
                 </div>
-                <div class="col-6">
-                  <div class="form-floating">
-                    <%= f.number_field :price_max, class: "form-control", placeholder: "Max" %>
-                    <label for="price_max">Prix max (€)</label>
+                <div class="form-group">
+                  <div class="relative">
+                    <i class="bi bi-tag absolute left-3 top-2.5 text-[#B18B43]"></i>
+                    <%= f.text_field :model, class: "w-full p-2 pl-10 border border-[#D9D9D9] rounded-lg bg-white", 
+                                      placeholder: "Modèle (Série 3, 308...)" %>
                   </div>
                 </div>
               </div>
             </div>
             
-            <!-- Filtres de kilométrage -->
-            <div class="col-md-6">
-              <div class="row g-2">
-                <div class="col-6">
-                  <div class="form-floating">
-                    <%= f.number_field :km_min, class: "form-control", placeholder: "Min" %>
-                    <label for="km_min">Km min</label>
+            <!-- Prix / Kilométrage / Année -->
+            <div class="filter-group mb-6" data-controller="accordion">
+              <button type="button" class="filter-header w-full flex justify-between items-center pb-2 border-b border-[#D9D9D9]"
+                      data-action="accordion#toggle">
+                <h4 class="font-medium text-[#0C1E3B]">Prix / Kilométrage / Année</h4>
+                <i class="bi bi-chevron-down text-[#B18B43] transition-transform duration-300"
+                   data-accordion-target="icon"></i>
+              </button>
+              <div class="filter-content pt-3 space-y-4" data-accordion-target="content">
+                <!-- Prix -->
+                <div class="form-group">
+                  <label class="block text-sm text-[#1A1A1A] mb-1">Prix (€)</label>
+                  <div class="flex gap-2">
+                    <div class="w-1/2">
+                      <%= f.number_field :price_min, class: "w-full p-2 border border-[#D9D9D9] rounded-lg bg-white", 
+                                         placeholder: "Min" %>
+                  </div>
+                    <div class="w-1/2">
+                      <%= f.number_field :price_max, class: "w-full p-2 border border-[#D9D9D9] rounded-lg bg-white", 
+                                         placeholder: "Max" %>
+                </div>
                   </div>
                 </div>
-                <div class="col-6">
-                  <div class="form-floating">
-                    <%= f.number_field :km_max, class: "form-control", placeholder: "Max" %>
-                    <label for="km_max">Km max</label>
+                
+                <!-- Kilométrage -->
+                <div class="form-group">
+                  <label class="block text-sm text-[#1A1A1A] mb-1">Kilométrage</label>
+                  <div class="flex gap-2">
+                    <div class="w-1/2">
+                      <%= f.number_field :km_min, class: "w-full p-2 border border-[#D9D9D9] rounded-lg bg-white", 
+                                         placeholder: "Min" %>
+              </div>
+                    <div class="w-1/2">
+                      <%= f.number_field :km_max, class: "w-full p-2 border border-[#D9D9D9] rounded-lg bg-white", 
+                                         placeholder: "Max" %>
+            </div>
+                  </div>
+                </div>
+                
+                <!-- Année -->
+                <div class="form-group">
+                  <label class="block text-sm text-[#1A1A1A] mb-1">Année</label>
+                  <div class="flex gap-2">
+                    <div class="w-1/2">
+                      <%= f.number_field :year_min, class: "w-full p-2 border border-[#D9D9D9] rounded-lg bg-white", 
+                                         placeholder: "Min", min: 1900, max: Time.current.year %>
+                    </div>
+                    <div class="w-1/2">
+                      <%= f.number_field :year_max, class: "w-full p-2 border border-[#D9D9D9] rounded-lg bg-white", 
+                                         placeholder: "Max", min: 1900, max: Time.current.year %>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
             
-            <!-- Filtres d'année -->
-            <div class="col-md-6">
-              <div class="row g-2">
-                <div class="col-6">
-                  <div class="form-floating">
-                    <%= f.number_field :year_min, class: "form-control", placeholder: "Min", min: 1900, max: Time.current.year %>
-                    <label for="year_min">Année min</label>
+            <!-- Carburant / Transmission -->
+            <div class="filter-group mb-6" data-controller="accordion">
+              <button type="button" class="filter-header w-full flex justify-between items-center pb-2 border-b border-[#D9D9D9]"
+                      data-action="accordion#toggle">
+                <h4 class="font-medium text-[#0C1E3B]">Carburant / Transmission</h4>
+                <i class="bi bi-chevron-down text-[#B18B43] transition-transform duration-300"
+                   data-accordion-target="icon"></i>
+              </button>
+              <div class="filter-content pt-3 space-y-3" data-accordion-target="content">
+                <!-- Carburant -->
+                <div class="form-group">
+                  <label class="block text-sm text-[#1A1A1A] mb-1">Carburant</label>
+                  <div class="grid grid-cols-2 gap-2">
+                    <% ['Essence', 'Diesel', 'Hybride', 'Électrique', 'GPL', 'Autre'].each do |fuel| %>
+                      <div class="flex items-center">
+                        <%= f.check_box :fuel_type, { multiple: true, class: "mr-2 accent-[#B18B43]", id: "fuel_#{fuel.parameterize}" }, fuel, nil %>
+                        <label for="fuel_<%= fuel.parameterize %>" class="text-sm">
+                          <i class="bi <%= fuel_type_icon(fuel) %> mr-1 text-[#B18B43]"></i> <%= fuel %>
+                        </label>
+                      </div>
+                    <% end %>
                   </div>
                 </div>
-                <div class="col-6">
-                  <div class="form-floating">
-                    <%= f.number_field :year_max, class: "form-control", placeholder: "Max", min: 1900, max: Time.current.year %>
-                    <label for="year_max">Année max</label>
+                
+                <!-- Transmission -->
+                <div class="form-group mt-3">
+                  <label class="block text-sm text-[#1A1A1A] mb-1">Transmission</label>
+                  <div class="grid grid-cols-1 gap-2">
+                    <% ['Manuelle', 'Automatique', 'Semi-automatique'].each do |transmission| %>
+                      <div class="flex items-center">
+                        <%= f.check_box :transmission, { multiple: true, class: "mr-2 accent-[#B18B43]", id: "transmission_#{transmission.parameterize}" }, transmission, nil %>
+                        <label for="transmission_<%= transmission.parameterize %>" class="text-sm">
+                          <i class="bi <%= transmission_icon(transmission) %> mr-1 text-[#B18B43]"></i> <%= transmission %>
+                        </label>
                   </div>
-                </div>
-              </div>
-            </div>
-            
-            <!-- Filtres de carburant et transmission -->
-            <div class="col-md-6">
-              <div class="row g-2">
-                <div class="col-6">
-                  <div class="form-floating">
-                    <%= f.select :fuel_type, 
-                      ['Essence', 'Diesel', 'Hybride', 'Électrique', 'GPL', 'Autre'],
-                      { include_blank: "Tous les carburants" },
-                      { class: "form-select" } 
-                    %>
-                    <label for="fuel_type">Carburant</label>
-                  </div>
-                </div>
-                <div class="col-6">
-                  <div class="form-floating">
-                    <%= f.select :transmission, 
-                      ['Manuelle', 'Automatique', 'Semi-automatique'],
-                      { include_blank: "Toutes" },
-                      { class: "form-select" } 
-                    %>
-                    <label for="transmission">Transmission</label>
-                  </div>
+                    <% end %>
                 </div>
               </div>
             </div>
           </div>
           
-          <!-- Filtre par équipements -->
-          <div class="row mb-3">
-            <div class="col-12">
-              <h6 class="mb-2">Équipements</h6>
-              
-              <div class="accordion" id="equipmentAccordion">
-                <% @equipment_categories.each_with_index do |(category, equipment_list), index| %>
-                  <div class="accordion-item">
-                    <h2 class="accordion-header" id="heading<%= category.to_s.parameterize %>">
-                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse<%= category.to_s.parameterize %>" aria-expanded="false" aria-controls="collapse<%= category.to_s.parameterize %>">
-                        <%= category %>
+            <!-- Équipements -->
+            <div class="filter-group mb-6" data-controller="accordion">
+              <button type="button" class="filter-header w-full flex justify-between items-center pb-2 border-b border-[#D9D9D9]"
+                      data-action="accordion#toggle">
+                <h4 class="font-medium text-[#0C1E3B]">Équipements</h4>
+                <i class="bi bi-chevron-down text-[#B18B43] transition-transform duration-300"
+                   data-accordion-target="icon"></i>
+              </button>
+              <div class="filter-content pt-3" data-accordion-target="content">
+                <% @equipment_categories.each do |(category, equipment_list)| %>
+                  <div class="mb-4" data-controller="accordion">
+                    <button type="button" class="w-full flex justify-between items-center text-sm pb-1 border-b border-[#D9D9D9] opacity-80"
+                            data-action="accordion#toggle">
+                      <span class="font-medium"><%= category %></span>
+                      <i class="bi bi-chevron-down text-[#B18B43] text-xs transition-transform duration-300"
+                         data-accordion-target="icon"></i>
                       </button>
-                    </h2>
-                    <div id="collapse<%= category.to_s.parameterize %>" class="accordion-collapse collapse" aria-labelledby="heading<%= category.to_s.parameterize %>" data-bs-parent="#equipmentAccordion">
-                      <div class="accordion-body">
-                        <div class="row">
+                    <div class="pt-2 pl-1 grid grid-cols-1 gap-1 hidden" data-accordion-target="content">
                           <% equipment_list.each do |equipment| %>
-                            <div class="col-md-4 mb-2">
-                              <div class="form-check">
-                                <%= f.check_box :equipment, { multiple: true, class: "form-check-input", id: "equipment_#{equipment.parameterize}" }, equipment, nil %>
-                                <label class="form-check-label" for="equipment_<%= equipment.parameterize %>"><%= equipment %></label>
-                              </div>
-                            </div>
-                          <% end %>
+                        <div class="flex items-center">
+                          <%= f.check_box :equipment, { multiple: true, class: "mr-2 accent-[#B18B43]", id: "equipment_#{equipment.parameterize}" }, equipment, nil %>
+                          <label for="equipment_<%= equipment.parameterize %>" class="text-sm flex items-center">
+                            <i class="bi <%= equipment_icon(equipment) %> mr-1 text-[#B18B43]"></i>
+                            <%= equipment %>
+                          </label>
                         </div>
-                      </div>
+                      <% end %>
                     </div>
                   </div>
                 <% end %>
               </div>
             </div>
+            
+            <!-- Spécificités -->
+            <div class="filter-group mb-6" data-controller="accordion">
+              <button type="button" class="filter-header w-full flex justify-between items-center pb-2 border-b border-[#D9D9D9]"
+                      data-action="accordion#toggle">
+                <h4 class="font-medium text-[#0C1E3B]">Spécificités</h4>
+                <i class="bi bi-chevron-down text-[#B18B43] transition-transform duration-300"
+                   data-accordion-target="icon"></i>
+              </button>
+              <div class="filter-content pt-3 space-y-3" data-accordion-target="content">
+                <!-- Specific filters will be loaded dynamically based on vehicle type -->
+                <div data-search-form-target="specificFilters" class="space-y-4">
+                  <!-- Specific filters will be inserted here -->
           </div>
-          
-          <!-- Filtres spécifiques (s'affichent dynamiquement selon la catégorie) -->
-          <div class="specific-filters mb-3" data-search-form-target="specificFilters">
-            <!-- Les filtres spécifiques seront ajoutés ici dynamiquement -->
           </div>
-          
-          <!-- Tri et boutons de soumission -->
-          <div class="d-flex justify-content-between align-items-center">
-            <div class="form-floating" style="width: 200px;">
-              <%= f.select :sort, 
-                [
-                  ['Plus récentes', 'date_desc'],
-                  ['Plus anciennes', 'date_asc'],
-                  ['Prix croissant', 'price_asc'],
-                  ['Prix décroissant', 'price_desc'],
-                  ['Kilométrage croissant', 'km_asc'],
-                  ['Année: plus récentes', 'year_desc'],
-                  ['Année: plus anciennes', 'year_asc']
-                ],
-                { selected: params[:sort] || 'date_desc' },
-                { class: "form-select" } 
-              %>
-              <label for="sort">Trier par</label>
             </div>
             
-            <div>
-              <%= link_to "Réinitialiser", listings_path, class: "btn btn-outline-secondary me-2" %>
-              <%= f.submit "Filtrer", class: "btn btn-primary" %>
-            </div>
+            <div class="flex gap-3 justify-between mt-8">
+              <%= link_to "Réinitialiser", listings_path, class: "btn btn-ghost text-[#0C1E3B] border-[#D9D9D9]" %>
+              <%= f.submit "Appliquer les filtres", class: "btn bg-[#B18B43] hover:bg-[#A0782D] text-white border-none" %>
           </div>
         <% end %>
       </div>
     </div>
+      
+      <!-- Listings Results -->
+      <div class="lg:col-span-3">
+        <!-- Results Header & Sorting -->
+        <div class="bg-white rounded-xl shadow-md p-4 mb-6">
+          <div class="flex flex-col sm:flex-row justify-between items-center">
+            <div>
+              <div class="flex items-center">
+                <h2 class="font-poppins text-lg font-semibold text-[#0C1E3B] mr-2">Résultats</h2>
+                <span class="badge bg-[#B18B43] text-white border-none"><%= @listings.count %> annonces</span>
+              </div>
+              <p class="text-sm text-[#1A1A1A] opacity-75">
+                <%= search_summary(params) %>
+              </p>
   </div>
 
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h5 class="m-0"><span class="badge bg-primary"><%= @listings.count %></span> annonces trouvées</h5>
-    <div class="dropdown">
-      <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-        <i class="bi bi-sort-down"></i> Trier
-      </button>
-      <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
-        <li><a class="dropdown-item" href="#">Prix: croissant</a></li>
-        <li><a class="dropdown-item" href="#">Prix: décroissant</a></li>
-        <li><a class="dropdown-item" href="#">Date: plus récentes</a></li>
-        <li><a class="dropdown-item" href="#">Date: plus anciennes</a></li>
-        <li><a class="dropdown-item" href="#">Kilométrage: croissant</a></li>
-        <li><a class="dropdown-item" href="#">Date d'immatriculation: récentes</a></li>
-        <li><a class="dropdown-item" href="#">Date d'immatriculation: anciennes</a></li>
-        <li><a class="dropdown-item" href="#">Consommation: économique</a></li>
+            <div class="mt-3 sm:mt-0">
+              <div class="dropdown dropdown-end">
+                <label tabindex="0" class="btn btn-sm bg-white hover:bg-[#F2E8D8] text-[#0C1E3B] border-[#D9D9D9]">
+                  <i class="bi bi-sort-down mr-2"></i> 
+                  <%= sort_label(params[:sort]) || "Trier par" %>
+                </label>
+                <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
+                  <li><%= link_to "Plus récentes", listings_path(request.query_parameters.merge(sort: "date_desc")) %></li>
+                  <li><%= link_to "Plus anciennes", listings_path(request.query_parameters.merge(sort: "date_asc")) %></li>
+                  <li><%= link_to "Prix croissant", listings_path(request.query_parameters.merge(sort: "price_asc")) %></li>
+                  <li><%= link_to "Prix décroissant", listings_path(request.query_parameters.merge(sort: "price_desc")) %></li>
+                  <li><%= link_to "Kilométrage croissant", listings_path(request.query_parameters.merge(sort: "km_asc")) %></li>
+                  <li><%= link_to "Année: plus récentes", listings_path(request.query_parameters.merge(sort: "year_desc")) %></li>
+                  <li><%= link_to "Année: plus anciennes", listings_path(request.query_parameters.merge(sort: "year_asc")) %></li>
       </ul>
+              </div>
+            </div>
     </div>
   </div>
   
-  <% if @listings.any? %>
-    <div class="listings-container bg-white border rounded p-0">
-      <% @listings.each_with_index do |listing, index| %>
-        <%= link_to listing, class: "text-decoration-none" do %>
-          <div class="listing-card <%= index > 0 ? 'border-top' : '' %> p-3">
-            <div class="row g-0">
-              <!-- Image section - côté gauche -->
-              <div class="col-4 col-md-3">
-                <% if listing.photos.attached? %>
-                  <div class="listing-image position-relative rounded bg-light" style="height: 150px; display: flex; align-items: center; justify-content: center;">
-                    <%= image_tag listing.photos.first, style: "max-height: 100%; max-width: 100%; object-fit: contain;" %>
-                    <% if listing.vehicle.non_smoker.present? && listing.vehicle.non_smoker %>
-                      <div class="position-absolute bottom-0 end-0 m-1">
-                        <span class="badge bg-success rounded-pill">
-                          <i class="bi bi-slash-circle"></i>
-                        </span>
+        <!-- Listing Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <% @listings.each do |listing| %>
+            <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
+              <!-- Image container with badge -->
+              <div class="relative h-48">
+                <% if listing.main_photo&.file.present? %>
+                  <%= image_tag listing.main_photo.file, class: "w-full h-full object-cover" %>
+                <% else %>
+                  <div class="w-full h-full flex items-center justify-center bg-[#D9D9D9]">
+                    <i class="bi bi-image text-[#0C1E3B] text-4xl"></i>
                       </div>
                     <% end %>
+                
+                <!-- Status Badge -->
+                <% if recently_created?(listing) %>
+                  <div class="absolute top-3 left-3">
+                    <span class="bg-[#B18B43] text-white text-xs font-medium px-2.5 py-1 rounded-lg">NOUVEAU</span>
                   </div>
-                <% else %>
-                  <div class="listing-image bg-light d-flex justify-content-center align-items-center rounded" style="height: 150px;">
-                    <i class="bi bi-camera fs-4 text-muted"></i>
+                <% end %>
+                
+                <!-- Certification Badge -->
+                <% if listing.certified? %>
+                  <div class="absolute top-3 right-3">
+                    <span class="bg-blue-600 text-white text-xs font-medium px-2.5 py-1 rounded-lg flex items-center">
+                      <i class="bi bi-patch-check-fill mr-1"></i> CERTIFIÉ
+                    </span>
                   </div>
                 <% end %>
               </div>
               
-              <!-- Information section - côté droit -->
-              <div class="col-8 col-md-9">
-                <div class="ps-3">
-                  <div class="row">
-                    <div class="col-md-8">
-                      <h5 class="listing-title text-dark fw-bold mb-1 text-truncate"><%= listing.title %></h5>
-                      <div class="listing-category text-dark mb-2">
-                        <%= listing.vehicle.make %> <%= listing.vehicle.model %> (<%= listing.vehicle.year %>)
-                        <% if listing.vehicle.finition.present? %>
-                          - <%= listing.vehicle.finition %>
-                        <% end %>
-                        <% if listing.vehicle.category %>
-                          <span class="badge bg-light text-dark ms-2"><%= listing.vehicle.category.name %></span>
-                        <% end %>
-                        <% if listing.vehicle.subcategory.present? %>
-                          <span class="badge bg-light text-dark"><%= listing.vehicle.subcategory %></span>
-                        <% end %>
+              <!-- Content -->
+              <div class="p-4">
+                <div class="flex justify-between items-start mb-2">
+                  <h3 class="font-poppins font-medium text-[#0C1E3B] truncate"><%= listing.title %></h3>
+                  <p class="font-semibold text-[#B18B43]">
+                    <%= number_to_currency(listing.vehicle.price, precision: 0, unit: "€", delimiter: " ") %>
+                  </p>
                       </div>
                       
-                      <!-- Caractéristiques du véhicule - badges -->
-                      <div class="listing-details d-flex flex-wrap gap-2 mb-2">
-                        <% if listing.vehicle.kilometers.present? %>
-                          <span class="badge bg-light text-dark"><i class="bi bi-speedometer2 me-1"></i><%= number_with_delimiter(listing.vehicle.kilometers) %> km</span>
-                        <% end %>
-                        <% if listing.vehicle.fuel_type.present? %>
-                          <span class="badge bg-light text-dark"><i class="bi bi-fuel-pump me-1"></i><%= listing.vehicle.fuel_type %></span>
-                        <% end %>
-                        <% if listing.vehicle.transmission.present? %>
-                          <span class="badge bg-light text-dark"><i class="bi bi-gear me-1"></i><%= listing.vehicle.transmission %></span>
-                        <% end %>
-                        <% if listing.vehicle.doors.present? %>
-                          <span class="badge bg-light text-dark"><i class="bi bi-door-closed me-1"></i><%= listing.vehicle.doors %> portes</span>
-                        <% end %>
-                        <% if listing.vehicle.exterior_color.present? %>
-                          <span class="badge bg-light text-dark"><i class="bi bi-palette me-1"></i><%= listing.vehicle.exterior_color %></span>
-                        <% end %>
-                        <% if listing.vehicle.interior_material.present? %>
-                          <span class="badge bg-light text-dark"><i class="bi bi-chair me-1"></i><%= listing.vehicle.interior_material %></span>
-                        <% end %>
+                <p class="text-sm text-[#1A1A1A] line-clamp-2 mb-3"><%= listing.vehicle.make %> <%= listing.vehicle.model %></p>
+                
+                <!-- Specs -->
+                <div class="grid grid-cols-2 gap-2 mb-4">
+                  <div class="flex items-center text-xs text-[#1A1A1A]">
+                    <i class="bi bi-calendar3 text-[#B18B43] mr-1"></i>
+                    <%= listing.vehicle.year %>
                       </div>
-
-                      <!-- Seconde ligne de badges -->
-                      <div class="listing-details d-flex flex-wrap gap-2 mb-2">
-                        <% if listing.vehicle.previous_owners.present? %>
-                          <span class="badge bg-light text-dark"><i class="bi bi-people me-1"></i><%= listing.vehicle.previous_owners %> prop.</span>
-                        <% end %>
-                        <% if listing.vehicle.last_service_date.present? %>
-                          <span class="badge bg-light text-dark"><i class="bi bi-tools me-1"></i>Entretien: <%= listing.vehicle.last_service_date.strftime("%m/%Y") %></span>
-                        <% end %>
-                        <% if listing.vehicle.ct_expiry_date.present? %>
-                          <span class="badge bg-light text-dark"><i class="bi bi-check-circle me-1"></i>CT: <%= listing.vehicle.ct_expiry_date.strftime("%m/%Y") %></span>
-                        <% end %>
-                        <% if listing.vehicle.has_service_history.present? && listing.vehicle.has_service_history %>
-                          <span class="badge bg-light text-dark"><i class="bi bi-journal-check me-1"></i>Carnet</span>
-                        <% end %>
-                      </div>
-                      
-                      <!-- Description en format desktop -->
-                      <div class="d-none d-md-block text-dark mt-2">
-                        <div class="text-truncate-2" style="max-height: 40px; overflow: hidden;">
-                          <%= listing.description %>
+                  <div class="flex items-center text-xs text-[#1A1A1A]">
+                    <i class="bi bi-speedometer2 text-[#B18B43] mr-1"></i>
+                    <%= number_with_delimiter(listing.vehicle.mileage) %> km
                         </div>
+                  <div class="flex items-center text-xs text-[#1A1A1A]">
+                    <i class="bi bi-fuel-pump text-[#B18B43] mr-1"></i>
+                    <%= listing.vehicle.fuel_type %>
                       </div>
-                    </div>
-                    
-                    <div class="col-md-4 d-flex flex-column align-items-end justify-content-between">
-                      <!-- Prix -->
-                      <div>
-                        <div class="listing-price text-primary fw-bold fs-4">
-                          <%= number_to_currency(listing.vehicle.price, unit: "€", precision: 0) %>
-                        </div>
-                      </div>
-                      
-                      <!-- Localisation et date -->
-                      <div class="d-flex flex-column align-items-end mt-auto">
-                        <% if listing.vehicle.location.present? %>
-                          <div class="text-muted small mb-1">
-                            <i class="bi bi-geo-alt"></i> <%= listing.vehicle.location %>
-                          </div>
-                        <% end %>
-                        <div class="text-muted small">
-                          <i class="bi bi-clock"></i> <%= time_ago_in_words(listing.created_at) %>
-                        </div>
-                      </div>
-                    </div>
+                  <div class="flex items-center text-xs text-[#1A1A1A]">
+                    <i class="bi bi-gear-wide-connected text-[#B18B43] mr-1"></i>
+                    <%= listing.vehicle.transmission %>
                   </div>
                 </div>
+                
+                <!-- Button -->
+                <%= link_to "Voir l'annonce", listing_path(listing), class: "btn btn-sm w-full bg-[#F2E8D8] hover:bg-[#D9D9D9] border-none text-[#0C1E3B]" %>
               </div>
             </div>
+          <% end %>
+        </div>
+        
+        <!-- Pagination -->
+        <% if @listings.respond_to?(:total_pages) %>
+          <div class="mt-8 flex justify-center">
+            <%= paginate @listings %>
           </div>
         <% end %>
-      <% end %>
+      </div>
     </div>
-  <% else %>
-    <div class="alert alert-info">
-      Aucune annonce n'est disponible pour le moment.
     </div>
-  <% end %>
 </div>
 
-<style>
-  .listing-card {
-    transition: background-color 0.2s;
-  }
-  
-  .listing-card:hover {
-    background-color: #f8f9fa;
-  }
-  
-  .text-truncate-2 {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-  
-  .dropdown-toggle::after {
-    display: none;
-  }
-  
-  .badge {
-    padding: 0.4em 0.6em;
-    font-weight: normal;
-  }
-</style>
-
+<% content_for :head do %>
 <script>
-  window.addEventListener("turbo:load", function() {
-    // Controller pour le formulaire de recherche
-    class SearchForm {
-      static targets = ["subcategorySelect", "specificFilters"];
+    document.addEventListener('DOMContentLoaded', function() {
+      // Accordion functionality
+      const accordions = document.querySelectorAll('[data-controller="accordion"]');
       
-      initialize() {
-        this.loadSpecificFilters();
-      }
-      
-      loadSubcategories(event) {
-        const categoryId = event.target.value;
-        const subcategorySelect = this.subcategorySelectTarget;
+      accordions.forEach(accordion => {
+        const toggle = accordion.querySelector('[data-action="accordion#toggle"]');
+        const content = accordion.querySelector('[data-accordion-target="content"]');
+        const icon = accordion.querySelector('[data-accordion-target="icon"]');
         
-        if (!categoryId) {
-          subcategorySelect.innerHTML = '<option value="">Tous les types</option>';
-          subcategorySelect.disabled = true;
-          this.specificFiltersTarget.innerHTML = '';
-          return;
-        }
-        
-        // Appel AJAX pour charger les sous-catégories
-        fetch(`/vehicles/subcategories/${categoryId}`)
-          .then(response => response.json())
-          .then(data => {
-            // Vider et réactiver le select des sous-catégories
-            subcategorySelect.innerHTML = '<option value="">Tous les types</option>';
-            
-            // Ajouter les options pour les sous-catégories
-            if (data && data.length > 0) {
-              data.forEach(subcategory => {
-                const option = document.createElement('option');
-                option.value = subcategory.name;
-                option.textContent = subcategory.name;
-                subcategorySelect.appendChild(option);
-              });
-              
-              subcategorySelect.disabled = false;
-            } else {
-              subcategorySelect.disabled = true;
+        if (toggle && content) {
+          toggle.addEventListener('click', () => {
+            content.classList.toggle('hidden');
+            if (icon) {
+              icon.classList.toggle('rotate-180');
             }
-            
-            // Charger les filtres spécifiques pour cette catégorie
-            const categoryText = event.target.options[event.target.selectedIndex].text;
-            this.loadSpecificFilters(categoryText);
-          })
-          .catch(error => {
-            console.error('Erreur lors du chargement des sous-catégories:', error);
           });
-      }
-      
-      loadSpecificFilters(categoryText) {
-        const specificFiltersContainer = this.specificFiltersTarget;
-        specificFiltersContainer.innerHTML = '';
-        
-        if (!categoryText) {
-          return;
         }
-        
-        // Créer des filtres spécifiques en fonction de la catégorie
-        const categoryFilters = document.createElement('div');
-        categoryFilters.className = 'row g-3 mb-3';
-        categoryFilters.innerHTML = '<h6>Filtres spécifiques pour ' + categoryText + '</h6>';
-        
-        switch(categoryText) {
-          case 'Voiture':
-            categoryFilters.innerHTML += `
-              <div class="col-md-6">
-                <div class="form-floating">
-                  <select name="doors" class="form-select">
-                    <option value="">Toutes</option>
-                    <option value="3">3 portes</option>
-                    <option value="5">5 portes</option>
-                  </select>
-                  <label for="doors">Nombre de portes</label>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="form-floating">
-                  <select name="interior_material" class="form-select">
-                    <option value="">Tous</option>
-                    <option value="Tissu">Tissu</option>
-                    <option value="Cuir">Cuir</option>
-                    <option value="Alcantara">Alcantara</option>
-                    <option value="Simili cuir">Simili cuir</option>
-                    <option value="Mixte">Mixte</option>
-                  </select>
-                  <label for="interior_material">Matière intérieure</label>
-                </div>
-              </div>
-            `;
-            break;
-          case 'Moto':
-            categoryFilters.innerHTML += `
-              <div class="col-md-6">
-                <div class="row g-2">
-                  <div class="col-6">
-                    <div class="form-floating">
-                      <input type="number" name="cylinder_capacity_min" class="form-control" placeholder="Min">
-                      <label for="cylinder_capacity_min">Cylindrée min (cm³)</label>
-                    </div>
-                  </div>
-                  <div class="col-6">
-                    <div class="form-floating">
-                      <input type="number" name="cylinder_capacity_max" class="form-control" placeholder="Max">
-                      <label for="cylinder_capacity_max">Cylindrée max (cm³)</label>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="row g-2">
-                  <div class="col-6">
-                    <div class="form-floating">
-                      <select name="engine_type" class="form-select">
-                        <option value="">Tous</option>
-                        <option value="4 temps">4 temps</option>
-                        <option value="2 temps">2 temps</option>
-                        <option value="Electrique">Électrique</option>
-                      </select>
-                      <label for="engine_type">Type de moteur</label>
-                    </div>
-                  </div>
-                  <div class="col-6">
-                    <div class="form-floating">
-                      <select name="license_type" class="form-select">
-                        <option value="">Tous</option>
-                        <option value="A">A</option>
-                        <option value="A1">A1</option>
-                        <option value="A2">A2</option>
-                        <option value="B">B</option>
-                        <option value="AM">AM</option>
-                      </select>
-                      <label for="license_type">Type de permis</label>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            `;
-            break;
-          case 'Bateau':
-            categoryFilters.innerHTML += `
-              <div class="col-md-6">
-                <div class="row g-2">
-                  <div class="col-6">
-                    <div class="form-floating">
-                      <input type="number" name="length_min" class="form-control" placeholder="Min" step="0.1">
-                      <label for="length_min">Longueur min (m)</label>
-                    </div>
-                  </div>
-                  <div class="col-6">
-                    <div class="form-floating">
-                      <input type="number" name="length_max" class="form-control" placeholder="Max" step="0.1">
-                      <label for="length_max">Longueur max (m)</label>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="row g-2">
-                  <div class="col-6">
-                    <div class="form-floating">
-                      <select name="hull_material" class="form-select">
-                        <option value="">Tous</option>
-                        <option value="Fibre de verre">Fibre de verre</option>
-                        <option value="Polyester">Polyester</option>
-                        <option value="Bois">Bois</option>
-                        <option value="Aluminium">Aluminium</option>
-                        <option value="Acier">Acier</option>
-                      </select>
-                      <label for="hull_material">Matériau de coque</label>
-                    </div>
-                  </div>
-                  <div class="col-6">
-                    <div class="form-floating">
-                      <input type="number" name="number_of_cabins_min" class="form-control" placeholder="Min">
-                      <label for="number_of_cabins_min">Cabines (min)</label>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            `;
-            break;
-          case 'Avion':
-            categoryFilters.innerHTML += `
-              <div class="col-md-6">
-                <div class="form-floating">
-                  <input type="number" name="flight_hours_max" class="form-control" placeholder="Max">
-                  <label for="flight_hours_max">Heures de vol max</label>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="form-floating">
-                  <input type="number" name="number_of_seats_min" class="form-control" placeholder="Min">
-                  <label for="number_of_seats_min">Nombre de places min</label>
-                </div>
-              </div>
-            `;
-            break;
-          case 'Véhicule de chantier':
-            categoryFilters.innerHTML += `
-              <div class="col-md-6">
-                <div class="form-floating">
-                  <input type="number" name="operating_hours_max" class="form-control" placeholder="Max">
-                  <label for="operating_hours_max">Heures de fonctionnement max</label>
-                </div>
-              </div>
-            `;
-            break;
-        }
-        
-        specificFiltersContainer.appendChild(categoryFilters);
-      }
-    }
-    
-    // Enregistrer le contrôleur
-    window.SearchForm = SearchForm;
-    
-    // Initialiser le contrôleur si nécessaire
-    if (document.querySelector('[data-controller="search-form"]')) {
-      const form = document.querySelector('[data-controller="search-form"]');
-      const controller = new SearchForm();
-      controller.subcategorySelectTarget = form.querySelector('[data-search-form-target="subcategorySelect"]');
-      controller.specificFiltersTarget = form.querySelector('[data-search-form-target="specificFilters"]');
-      
-      // Ajouter les écouteurs d'événements
-      form.querySelector('select[name="category_id"]').addEventListener('change', (event) => {
-        controller.loadSubcategories(event);
       });
       
-      // Charger les filtres spécifiques si une catégorie est déjà sélectionnée
-      const categorySelect = form.querySelector('select[name="category_id"]');
-      if (categorySelect.value) {
-        const categoryText = categorySelect.options[categorySelect.selectedIndex].text;
-        controller.loadSpecificFilters(categoryText);
-      }
-    }
+      // Show main accordions by default (not nested ones)
+      document.querySelectorAll('.filter-group > .filter-content').forEach(content => {
+        content.classList.remove('hidden');
+      });
   });
 </script>
+<% end %>

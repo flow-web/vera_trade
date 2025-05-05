@@ -1,0 +1,199 @@
+<div class="min-h-screen bg-[#F2E8D8] text-[#1A1A1A]">
+  <div class="max-w-[1280px] mx-auto px-4 md:px-8 py-8">
+    <div class="flex flex-col md:flex-row gap-8">
+      <!-- Sidebar -->
+      <div class="w-full md:w-64 bg-[#0C1E3B] rounded-xl shadow-md p-4 text-white">
+        <h3 class="font-poppins text-lg font-semibold mb-6 text-[#B18B43]">DASHBOARD</h3>
+        
+        <ul class="space-y-2">
+          <li class="dashboard-nav-item">
+            <a href="<%= dashboard_path %>" class="flex items-center py-2 px-4 rounded-lg bg-[#B18B43] bg-opacity-20">
+              <i class="bi bi-speedometer2 text-[#B18B43] mr-3"></i>
+              <span>Vue d'ensemble</span>
+            </a>
+          </li>
+          <li class="dashboard-nav-item">
+            <a href="<%= dashboard_my_listings_path %>" class="flex items-center py-2 px-4 rounded-lg hover:bg-[#B18B43] hover:bg-opacity-20">
+              <i class="bi bi-car-front text-[#B18B43] mr-3"></i>
+              <span>Mes Annonces</span>
+            </a>
+          </li>
+          <li class="dashboard-nav-item">
+            <a href="<%= dashboard_my_purchases_path %>" class="flex items-center py-2 px-4 rounded-lg hover:bg-[#B18B43] hover:bg-opacity-20">
+              <i class="bi bi-bag-check text-[#B18B43] mr-3"></i>
+              <span>Mes Achats</span>
+            </a>
+          </li>
+          <li class="dashboard-nav-item">
+            <a href="<%= dashboard_wallet_path %>" class="flex items-center py-2 px-4 rounded-lg hover:bg-[#B18B43] hover:bg-opacity-20">
+              <i class="bi bi-wallet2 text-[#B18B43] mr-3"></i>
+              <span>Mon Portefeuille</span>
+            </a>
+          </li>
+          <li class="dashboard-nav-item">
+            <a href="<%= dashboard_messages_path %>" class="flex items-center py-2 px-4 rounded-lg hover:bg-[#B18B43] hover:bg-opacity-20">
+              <i class="bi bi-chat-left-text text-[#B18B43] mr-3"></i>
+              <span>Messagerie</span>
+            </a>
+          </li>
+          <li class="dashboard-nav-item">
+            <a href="<%= dashboard_transport_path %>" class="flex items-center py-2 px-4 rounded-lg hover:bg-[#B18B43] hover:bg-opacity-20">
+              <i class="bi bi-truck text-[#B18B43] mr-3"></i>
+              <span>Transport</span>
+            </a>
+          </li>
+          <li class="dashboard-nav-item">
+            <a href="<%= dashboard_services_path %>" class="flex items-center py-2 px-4 rounded-lg hover:bg-[#B18B43] hover:bg-opacity-20">
+              <i class="bi bi-wrench text-[#B18B43] mr-3"></i>
+              <span>Services Mécaniques</span>
+            </a>
+          </li>
+          <li class="dashboard-nav-item">
+            <a href="<%= dashboard_profile_path %>" class="flex items-center py-2 px-4 rounded-lg hover:bg-[#B18B43] hover:bg-opacity-20">
+              <i class="bi bi-person-circle text-[#B18B43] mr-3"></i>
+              <span>Profil</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+      
+      <!-- Main content -->
+      <div class="flex-1">
+        <div class="mb-6">
+          <h1 class="font-poppins text-2xl font-semibold text-[#0C1E3B]">Bienvenue sur votre Dashboard</h1>
+          <p class="text-[#1A1A1A]">Gérez vos annonces, transactions et services à partir d'ici.</p>
+        </div>
+        
+        <!-- Statistics Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <!-- Wallet Balance -->
+          <div class="bg-white rounded-xl shadow-md p-4">
+            <div class="flex justify-between items-center mb-2">
+              <h3 class="font-poppins font-medium">Portefeuille</h3>
+              <div class="p-2 bg-[#F2E8D8] rounded-full">
+                <i class="bi bi-wallet2 text-[#B18B43]"></i>
+              </div>
+            </div>
+            <p class="text-2xl font-semibold text-[#0C1E3B]"><%= number_to_currency(@wallet.balance, precision: 2, unit: "€", separator: ",", delimiter: " ") %></p>
+            <a href="<%= dashboard_wallet_path %>" class="text-[#B18B43] text-sm hover:underline">Gérer <i class="bi bi-arrow-right"></i></a>
+          </div>
+          
+          <!-- Active Listings -->
+          <div class="bg-white rounded-xl shadow-md p-4">
+            <div class="flex justify-between items-center mb-2">
+              <h3 class="font-poppins font-medium">Annonces actives</h3>
+              <div class="p-2 bg-[#F2E8D8] rounded-full">
+                <i class="bi bi-megaphone text-[#B18B43]"></i>
+              </div>
+            </div>
+            <p class="text-2xl font-semibold text-[#0C1E3B]"><%= @my_listings.active.count %></p>
+            <a href="<%= dashboard_my_listings_path %>" class="text-[#B18B43] text-sm hover:underline">Voir toutes <i class="bi bi-arrow-right"></i></a>
+          </div>
+          
+          <!-- Purchases -->
+          <div class="bg-white rounded-xl shadow-md p-4">
+            <div class="flex justify-between items-center mb-2">
+              <h3 class="font-poppins font-medium">Achats</h3>
+              <div class="p-2 bg-[#F2E8D8] rounded-full">
+                <i class="bi bi-bag-check text-[#B18B43]"></i>
+              </div>
+            </div>
+            <p class="text-2xl font-semibold text-[#0C1E3B]"><%= @my_purchases.count %></p>
+            <a href="<%= dashboard_my_purchases_path %>" class="text-[#B18B43] text-sm hover:underline">Historique <i class="bi bi-arrow-right"></i></a>
+          </div>
+          
+          <!-- Messages -->
+          <div class="bg-white rounded-xl shadow-md p-4">
+            <div class="flex justify-between items-center mb-2">
+              <h3 class="font-poppins font-medium">Messages</h3>
+              <div class="p-2 bg-[#F2E8D8] rounded-full">
+                <i class="bi bi-chat-left-text text-[#B18B43]"></i>
+              </div>
+            </div>
+            <p class="text-2xl font-semibold text-[#0C1E3B]"><%= @conversations.count %></p>
+            <a href="<%= messages_path %>" class="text-[#B18B43] text-sm hover:underline">Voir tous <i class="bi bi-arrow-right"></i></a>
+          </div>
+        </div>
+        
+        <!-- Recent Activity -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <!-- Recent Listings -->
+          <div class="bg-white rounded-xl shadow-md p-6">
+            <h3 class="font-poppins text-lg font-semibold mb-4 text-[#0C1E3B]">Annonces récentes</h3>
+            
+            <% if @my_listings.any? %>
+              <div class="space-y-4">
+                <% @my_listings.order(created_at: :desc).limit(3).each do |listing| %>
+                  <div class="flex items-center gap-4 p-3 rounded-lg hover:bg-[#F2E8D8]">
+                    <div class="w-16 h-16 bg-[#D9D9D9] rounded-lg overflow-hidden">
+                      <% if listing.main_photo&.file.present? %>
+                        <%= image_tag listing.main_photo.file, class: "w-full h-full object-cover" %>
+                      <% else %>
+                        <div class="w-full h-full flex items-center justify-center bg-[#D9D9D9]">
+                          <i class="bi bi-image text-[#0C1E3B]"></i>
+                        </div>
+                      <% end %>
+                    </div>
+                    <div class="flex-1">
+                      <h4 class="font-medium"><%= listing.title %></h4>
+                      <div class="flex justify-between">
+                        <p class="text-sm text-[#0C1E3B]"><%= number_to_currency(listing.vehicle.price, precision: 0, unit: "€", delimiter: " ") %></p>
+                        <p class="text-xs text-[#0C1E3B]"><%= listing.status.humanize %></p>
+                      </div>
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+              <div class="mt-4 text-center">
+                <a href="<%= dashboard_my_listings_path %>" class="text-[#B18B43] hover:underline">Voir toutes mes annonces</a>
+              </div>
+            <% else %>
+              <div class="text-center py-6">
+                <p class="text-[#0C1E3B] mb-4">Vous n'avez pas encore d'annonce</p>
+                <a href="<%= new_listing_path %>" class="bg-[#B18B43] hover:bg-[#A0782D] text-white py-2 px-4 rounded-lg inline-block">
+                  Créer une annonce
+                </a>
+              </div>
+            <% end %>
+          </div>
+          
+          <!-- Recent Transactions -->
+          <div class="bg-white rounded-xl shadow-md p-6">
+            <h3 class="font-poppins text-lg font-semibold mb-4 text-[#0C1E3B]">Transactions récentes</h3>
+            
+            <% if @transactions.any? %>
+              <div class="space-y-4">
+                <% @transactions.each do |transaction| %>
+                  <div class="flex items-center justify-between p-3 rounded-lg hover:bg-[#F2E8D8]">
+                    <div class="flex items-center gap-3">
+                      <div class="p-2 rounded-full <%= transaction.amount_cents >= 0 ? 'bg-green-100' : 'bg-red-100' %>">
+                        <i class="bi <%= transaction.amount_cents >= 0 ? 'bi-arrow-down text-green-600' : 'bi-arrow-up text-red-600' %>"></i>
+                      </div>
+                      <div>
+                        <h4 class="font-medium"><%= transaction.transaction_type.humanize %></h4>
+                        <p class="text-xs text-[#0C1E3B]"><%= l transaction.created_at, format: :short %></p>
+                      </div>
+                    </div>
+                    <p class="font-semibold <%= transaction.amount_cents >= 0 ? 'text-green-600' : 'text-red-600' %>">
+                      <%= number_to_currency(transaction.amount, precision: 2, unit: "€", separator: ",", delimiter: " ") %>
+                    </p>
+                  </div>
+                <% end %>
+              </div>
+              <div class="mt-4 text-center">
+                <a href="<%= dashboard_wallet_path %>" class="text-[#B18B43] hover:underline">Voir toutes les transactions</a>
+              </div>
+            <% else %>
+              <div class="text-center py-6">
+                <p class="text-[#0C1E3B] mb-4">Aucune transaction récente</p>
+                <a href="<%= dashboard_wallet_path %>" class="bg-[#B18B43] hover:bg-[#A0782D] text-white py-2 px-4 rounded-lg inline-block">
+                  Gérer mon portefeuille
+                </a>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 

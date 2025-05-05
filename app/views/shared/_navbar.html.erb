@@ -1,44 +1,43 @@
-<div class="navbar shadow-md" style="background-color: #011f3b; color: white;">
+<div class="navbar shadow-md" style="background-color: #0C1E3B; color: white;">
   <div class="navbar-start">
     <div class="dropdown">
       <div tabindex="0" role="button" class="btn btn-ghost lg:hidden">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h8m-8 6h16" /></svg>
       </div>
       <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
-        <li><a href="/">Home</a></li>
-        <li><a href="<%= listings_path %>">Annonces</a></li>
+        <li><a href="/"><i class="bi bi-house-door mr-2"></i>Home</a></li>
+        <li><a href="<%= listings_path %>"><i class="bi bi-car-front mr-2"></i>Annonces</a></li>
         <% if user_signed_in? %>
-          <li><a href="<%= my_listings_path %>">Mes annonces</a></li>
-          <li><a href="<%= new_listing_path %>">Publier une annonce</a></li>
-          <li><a href="<%= messages_path %>">Messages</a></li>
+          <li><a href="<%= my_listings_path %>"><i class="bi bi-list-ul mr-2"></i>Mes annonces</a></li>
+          <li><a href="<%= new_listing_path %>"><i class="bi bi-plus-circle mr-2"></i>Publier une annonce</a></li>
+          <li><a href="<%= dashboard_path %>" class="text-[#B18B43]"><i class="bi bi-speedometer2 mr-2"></i>Dashboard</a></li>
+          <li><a href="<%= messages_path %>"><i class="bi bi-chat-left-text mr-2"></i>Messages</a></li>
         <% end %>
-        <li><a>Services</a></li>
-        <li><a>About Us</a></li>
-        <li><a>Contact</a></li>
+        <li><a><i class="bi bi-tools mr-2"></i>Services</a></li>
+        <li><a><i class="bi bi-info-circle mr-2"></i>About Us</a></li>
+        <li><a><i class="bi bi-envelope mr-2"></i>Contact</a></li>
       </ul>
     </div>
+    <a href="/" class="btn btn-ghost normal-case text-xl px-2">
+      <img src="/vta_logo.png" alt="VTA Logo" class="h-8 mx-auto" />
+    </a>
     <ul class="menu menu-horizontal px-1 hidden lg:flex">
-      <li><a href="/">Home</a></li>
-      <li><a href="<%= listings_path %>">Annonces</a></li>
+      <li><a href="/"><i class="bi bi-house-door mr-2"></i>Home</a></li>
+      <li><a href="<%= listings_path %>"><i class="bi bi-car-front mr-2"></i>Annonces</a></li>
       <% if user_signed_in? %>
-        <li><a href="<%= my_listings_path %>">Mes annonces</a></li>
+        <li><a href="<%= my_listings_path %>"><i class="bi bi-list-ul mr-2"></i>Mes annonces</a></li>
       <% end %>
     </ul>
-  </div>
-  
-  <div class="navbar-center">
-    <a href="/" class="btn btn-ghost">
-      <img src="/vta_logo.png" alt="VTA Logo" class="h-12" />
-    </a>
   </div>
   
   <div class="navbar-end">
     <ul class="menu menu-horizontal px-1 hidden lg:flex">
       <% if user_signed_in? %>
-        <li><a href="<%= new_listing_path %>">Publier une annonce</a></li>
-        <li><a href="<%= messages_path %>">Messages</a></li>
+        <li><a href="<%= new_listing_path %>"><i class="bi bi-plus-circle mr-2"></i>Publier une annonce</a></li>
+        <li><a href="<%= dashboard_path %>" class="text-[#B18B43]"><i class="bi bi-speedometer2 mr-2"></i>Dashboard</a></li>
+        <li><a href="<%= messages_path %>"><i class="bi bi-chat-left-text mr-2"></i>Messages</a></li>
       <% end %>
-      <li><a>Services</a></li>
+      <li><a><i class="bi bi-tools mr-2"></i>Services</a></li>
     </ul>
     <% if user_signed_in? %>
       <div class="dropdown dropdown-end">
@@ -48,14 +47,21 @@
           </div>
         </div>
         <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
-          <li><a>Profile</a></li>
-          <li><a href="<%= edit_user_registration_path %>">Settings</a></li>
-          <li><%= link_to "Sign out", destroy_user_session_path, data: { turbo_method: :delete } %></li>
+          <li><a href="<%= dashboard_path %>"><i class="bi bi-speedometer2 mr-2"></i>Dashboard</a></li>
+          <li><a><i class="bi bi-person mr-2"></i>Profile</a></li>
+          <li><a href="<%= edit_user_registration_path %>"><i class="bi bi-gear mr-2"></i>Settings</a></li>
+          <li><%= link_to destroy_user_session_path, data: { turbo_method: :delete } do %>
+            <i class="bi bi-box-arrow-right mr-2"></i>Sign out
+          <% end %></li>
         </ul>
       </div>
     <% else %>
-      <%= link_to "Sign in", new_user_session_path, class: "btn btn-ghost mr-2" %>
-      <%= link_to "Register", new_user_registration_path, class: "btn btn-primary" %>
+      <%= link_to new_user_session_path, class: "btn btn-ghost mr-2" do %>
+        <i class="bi bi-box-arrow-in-right mr-2"></i>Sign in
+      <% end %>
+      <%= link_to new_user_registration_path, class: "btn hover:bg-[#A0782D] bg-[#B18B43] text-white border-none" do %>
+        <i class="bi bi-person-plus mr-2"></i>Register
+      <% end %>
     <% end %>
   </div>
 </div> 
