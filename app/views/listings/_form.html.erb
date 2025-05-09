@@ -1,0 +1,13 @@
+<div class="form-control w-full">
+  <%= v.label :make, "Marque", class: "label" %>
+  <div data-controller="car-brands" data-car-brands-url-value="<%= search_car_brands_path %>">
+    <%= v.text_field :make, 
+        class: "input input-bordered w-full", 
+        data: { 
+          car_brands_target: "input",
+          vehicle_info_target: "make"
+        },
+        placeholder: "Ex: BMW" %>
+    <ul data-car-brands-target="suggestions" class="hidden absolute z-10 mt-1 w-full bg-base-100 rounded-lg shadow-lg max-h-60 overflow-auto"></ul>
+  </div>
+</div> 

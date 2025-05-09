@@ -21,10 +21,12 @@ class ListingsController < ApplicationController
 
   def create
     @vehicle = Vehicle.new(vehicle_params)
+    @vehicle.is_draft = params[:save_as_draft].present?
     
     if @vehicle.save
       @listing = current_user.listings.new(listing_params)
       @listing.vehicle = @vehicle
+      @listing.status = 'active' unless @vehicle.is_draft
       
       if @listing.save
         # Gérer les photos après la sauvegarde de l'annonce
@@ -32,7 +34,7 @@ class ListingsController < ApplicationController
           @listing.photos.attach(params[:listing][:photos])
         end
         
-        redirect_to @listing, notice: 'Votre annonce a été créée avec succès.'
+        redirect_to @listing, notice: @vehicle.is_draft ? 'Brouillon enregistré avec succès.' : 'Votre annonce a été créée avec succès.'
       else
         render :new, status: :unprocessable_entity
       end
@@ -60,10 +62,12 @@ class ListingsController < ApplicationController
       @listing.photos.attach(params[:listing][:photos])
     end
     
-    if @listing.vehicle.update(vehicle_params) && @listing.update(listing_params)
-      redirect_to @listing, notice: 'Votre annonce a été mise à jour avec succès.'
+    @vehicle = @listing.vehicle
+    @vehicle.is_draft = params[:save_as_draft].present?
+    
+    if @vehicle.update(vehicle_params) && @listing.update(listing_params)
+      redirect_to @listing, notice: @vehicle.is_draft ? 'Brouillon mis à jour avec succès.' : 'Votre annonce a été mise à jour avec succès.'
     else
-      @vehicle = @listing.vehicle
       render :edit, status: :unprocessable_entity
     end
   end
@@ -98,6 +102,8 @@ class ListingsController < ApplicationController
                                    :non_smoker, :location, :safety_features, :comfort_features, 
                                    :multimedia_features, :exterior_features, :other_features, 
                                    :body_condition, :interior_condition, :tire_condition, 
-                                   :recent_works, :issues, :expected_costs)
+                                   :recent_works, :issues, :expected_costs,
+                                   :license_plate, :vin, :fiscal_power,
+                                   :average_consumption, :co2_emissions)
   end
 end

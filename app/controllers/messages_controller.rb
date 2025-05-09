@@ -3,10 +3,13 @@ class MessagesController < ApplicationController
   before_action :set_recipient, only: [:show, :create]
   
   def index
-    @users = current_user.other_users
+    @conversations = current_user.conversations.includes(:other_user, :messages).order(updated_at: :desc)
+    @current_conversation = @conversations.first
   end
 
   def show
+    @conversations = current_user.conversations.includes(:other_user, :messages).order(updated_at: :desc)
+    @current_conversation = current_user.conversations.find(params[:id])
     @messages = Message.between(current_user.id, @recipient.id)
     @message = Message.new
     @current_user_id = current_user.id
@@ -18,19 +21,8 @@ class MessagesController < ApplicationController
   end
 
   def create
-    @message = Message.new(message_params)
-    @message.sender = current_user
-    @message.recipient = @recipient
-    @message.current_user_id = current_user.id
-    
-    respond_to do |format|
-      if @message.save
-        format.turbo_stream
-        format.html { redirect_to conversation_path(@recipient) }
-      else
-        format.html { render :show, status: :unprocessable_entity }
-      end
-    end
+    @conversation = current_user.conversations.find_or_create_by(other_user_id: params[:user_id])
+    redirect_to conversation_path(@conversation)
   end
   
   private

@@ -63,15 +63,73 @@
         <h2 class="text-xl font-semibold mb-4">Détails du véhicule</h2>
         
         <%= fields_for :vehicle, @listing.vehicle do |v| %>
+          <!-- Nouveaux champs d'identification -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div class="form-control w-full">
+              <%= v.label :license_plate, "Immatriculation", class: "label" %>
+              <%= v.text_field :license_plate, 
+                  class: "input input-bordered w-full", 
+                  placeholder: "Ex: AA-123-AA",
+                  data: { 
+                    controller: "vehicle-info",
+                    action: "input->vehicle-info#validateLicensePlate blur->vehicle-info#fetchInfo",
+                    vehicle_info_target: "licensePlate"
+                  } %>
+              <div class="text-sm text-error hidden" data-vehicle-info-target="licensePlateError"></div>
+            </div>
+            
+            <div class="form-control w-full">
+              <%= v.label :vin, "Numéro de série (VIN)", class: "label" %>
+              <%= v.text_field :vin, 
+                  class: "input input-bordered w-full", 
+                  placeholder: "Ex: WVWZZZ1KZAW123456",
+                  data: { 
+                    controller: "vehicle-info",
+                    action: "input->vehicle-info#validateVin blur->vehicle-info#fetchInfo",
+                    vehicle_info_target: "vin"
+                  } %>
+              <div class="text-sm text-error hidden" data-vehicle-info-target="vinError"></div>
+            </div>
+          </div>
+          
+          <!-- Informations supplémentaires -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            <div class="form-control w-full">
+              <%= v.label :fiscal_power, "Puissance fiscale (CV)", class: "label" %>
+              <%= v.number_field :fiscal_power, 
+                  class: "input input-bordered w-full", 
+                  min: 1,
+                  data: { vehicle_info_target: "fiscalPower" } %>
+            </div>
+            
+            <div class="form-control w-full">
+              <%= v.label :average_consumption, "Consommation moyenne (L/100km)", class: "label" %>
+              <%= v.number_field :average_consumption, 
+                  class: "input input-bordered w-full", 
+                  min: 0,
+                  step: 0.1,
+                  data: { vehicle_info_target: "averageConsumption" } %>
+            </div>
+            
+            <div class="form-control w-full">
+              <%= v.label :co2_emissions, "Émissions CO2 (g/km)", class: "label" %>
+              <%= v.number_field :co2_emissions, 
+                  class: "input input-bordered w-full", 
+                  min: 0,
+                  data: { vehicle_info_target: "co2Emissions" } %>
+            </div>
+          </div>
+          
+          <!-- Champs existants -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div class="form-control w-full">
               <%= v.label :make, "Marque", class: "label" %>
-              <%= v.text_field :make, class: "input input-bordered w-full" %>
+              <%= v.text_field :make, class: "input input-bordered w-full", data: { vehicle_info_target: "make" } %>
             </div>
             
             <div class="form-control w-full">
               <%= v.label :model, "Modèle", class: "label" %>
-              <%= v.text_field :model, class: "input input-bordered w-full" %>
+              <%= v.text_field :model, class: "input input-bordered w-full", data: { vehicle_info_target: "model" } %>
             </div>
           </div>
           
@@ -175,6 +233,18 @@
         <button type="button" id="prev-btn" class="btn btn-outline btn-primary hidden">Précédent</button>
         <button type="button" id="next-btn" class="btn btn-primary">Suivant</button>
         <%= form.submit "Mettre à jour l'annonce", id: "submit-btn", class: "btn btn-primary hidden" %>
+      </div>
+
+      <!-- Boutons de soumission -->
+      <div class="flex justify-between mt-6">
+        <%= form.submit "Enregistrer comme brouillon", 
+            name: "save_as_draft",
+            class: "btn btn-outline",
+            data: { confirm: "Voulez-vous enregistrer cette annonce comme brouillon ?" } %>
+            
+        <%= form.submit "Publier l'annonce", 
+            class: "btn btn-primary",
+            data: { confirm: "Voulez-vous publier cette annonce ?" } %>
       </div>
     <% end %>
   </div>

@@ -12,7 +12,17 @@ class Message < ApplicationRecord
     .order(created_at: :asc)
   end
   
+  scope :unread, -> { where(read: false) }
+  
   after_create_commit :broadcast_to_users
+  
+  def mark_as_read!
+    update!(read: true) unless read?
+  end
+
+  def mark_as_unread!
+    update!(read: false) if read?
+  end
   
   private
   

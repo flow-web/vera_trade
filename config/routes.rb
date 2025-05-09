@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  get "wallet_transactions/index"
+  get "wallet_transactions/show"
   get "messages/index"
   get "messages/show"
   get "messages/create"
@@ -14,13 +16,29 @@ Rails.application.routes.draw do
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
   resources :listings
-  resources :vehicles
+  resources :vehicles do
+    collection do
+      get 'fetch_info'
+    end
+  end
   
   resources :messages, only: [:index, :create]
   get 'conversations/:user_id', to: 'messages#show', as: 'conversation'
+
+  resources :car_brands, only: [] do
+    collection do
+      get :search
+    end
+  end
+
+  # Wallet transactions
+  resources :wallet_transactions, path: 'transactions', only: [:index, :show]
 
   # Defines the root path route ("/")
   root "pages#home"
   
   get 'my_listings', to: 'listings#my_listings'
+
+  # Dashboard
+  get 'dashboard', to: 'dashboard#index', as: :dashboard
 end
