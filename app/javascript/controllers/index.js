@@ -15,3 +15,6 @@ application.register("reset-form", ResetFormController)
 
 import DirectUploadController from "./direct_upload_controller"
 application.register("direct-upload", DirectUploadController)
+
+import SearchController from "./search_controller"
+application.register("search", SearchController)

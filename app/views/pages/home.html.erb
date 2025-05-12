@@ -1,100 +1,201 @@
 <!-- Hero Section -->
-<div class="hero min-h-screen" style="background-image: url(https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?q=80&w=2070);">
-  <div class="hero-overlay bg-opacity-60"></div>
+<div class="hero min-h-[70vh]" style="background-image: url(https://images.unsplash.com/photo-1583121274602-3e2820c69888?q=80&w=2070);">
+  <div class="hero-overlay bg-opacity-70"></div>
   <div class="hero-content text-center text-neutral-content">
     <div class="max-w-md">
-      <h1 class="mb-5 text-5xl font-bold">Premium Cars, Exceptional Service</h1>
-      <p class="mb-5">Find your dream car with confidence. Quality vehicles at competitive prices with unmatched customer service.</p>
-      <button class="btn btn-primary">View Our Inventory</button>
+      <h1 class="mb-5 text-4xl font-bold">VeraTrade</h1>
+      <p class="mb-5 text-lg">La plateforme premium de transaction automobile</p>
+      <button class="btn btn-primary">Découvrir nos véhicules</button>
     </div>
   </div>
 </div>
 
-<!-- Featured Cars Section -->
-<div class="py-12 bg-base-100">
+<!-- Types de transactions -->
+<section class="py-16 bg-gray-900 text-white">
   <div class="container mx-auto px-4">
-    <h2 class="text-4xl font-bold text-center mb-10">Featured Vehicles</h2>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <!-- Car Card 1 -->
-      <div class="card bg-base-100 shadow-xl">
-        <figure><img src="https://images.unsplash.com/photo-1583121274602-3e2820c69888?q=80&w=2070" alt="Sedan" /></figure>
-        <div class="card-body">
-          <h2 class="card-title">2023 Luxury Sedan</h2>
-          <p>Elegant design with advanced features. Perfect for families and executives alike.</p>
-          <div class="flex justify-between items-center mt-4">
-            <span class="text-xl font-bold">$45,900</span>
-            <div class="card-actions">
-              <button class="btn btn-primary">Details</button>
-            </div>
-          </div>
+    <h2 class="text-3xl font-bold text-center mb-12">Nos Solutions</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <!-- Achat -->
+      <div class="relative group">
+        <div class="aspect-w-16 aspect-h-9 rounded-lg overflow-hidden">
+          <img src="https://images.unsplash.com/photo-1583121274602-3e2820c69888?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Achat" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300">
+        </div>
+        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-6">
+          <h3 class="text-2xl font-bold text-white mb-2">Achat</h3>
+          <p class="text-gray-200 mb-4">Trouvez le véhicule de vos rêves parmi notre sélection de véhicules premium</p>
+          <%= link_to "Voir les offres", listings_path, class: "btn btn-primary" %>
         </div>
       </div>
-      
-      <!-- Car Card 2 -->
-      <div class="card bg-base-100 shadow-xl">
-        <figure><img src="https://images.unsplash.com/photo-1494976388531-d1058494cdd8?q=80&w=2070" alt="Sports Car" /></figure>
-        <div class="card-body">
-          <h2 class="card-title">2023 Sports Coupe</h2>
-          <p>High-performance engine with sleek aerodynamic design. The ultimate driving experience.</p>
-          <div class="flex justify-between items-center mt-4">
-            <span class="text-xl font-bold">$79,900</span>
-            <div class="card-actions">
-              <button class="btn btn-primary">Details</button>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Car Card 3 -->
-      <div class="card bg-base-100 shadow-xl">
-        <figure><img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=2070" alt="SUV" /></figure>
-        <div class="card-body">
-          <h2 class="card-title">2023 Premium SUV</h2>
-          <p>Spacious interior with cutting-edge technology. Designed for adventure and comfort.</p>
-          <div class="flex justify-between items-center mt-4">
-            <span class="text-xl font-bold">$62,500</span>
-            <div class="card-actions">
-              <button class="btn btn-primary">Details</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="text-center mt-10">
-      <button class="btn btn-outline btn-wide">View All Vehicles</button>
-    </div>
-  </div>
-</div>
 
-<!-- Why Choose Us Section -->
-<div class="py-12 bg-base-200">
-  <div class="container mx-auto px-4">
-    <h2 class="text-4xl font-bold text-center mb-10">Why Choose Us</h2>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <div class="card bg-base-100">
-        <div class="card-body items-center text-center">
-          <div class="text-4xl mb-4">🛡️</div>
-          <h3 class="card-title">Quality Guaranteed</h3>
-          <p>All our vehicles undergo a rigorous 150-point inspection before listing.</p>
+      <!-- Location -->
+      <div class="relative group">
+        <div class="aspect-w-16 aspect-h-9 rounded-lg overflow-hidden">
+          <img src="https://images.unsplash.com/photo-1552519507-da3b142c6e3d?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Location" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300">
+        </div>
+        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-6">
+          <h3 class="text-2xl font-bold text-white mb-2">Location</h3>
+          <p class="text-gray-200 mb-4">Profitez de véhicules de luxe en location courte ou longue durée</p>
+          <%= link_to "Voir les offres", listings_path, class: "btn btn-primary" %>
         </div>
       </div>
-      <div class="card bg-base-100">
-        <div class="card-body items-center text-center">
-          <div class="text-4xl mb-4">💰</div>
-          <h3 class="card-title">Competitive Pricing</h3>
-          <p>We continuously monitor the market to ensure our prices are fair and competitive.</p>
+
+      <!-- Échange -->
+      <div class="relative group">
+        <div class="aspect-w-16 aspect-h-9 rounded-lg overflow-hidden">
+          <img src="https://images.unsplash.com/photo-1553440569-bcc63803a83d?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Échange" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300">
         </div>
-      </div>
-      <div class="card bg-base-100">
-        <div class="card-body items-center text-center">
-          <div class="text-4xl mb-4">🤝</div>
-          <h3 class="card-title">Exceptional Service</h3>
-          <p>Our dedicated team is committed to providing personalized service at every step.</p>
+        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-6">
+          <h3 class="text-2xl font-bold text-white mb-2">Échange</h3>
+          <p class="text-gray-200 mb-4">Échangez votre véhicule contre un autre modèle de votre choix</p>
+          <%= link_to "Voir les offres", listings_path, class: "btn btn-primary" %>
         </div>
       </div>
     </div>
   </div>
-</div>
+</section>
+
+<!-- Pourquoi VeraTrade ? -->
+<section class="py-16 bg-gray-900 text-white">
+  <div class="container mx-auto px-4">
+    <h2 class="text-3xl font-bold text-center mb-12">Pourquoi VeraTrade ?</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <!-- Paiement en cryptomonnaies -->
+      <div class="bg-gray-800 p-8 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 border border-gray-700">
+        <div class="text-primary mb-6">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <h3 class="text-xl font-bold mb-4">Paiement en cryptomonnaies</h3>
+        <p class="text-gray-300 leading-relaxed">Transactions sécurisées via Coinbase et système de wallet intégré pour une gestion simplifiée de vos actifs numériques.</p>
+      </div>
+
+      <!-- Écosystème complet -->
+      <div class="bg-gray-800 p-8 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 border border-gray-700">
+        <div class="text-primary mb-6">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+          </svg>
+        </div>
+        <h3 class="text-xl font-bold mb-4">Écosystème complet</h3>
+        <p class="text-gray-300 leading-relaxed">Dashboard personnalisé, messagerie intégrée, gestion des dossiers et historique détaillé de vos transactions.</p>
+      </div>
+
+      <!-- Types de transaction -->
+      <div class="bg-gray-800 p-8 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 border border-gray-700">
+        <div class="text-primary mb-6">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+          </svg>
+        </div>
+        <h3 class="text-xl font-bold mb-4">Transactions multiples</h3>
+        <p class="text-gray-300 leading-relaxed">Vente, location ou enchères : choisissez le mode de transaction qui vous convient le mieux.</p>
+      </div>
+
+      <!-- Interface guidée -->
+      <div class="bg-gray-800 p-8 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 border border-gray-700">
+        <div class="text-primary mb-6">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+        </div>
+        <h3 class="text-xl font-bold mb-4">Interface guidée</h3>
+        <p class="text-gray-300 leading-relaxed">Dépôt d'annonce simplifié et sécurisation des documents pour une expérience utilisateur optimale.</p>
+      </div>
+
+      <!-- Système d'évaluation -->
+      <div class="bg-gray-800 p-8 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 border border-gray-700">
+        <div class="text-primary mb-6">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+          </svg>
+        </div>
+        <h3 class="text-xl font-bold mb-4">Évaluation intelligente</h3>
+        <p class="text-gray-300 leading-relaxed">Système de modération et d'évaluation avancé pour garantir la qualité des transactions.</p>
+      </div>
+
+      <!-- Support 24/7 -->
+      <div class="bg-gray-800 p-8 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 border border-gray-700">
+        <div class="text-primary mb-6">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
+          </svg>
+        </div>
+        <h3 class="text-xl font-bold mb-4">Support 24/7</h3>
+        <p class="text-gray-300 leading-relaxed">Une équipe d'experts disponible à tout moment pour vous accompagner dans vos transactions.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer avec carrousel de partenaires et avis -->
+<footer class="bg-gray-900 text-white py-12">
+  <div class="container mx-auto px-4">
+    <!-- Carrousel de partenaires -->
+    <div class="mb-12">
+      <h3 class="text-2xl font-bold text-center mb-8">Nos Partenaires</h3>
+      <div class="relative overflow-hidden">
+        <div class="flex space-x-8 animate-carousel">
+          <!-- Logos des partenaires -->
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Google_2015_logo.svg/1200px-Google_2015_logo.svg.png" alt="Google" class="h-12 object-contain brightness-0 invert">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Microsoft_logo_%282012%29.svg/1200px-Microsoft_logo_%282012%29.svg.png" alt="Microsoft" class="h-12 object-contain brightness-0 invert">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/IBM_logo.svg/1200px-IBM_logo.svg.png" alt="IBM" class="h-12 object-contain brightness-0 invert">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/IBM_logo.svg/1200px-IBM_logo.svg.png" alt="Amazon" class="h-12 object-contain brightness-0 invert">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Apple_logo_black.svg/1200px-Apple_logo_black.svg.png" alt="Apple" class="h-12 object-contain brightness-0 invert">
+        </div>
+      </div>
+    </div>
+
+    <!-- Avis clients -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <!-- Trustpilot -->
+      <div class="bg-gray-800 p-6 rounded-lg">
+        <div class="flex items-center mb-4">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Trustpilot_Logo_%282022%2C_white%29.svg/1200px-Trustpilot_Logo_%282022%2C_white%29.svg.png" alt="Trustpilot" class="h-8 mr-4 object-contain">
+          <h4 class="text-xl font-semibold">Trustpilot</h4>
+        </div>
+        <p class="text-gray-300 mb-4">"Une plateforme exceptionnelle pour l'achat et la vente de véhicules. Le système de paiement en crypto est révolutionnaire !"</p>
+        <div class="flex text-yellow-400">
+          <span>★★★★★</span>
+        </div>
+      </div>
+
+      <!-- Avis Vérifiés -->
+      <div class="bg-gray-800 p-6 rounded-lg">
+        <div class="flex items-center mb-4">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Google_2015_logo.svg/1200px-Google_2015_logo.svg.png" alt="Avis Vérifiés" class="h-8 mr-4 object-contain brightness-0 invert">
+          <h4 class="text-xl font-semibold">Avis Vérifiés</h4>
+        </div>
+        <p class="text-gray-300 mb-4">"L'interface est intuitive et le service client réactif. Je recommande vivement pour tous les passionnés d'automobiles."</p>
+        <div class="flex text-yellow-400">
+          <span>★★★★★</span>
+        </div>
+      </div>
+
+      <!-- Google Reviews -->
+      <div class="bg-gray-800 p-6 rounded-lg">
+        <div class="flex items-center mb-4">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Google_2015_logo.svg/1200px-Google_2015_logo.svg.png" alt="Google Reviews" class="h-8 mr-4 object-contain brightness-0 invert">
+          <h4 class="text-xl font-semibold">Google Reviews</h4>
+        </div>
+        <p class="text-gray-300 mb-4">"Une expérience d'achat sécurisée et transparente. La modération des annonces est efficace et rassurante."</p>
+        <div class="flex text-yellow-400">
+          <span>★★★★★</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<style>
+  @keyframes carousel {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+  .animate-carousel {
+    animation: carousel 20s linear infinite;
+  }
+</style>
 
 <!-- Testimonials Section -->
 <div class="py-12 bg-base-100">
