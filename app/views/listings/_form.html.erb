@@ -1,13 +1,1072 @@
-<div class="form-control w-full">
-  <%= v.label :make, "Marque", class: "label" %>
-  <div data-controller="car-brands" data-car-brands-url-value="<%= search_car_brands_path %>">
-    <%= v.text_field :make, 
-        class: "input input-bordered w-full", 
-        data: { 
-          car_brands_target: "input",
-          vehicle_info_target: "make"
-        },
-        placeholder: "Ex: BMW" %>
-    <ul data-car-brands-target="suggestions" class="hidden absolute z-10 mt-1 w-full bg-base-100 rounded-lg shadow-lg max-h-60 overflow-auto"></ul>
+<%= form_with(model: listing, local: true, class: "space-y-6") do |f| %>
+  <% if listing.errors.any? %>
+    <div class="alert alert-error">
+      <h2><%= pluralize(listing.errors.count, "erreur") %> ont empêché l'enregistrement de cette annonce :</h2>
+      <ul>
+        <% listing.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <!-- Onglets pour les différentes sections du formulaire -->
+  <div class="tabs tabs-boxed mb-6">
+    <a class="tab tab-active" data-target="infos-section">Informations</a>
+    <a class="tab" data-target="vehicle-section">Véhicule</a>
+    <a class="tab" data-target="vehicle-details-section">Détails</a>
+    <a class="tab" data-target="vehicle-features-section">Équipements</a>
+    <a class="tab" data-target="vehicle-condition-section">État</a>
+    <a class="tab" data-target="media-section">Médias</a>
   </div>
-</div> 
+
+  <!-- Section Informations de l'annonce -->
+  <div id="infos-section" class="section-content">
+    <h2 class="text-xl font-semibold mb-4">Informations de l'annonce</h2>
+    
+    <div class="form-control w-full">
+      <%= f.label :title, "Titre de l'annonce", class: "label" %>
+      <%= f.text_field :title, class: "input input-bordered w-full", placeholder: "Ex: BMW Série 3 320d M Sport 2019" %>
+    </div>
+
+    <div class="form-control w-full">
+      <%= f.label :description, "Description", class: "label" %>
+      <%= f.text_area :description, class: "textarea textarea-bordered h-24", placeholder: "Décrivez votre véhicule en détail..." %>
+    </div>
+  </div>
+
+  <!-- Section Détails du véhicule -->
+  <div id="vehicle-section" class="section-content hidden">
+    <h2 class="text-xl font-semibold mb-4">Détails du véhicule</h2>
+    
+    <%= fields_for :vehicle do |v| %>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <div class="form-control w-full">
+          <%= v.label :license_plate, "Immatriculation", class: "label" %>
+          <%= v.text_field :license_plate, 
+              class: "input input-bordered w-full", 
+              placeholder: "Ex: AA-123-AA",
+              data: { 
+                controller: "vehicle-info",
+                action: "input->vehicle-info#validateLicensePlate blur->vehicle-info#fetchInfo",
+                vehicle_info_target: "licensePlate"
+              } %>
+          <div class="text-sm text-error hidden" data-vehicle-info-target="licensePlateError"></div>
+        </div>
+        
+        <div class="form-control w-full">
+          <%= v.label :vin, "Numéro de série (VIN)", class: "label" %>
+          <%= v.text_field :vin, 
+              class: "input input-bordered w-full", 
+              placeholder: "Ex: WVWZZZ1KZAW123456",
+              data: { 
+                controller: "vehicle-info",
+                action: "input->vehicle-info#validateVin blur->vehicle-info#fetchInfo",
+                vehicle_info_target: "vin"
+              } %>
+          <div class="text-sm text-error hidden" data-vehicle-info-target="vinError"></div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <div class="form-control w-full">
+          <%= v.label :make, "Marque", class: "label" %>
+          <div data-controller="car-brands" data-car-brands-url-value="<%= search_car_brands_path %>">
+            <%= v.select :make, 
+              [
+                ['4 Stroke', '4 Stroke'],
+                ['Abarth', 'Abarth'],
+                ['Ac', 'Ac'],
+                ['Acrea', 'Acrea'],
+                ['Acura', 'Acura'],
+                ['Ad Tramontana', 'Ad Tramontana'],
+                ['Adler', 'Adler'],
+                ['Aiways', 'Aiways'],
+                ['Aixam', 'Aixam'],
+                ['Al Melling', 'Al Melling'],
+                ['Aleko', 'Aleko'],
+                ['Alfa Romeo', 'Alfa Romeo'],
+                ['Alke', 'Alke'],
+                ['Alpina', 'Alpina'],
+                ['Alpine', 'Alpine'],
+                ['Alvis', 'Alvis'],
+                ['Am General', 'Am General'],
+                ['Amc', 'Amc'],
+                ['Amphicar', 'Amphicar'],
+                ['Anaig', 'Anaig'],
+                ['Apal', 'Apal'],
+                ['Aptera Motors', 'Aptera Motors'],
+                ['Ariel', 'Ariel'],
+                ['Armstrong Siddeley', 'Armstrong Siddeley'],
+                ['Aro', 'Aro'],
+                ['Artega', 'Artega'],
+                ['Ascari', 'Ascari'],
+                ['Aspark', 'Aspark'],
+                ['Aspp', 'Aspp'],
+                ['Aston Martin', 'Aston Martin'],
+                ['Auburn', 'Auburn'],
+                ['Audi', 'Audi'],
+                ['Austin', 'Austin'],
+                ['Austin Healey', 'Austin Healey'],
+                ['Auto Union', 'Auto Union'],
+                ['Autobianchi', 'Autobianchi'],
+                ['Auverland', 'Auverland'],
+                ['Bee Automobiles', 'Bee Automobiles'],
+                ['Beijing', 'Beijing'],
+                ['Bellier', 'Bellier'],
+                ['Bentley', 'Bentley'],
+                ['Berliet', 'Berliet'],
+                ['Bertone', 'Bertone'],
+                ['Bitter', 'Bitter'],
+                ['Bizzarrini', 'Bizzarrini'],
+                ['Bluecar Groupe Bollore', 'Bluecar Groupe Bollore'],
+                ['Bmw', 'Bmw'],
+                ['Bollore', 'Bollore'],
+                ['Bongarini', 'Bongarini'],
+                ['Booxt', 'Booxt'],
+                ['Borgward', 'Borgward'],
+                ['Bowler', 'Bowler'],
+                ['Brabus', 'Brabus'],
+                ['Bremach', 'Bremach'],
+                ['Brilliance', 'Brilliance'],
+                ['Bristol', 'Bristol'],
+                ['Brooke Cars', 'Brooke Cars'],
+                ['Bugatti', 'Bugatti'],
+                ['Buick', 'Buick'],
+                ['Burby S', 'Burby S'],
+                ['Byd', 'Byd'],
+                ['Cadillac', 'Cadillac'],
+                ['Caparo', 'Caparo'],
+                ['Carbodies', 'Carbodies'],
+                ['Carbontech', 'Carbontech'],
+                ['Carver', 'Carver'],
+                ['Casalini', 'Casalini'],
+                ['Caterham', 'Caterham'],
+                ['Cg', 'Cg'],
+                ['Chatenet', 'Chatenet'],
+                ['Chenard Et Walcker', 'Chenard Et Walcker'],
+                ['Chery', 'Chery'],
+                ['Chevrolet', 'Chevrolet'],
+                ['China Automobile', 'China Automobile'],
+                ['Chrysler', 'Chrysler'],
+                ['Citroen', 'Citroen'],
+                ['Clenet', 'Clenet'],
+                ['Commuter Cars', 'Commuter Cars'],
+                ['Connaught', 'Connaught'],
+                ['Coste', 'Coste'],
+                ['Courb', 'Courb'],
+                ['Cupra', 'Cupra'],
+                ['Curbee', 'Curbee'],
+                ['Dacia', 'Dacia'],
+                ['Daewoo', 'Daewoo'],
+                ['Daf', 'Daf'],
+                ['Daihatsu', 'Daihatsu'],
+                ['Daimler', 'Daimler'],
+                ['Dallara', 'Dallara'],
+                ['Dangel', 'Dangel'],
+                ['Darmont', 'Darmont'],
+                ['Datsun', 'Datsun'],
+                ['De Fremond', 'De Fremond'],
+                ['De La Chapelle', 'De La Chapelle'],
+                ['De Lorean', 'De Lorean'],
+                ['De Soto', 'De Soto'],
+                ['De Tomaso', 'De Tomaso'],
+                ['Delage', 'Delage'],
+                ['Delahaye', 'Delahaye'],
+                ['Denza', 'Denza'],
+                ['Deronda', 'Deronda'],
+                ['Deutsch-bonnet', 'Deutsch-bonnet'],
+                ['Devinci', 'Devinci'],
+                ['Devon', 'Devon'],
+                ['Dfsk', 'Dfsk'],
+                ['Dkw', 'Dkw'],
+                ['Dodge', 'Dodge'],
+                ['Dongfeng', 'Dongfeng'],
+                ['Donkervoort', 'Donkervoort'],
+                ['Donnet', 'Donnet'],
+                ['Dr Motor', 'Dr Motor'],
+                ['Ds', 'Ds'],
+                ['Due', 'Due'],
+                ['Duesenberg', 'Duesenberg'],
+                ['Eagle', 'Eagle'],
+                ['Ebro', 'Ebro'],
+                ['Eclassic Cars', 'Eclassic Cars'],
+                ['Edsel', 'Edsel'],
+                ['Elv', 'Elv'],
+                ['Embuggy', 'Embuggy'],
+                ['Erad', 'Erad'],
+                ['Estrima', 'Estrima'],
+                ['Exagon Motors', 'Exagon Motors'],
+                ['Excalibur', 'Excalibur'],
+                ['Facel Vega', 'Facel Vega'],
+                ['Fam Automobiles', 'Fam Automobiles'],
+                ['Faraday Future', 'Faraday Future'],
+                ['Faralli & Mazzanti', 'Faralli & Mazzanti'],
+                ['Farbio', 'Farbio'],
+                ['Ferrari', 'Ferrari'],
+                ['Fest', 'Fest'],
+                ['Fiat', 'Fiat'],
+                ['Fioravanti', 'Fioravanti'],
+                ['Fisker', 'Fisker'],
+                ['Ford', 'Ford'],
+                ['Fornasari', 'Fornasari'],
+                ['Foton', 'Foton'],
+                ['Fso', 'Fso'],
+                ['Gac Gonow', 'Gac Gonow'],
+                ['Gac Motor', 'Gac Motor'],
+                ['Geely', 'Geely'],
+                ['Genesis', 'Genesis'],
+                ['Gillet', 'Gillet'],
+                ['Ginetta', 'Ginetta'],
+                ['Giotti Victoria', 'Giotti Victoria'],
+                ['Glas', 'Glas'],
+                ['Gmc', 'Gmc'],
+                ['Gme', 'Gme'],
+                ['Goupil', 'Goupil'],
+                ['Grandin', 'Grandin'],
+                ['Great Wall', 'Great Wall'],
+                ['Grecav', 'Grecav'],
+                ['Gumpert', 'Gumpert'],
+                ['Healey', 'Healey'],
+                ['Helem', 'Helem'],
+                ['Hennessey', 'Hennessey'],
+                ['Heuliez', 'Heuliez'],
+                ['Hillman', 'Hillman'],
+                ['Hispano Suiza Cars', 'Hispano Suiza Cars'],
+                ['Holden', 'Holden'],
+                ['Hommell', 'Hommell'],
+                ['Honda', 'Honda'],
+                ['Hongqi', 'Hongqi'],
+                ['Hopium', 'Hopium'],
+                ['Hotchkiss', 'Hotchkiss'],
+                ['Howmet', 'Howmet'],
+                ['Hudson', 'Hudson'],
+                ['Humber', 'Humber'],
+                ['Hummer', 'Hummer'],
+                ['Hyundai', 'Hyundai'],
+                ['Imperial', 'Imperial'],
+                ['Ineos', 'Ineos'],
+                ['Infiniti', 'Infiniti'],
+                ['Innocenti', 'Innocenti'],
+                ['Innotech', 'Innotech'],
+                ['Intermeccanica', 'Intermeccanica'],
+                ['International', 'International'],
+                ['Invicta', 'Invicta'],
+                ['Iso', 'Iso'],
+                ['Isorivolta', 'Isorivolta'],
+                ['Isuzu', 'Isuzu'],
+                ['Italcar', 'Italcar'],
+                ['Iveco', 'Iveco'],
+                ['Jaguar', 'Jaguar'],
+                ['Jannarelly', 'Jannarelly'],
+                ['Jdm Simpa', 'Jdm Simpa'],
+                ['Jeep', 'Jeep'],
+                ['Jensen', 'Jensen'],
+                ['Karma', 'Karma'],
+                ['Kassbohrer Setra', 'Kassbohrer Setra'],
+                ['Kia', 'Kia'],
+                ['Koenigsegg', 'Koenigsegg'],
+                ['Ktm', 'Ktm'],
+                ['Lada', 'Lada'],
+                ['Lagonda', 'Lagonda'],
+                ['Lamborghini', 'Lamborghini'],
+                ['Lancia', 'Lancia'],
+                ['Land Rover', 'Land Rover'],
+                ['Landwind', 'Landwind'],
+                ['Lantana', 'Lantana'],
+                ['Laraki', 'Laraki'],
+                ['Ldv', 'Ldv'],
+                ['Leapmotor', 'Leapmotor'],
+                ['Levc', 'Levc'],
+                ['Lexus', 'Lexus'],
+                ['Lightyear', 'Lightyear'],
+                ['Ligier', 'Ligier'],
+                ['Lincoln', 'Lincoln'],
+                ['Lister', 'Lister'],
+                ['Little', 'Little'],
+                ['Lola', 'Lola'],
+                ['London Taxi Company', 'London Taxi Company'],
+                ['Loremo', 'Loremo'],
+                ['Lotus', 'Lotus'],
+                ['Lucid', 'Lucid'],
+                ['Lumeneo', 'Lumeneo'],
+                ['Lynk & Co', 'Lynk & Co'],
+                ['Mahindra', 'Mahindra'],
+                ['Man', 'Man'],
+                ['Marcadier', 'Marcadier'],
+                ['Marcos', 'Marcos'],
+                ['Martin', 'Martin'],
+                ['Marussia', 'Marussia'],
+                ['Maruti', 'Maruti'],
+                ['Maserati', 'Maserati'],
+                ['Matra', 'Matra'],
+                ['Maxus', 'Maxus'],
+                ['Maybach', 'Maybach'],
+                ['Mazda', 'Mazda'],
+                ['Mclaren', 'Mclaren'],
+                ['Mdi', 'Mdi'],
+                ['Mega', 'Mega'],
+                ['Melkus', 'Melkus'],
+                ['Mercedes', 'Mercedes'],
+                ['Mercedes-amg', 'Mercedes-amg'],
+                ['Mercury', 'Mercury'],
+                ['Messerschmitt', 'Messerschmitt'],
+                ['Mev', 'Mev'],
+                ['Meyers Manx', 'Meyers Manx'],
+                ['Mg', 'Mg'],
+                ['Mia Electric', 'Mia Electric'],
+                ['Micro', 'Micro'],
+                ['Microcar', 'Microcar'],
+                ['Microdrive', 'Microdrive'],
+                ['Minauto', 'Minauto'],
+                ['Mini', 'Mini'],
+                ['Mitsubishi', 'Mitsubishi'],
+                ['Mitsubishi Fuso', 'Mitsubishi Fuso'],
+                ['Mitsuoka', 'Mitsuoka'],
+                ['Mlt', 'Mlt'],
+                ['Mobilize', 'Mobilize'],
+                ['Moke', 'Moke'],
+                ['Monteverdi', 'Monteverdi'],
+                ['Morgan', 'Morgan'],
+                ['Morris', 'Morris'],
+                ['Mosler', 'Mosler'],
+                ['Mpm Motors', 'Mpm Motors'],
+                ['Munro', 'Munro'],
+                ['Mvs', 'Mvs'],
+                ['Mygale', 'Mygale'],
+                ['Namx', 'Namx'],
+                ['Nanjing', 'Nanjing'],
+                ['Nash', 'Nash'],
+                ['Neckar', 'Neckar'],
+                ['Newteon', 'Newteon'],
+                ['Newyark', 'Newyark'],
+                ['Nio', 'Nio'],
+                ['Nissan', 'Nissan'],
+                ['Noble', 'Noble'],
+                ['Nosmoke', 'Nosmoke'],
+                ['Noun Electric', 'Noun Electric'],
+                ['Nsu', 'Nsu'],
+                ['Numexia', 'Numexia'],
+                ['Oldsmobile', 'Oldsmobile'],
+                ['Opel', 'Opel'],
+                ['Ora', 'Ora'],
+                ['Osi', 'Osi'],
+                ['Packard', 'Packard'],
+                ['Pagani', 'Pagani'],
+                ['Panhard', 'Panhard'],
+                ['Panoz', 'Panoz'],
+                ['Panther', 'Panther'],
+                ['Pegaso', 'Pegaso'],
+                ['Perana', 'Perana'],
+                ['Peugeot', 'Peugeot'],
+                ['Pgo', 'Pgo'],
+                ['Piaggio', 'Piaggio'],
+                ['Pilbeam', 'Pilbeam'],
+                ['Pininfarina', 'Pininfarina'],
+                ['Plymouth', 'Plymouth'],
+                ['Polestar', 'Polestar'],
+                ['Polski', 'Polski'],
+                ['Pontiac', 'Pontiac'],
+                ['Porsche', 'Porsche'],
+                ['Proton', 'Proton'],
+                ['Protoscar', 'Protoscar'],
+                ['Radical', 'Radical'],
+                ['Ram', 'Ram'],
+                ['Rcb', 'Rcb'],
+                ['Realm', 'Realm'],
+                ['Reliant', 'Reliant'],
+                ['Renault', 'Renault'],
+                ['Renault Trucks', 'Renault Trucks'],
+                ['Rene Bonnet', 'Rene Bonnet'],
+                ['Reva', 'Reva'],
+                ['Reynard', 'Reynard'],
+                ['Riley', 'Riley'],
+                ['Rimac', 'Rimac'],
+                ['Rinspeed', 'Rinspeed'],
+                ['Rivian', 'Rivian'],
+                ['Rolls Royce', 'Rolls Royce'],
+                ['Ronart', 'Ronart'],
+                ['Rosengart', 'Rosengart'],
+                ['Rover', 'Rover'],
+                ['Russo-baltique', 'Russo-baltique'],
+                ['Saab', 'Saab'],
+                ['Saic', 'Saic'],
+                ['Saleen', 'Saleen'],
+                ['Salica', 'Salica'],
+                ['Salmson', 'Salmson'],
+                ['Samsung', 'Samsung'],
+                ['Santana', 'Santana'],
+                ['Saturn', 'Saturn'],
+                ['Savel', 'Savel'],
+                ['Saviem', 'Saviem'],
+                ['Sbarro', 'Sbarro'],
+                ['Scania', 'Scania'],
+                ['Scion', 'Scion'],
+                ['Seat', 'Seat'],
+                ['Secma', 'Secma'],
+                ['Seres', 'Seres'],
+                ['Shelby', 'Shelby'],
+                ['Shuanghuan', 'Shuanghuan'],
+                ['Simca', 'Simca'],
+                ['Simplici', 'Simplici'],
+                ['Singer', 'Singer'],
+                ['Sivax', 'Sivax'],
+                ['Skoda', 'Skoda'],
+                ['Skyworth', 'Skyworth'],
+                ['Smart', 'Smart'],
+                ['Sms', 'Sms'],
+                ['Sovamag', 'Sovamag'],
+                ['Spectre', 'Spectre'],
+                ['Spyker', 'Spyker'],
+                ['Srt', 'Srt'],
+                ['Ssangyong', 'Ssangyong'],
+                ['Ssc', 'Ssc'],
+                ['Studebaker', 'Studebaker'],
+                ['Stutz', 'Stutz'],
+                ['Subaru', 'Subaru'],
+                ['Sunbeam', 'Sunbeam'],
+                ['Suzuki', 'Suzuki'],
+                ['Talbot', 'Talbot'],
+                ['Talbot Simca', 'Talbot Simca'],
+                ['Tata', 'Tata'],
+                ['Teilhol', 'Teilhol'],
+                ['Tesla', 'Tesla'],
+                ['Think', 'Think'],
+                ['Toyota', 'Toyota'],
+                ['Trabant', 'Trabant'],
+                ['Triumph', 'Triumph'],
+                ['Tvr', 'Tvr'],
+                ['Ultima', 'Ultima'],
+                ['Umm', 'Umm'],
+                ['Vaillante', 'Vaillante'],
+                ['Van Hool', 'Van Hool'],
+                ['Vanden Plas', 'Vanden Plas'],
+                ['Vauxhall', 'Vauxhall'],
+                ['Velam', 'Velam'],
+                ['Venturi', 'Venturi'],
+                ['Veritas', 'Veritas'],
+                ['Vespa', 'Vespa'],
+                ['Vinfast', 'Vinfast'],
+                ['Virago', 'Virago'],
+                ['Volkswagen', 'Volkswagen'],
+                ['Volteis', 'Volteis'],
+                ['Volvo', 'Volvo'],
+                ['Volvo Trucks', 'Volvo Trucks'],
+                ['Wallys Car', 'Wallys Car'],
+                ['Westfield', 'Westfield'],
+                ['Wiesmann', 'Wiesmann'],
+                ['Willys', 'Willys'],
+                ['Wolseley', 'Wolseley'],
+                ['Xev', 'Xev'],
+                ['Xiaomi', 'Xiaomi'],
+                ['Xinyang', 'Xinyang'],
+                ['Xpeng', 'Xpeng'],
+                ['Yangwang', 'Yangwang'],
+                ['Zagato', 'Zagato'],
+                ['Zap', 'Zap'],
+                ['Zastava', 'Zastava'],
+                ['Zeekr', 'Zeekr'],
+                ['Zenn', 'Zenn'],
+                ['Zenvo', 'Zenvo']
+              ],
+              { include_blank: "Sélectionnez une marque" },
+              { 
+                class: "select select-bordered w-full",
+                data: { 
+                  car_brands_target: "input",
+                  vehicle_info_target: "make"
+                }
+              } 
+            %>
+          </div>
+        </div>
+        
+        <div class="form-control w-full">
+          <%= v.label :model, "Modèle", class: "label" %>
+          <%= v.text_field :model, 
+              class: "input input-bordered w-full", 
+              data: { vehicle_info_target: "model" },
+              placeholder: "Ex: Série 3" %>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <div class="form-control w-full">
+          <%= v.label :year, "Année", class: "label" %>
+          <%= v.number_field :year, class: "input input-bordered w-full", min: 1900, max: Time.current.year, placeholder: "Ex: 2020" %>
+        </div>
+        
+        <div class="form-control w-full">
+          <%= v.label :price, "Prix (€)", class: "label" %>
+          <%= v.number_field :price, class: "input input-bordered w-full", min: 0, step: 100, placeholder: "Ex: 15000" %>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <div class="form-control w-full">
+          <%= v.label :kilometers, "Kilométrage", class: "label" %>
+          <%= v.number_field :kilometers, class: "input input-bordered w-full", min: 0, placeholder: "Ex: 50000" %>
+        </div>
+        
+        <div class="form-control w-full">
+          <%= v.label :fuel_type, "Type de carburant", class: "label" %>
+          <%= v.select :fuel_type, 
+            ['Essence', 'Diesel', 'Hybride', 'Électrique', 'GPL', 'Autre'],
+            { include_blank: "Sélectionnez un type de carburant" },
+            { class: "select select-bordered w-full" } 
+          %>
+        </div>
+      </div>
+
+      <div class="form-control w-full mb-4">
+        <%= v.label :transmission, "Transmission", class: "label" %>
+        <%= v.select :transmission, 
+          ['Manuelle', 'Automatique', 'Semi-automatique'],
+          { include_blank: "Sélectionnez un type de transmission" },
+          { class: "select select-bordered w-full" } 
+        %>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Section Détails supplémentaires du véhicule -->
+  <div id="vehicle-details-section" class="section-content hidden">
+    <h2 class="text-xl font-semibold mb-4">Détails supplémentaires du véhicule</h2>
+    
+    <%= fields_for :vehicle do |v| %>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <div class="form-control w-full">
+          <%= v.label :finition, "Finition/Version", class: "label" %>
+          <%= v.text_field :finition, class: "input input-bordered w-full", placeholder: "Ex: Pack Luxe, S LINE, INNOVA..." %>
+        </div>
+        
+        <div class="form-control w-full">
+          <%= v.label :doors, "Nombre de portes", class: "label" %>
+          <%= v.select :doors, 
+            [3, 5],
+            { include_blank: "Sélectionnez un nombre de portes" },
+            { class: "select select-bordered w-full" } 
+          %>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <div class="form-control w-full">
+          <%= v.label :exterior_color, "Couleur extérieure", class: "label" %>
+          <%= v.text_field :exterior_color, class: "input input-bordered w-full", placeholder: "Ex: Noir, Blanc, Rouge..." %>
+        </div>
+        
+        <div class="form-control w-full">
+          <%= v.label :interior_material, "Matière intérieure", class: "label" %>
+          <%= v.select :interior_material, 
+            ['Tissu', 'Cuir', 'Alcantara', 'Simili cuir', 'Mixte', 'Autre'],
+            { include_blank: "Sélectionnez la matière intérieure" },
+            { class: "select select-bordered w-full" } 
+          %>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <div class="form-control w-full">
+          <%= v.label :interior_color, "Couleur intérieure", class: "label" %>
+          <%= v.text_field :interior_color, class: "input input-bordered w-full", placeholder: "Ex: Noir, Beige..." %>
+        </div>
+        
+        <div class="form-control w-full">
+          <%= v.label :previous_owners, "Propriétaires précédents", class: "label" %>
+          <%= v.number_field :previous_owners, class: "input input-bordered w-full", min: 0, placeholder: "Ex: 1" %>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <div class="form-control w-full">
+          <%= v.label :location, "Lieu de visualisation", class: "label" %>
+          <%= v.text_field :location, class: "input input-bordered w-full", placeholder: "Ex: Paris, Lyon..." %>
+        </div>
+        
+        <div class="form-control w-full">
+          <%= v.label :non_smoker, "Véhicule non-fumeur", class: "label" %>
+          <div class="flex items-center space-x-4 pt-2 pl-2">
+            <label class="cursor-pointer flex items-center">
+              <%= v.radio_button :non_smoker, true, class: "radio radio-primary" %>
+              <span class="ml-2">Oui</span>
+            </label>
+            <label class="cursor-pointer flex items-center">
+              <%= v.radio_button :non_smoker, false, class: "radio radio-primary" %>
+              <span class="ml-2">Non</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider my-4">Historique et entretien</div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <div class="form-control w-full">
+          <%= v.label :last_service_date, "Date de la dernière révision", class: "label" %>
+          <%= v.date_field :last_service_date, class: "input input-bordered w-full" %>
+        </div>
+        
+        <div class="form-control w-full">
+          <%= v.label :has_service_history, "Carnet d'entretien disponible", class: "label" %>
+          <div class="flex items-center space-x-4 pt-2 pl-2">
+            <label class="cursor-pointer flex items-center">
+              <%= v.radio_button :has_service_history, true, class: "radio radio-primary" %>
+              <span class="ml-2">Oui</span>
+            </label>
+            <label class="cursor-pointer flex items-center">
+              <%= v.radio_button :has_service_history, false, class: "radio radio-primary" %>
+              <span class="ml-2">Non</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <div class="form-control w-full">
+          <%= v.label :next_ct_date, "Date du prochain contrôle technique", class: "label" %>
+          <%= v.date_field :next_ct_date, class: "input input-bordered w-full" %>
+        </div>
+        
+        <div class="form-control w-full">
+          <%= v.label :ct_expiry_date, "Date d'expiration du contrôle technique", class: "label" %>
+          <%= v.date_field :ct_expiry_date, class: "input input-bordered w-full" %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Section Équipements du véhicule -->
+  <div id="vehicle-features-section" class="section-content hidden">
+    <h2 class="text-xl font-semibold mb-4">Équipements et options du véhicule</h2>
+    
+    <%= fields_for :vehicle do |v| %>
+      <div class="form-control w-full mb-4">
+        <%= v.label :safety_features, "Équipements de sécurité", class: "label" %>
+        <div class="card bg-base-200 p-3 mb-2">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+            <% ["ABS", "ESP (Contrôle de stabilité)", "Airbags frontaux", "Airbags latéraux", "Airbags rideaux", "Alarme", "Verrouillage centralisé", "Fixations ISOFIX", "Détecteur de fatigue", "Système d'appel d'urgence"].each do |feature| %>
+              <div class="form-control">
+                <label class="label cursor-pointer justify-start">
+                  <input type="checkbox" class="checkbox checkbox-primary checkbox-sm mr-2" data-feature="safety" value="<%= feature %>">
+                  <span class="label-text"><%= feature %></span>
+                </label>
+              </div>
+            <% end %>
+          </div>
+        </div>
+        <%= v.text_area :safety_features, rows: 3, class: "textarea textarea-bordered w-full", placeholder: "Autres équipements de sécurité..." %>
+      </div>
+
+      <div class="form-control w-full mb-4">
+        <%= v.label :comfort_features, "Équipements de confort", class: "label" %>
+        <div class="card bg-base-200 p-3 mb-2">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+            <% ["Climatisation manuelle", "Climatisation automatique", "Climatisation bi-zone", "Sellerie cuir", "Sellerie tissu", "Sièges chauffants", "Sièges électriques", "Sièges à mémoire", "Régulateur de vitesse", "Limiteur de vitesse", "Direction assistée", "Vitres électriques avant", "Vitres électriques arrière", "Rétroviseurs électriques", "Rétroviseurs rabattables électriquement", "Toit ouvrant", "Toit panoramique", "Détecteur de pluie", "Allumage automatique des phares", "Aide au stationnement avant", "Aide au stationnement arrière", "Caméra de recul"].each do |feature| %>
+              <div class="form-control">
+                <label class="label cursor-pointer justify-start">
+                  <input type="checkbox" class="checkbox checkbox-primary checkbox-sm mr-2" data-feature="comfort" value="<%= feature %>">
+                  <span class="label-text"><%= feature %></span>
+                </label>
+              </div>
+            <% end %>
+          </div>
+        </div>
+        <%= v.text_area :comfort_features, rows: 3, class: "textarea textarea-bordered w-full", placeholder: "Autres équipements de confort..." %>
+      </div>
+
+      <div class="form-control w-full mb-4">
+        <%= v.label :multimedia_features, "Équipements multimédia", class: "label" %>
+        <div class="card bg-base-200 p-3 mb-2">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+            <% ["Système audio", "Navigation GPS", "Lecteur CD/DVD", "Prise auxiliaire", "Prise USB", "Bluetooth", "Écran tactile", "Apple CarPlay", "Android Auto", "Commandes au volant", "Système audio premium"].each do |feature| %>
+              <div class="form-control">
+                <label class="label cursor-pointer justify-start">
+                  <input type="checkbox" class="checkbox checkbox-primary checkbox-sm mr-2" data-feature="multimedia" value="<%= feature %>">
+                  <span class="label-text"><%= feature %></span>
+                </label>
+              </div>
+            <% end %>
+          </div>
+        </div>
+        <%= v.text_area :multimedia_features, rows: 3, class: "textarea textarea-bordered w-full", placeholder: "Autres équipements multimédia..." %>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <div class="form-control w-full">
+          <%= v.label :exterior_features, "Équipements extérieurs", class: "label" %>
+          <div class="card bg-base-200 p-3 mb-2">
+            <div class="grid grid-cols-1 gap-2">
+              <% ["Jantes alliage", "Phares xénon", "Phares LED", "Feux antibrouillard", "Attelage de remorque", "Barres de toit", "Toit ouvrant", "Vitres teintées"].each do |feature| %>
+                <div class="form-control">
+                  <label class="label cursor-pointer justify-start">
+                    <input type="checkbox" class="checkbox checkbox-primary checkbox-sm mr-2" data-feature="exterior" value="<%= feature %>">
+                    <span class="label-text"><%= feature %></span>
+                  </label>
+                </div>
+              <% end %>
+            </div>
+          </div>
+          <%= v.text_area :exterior_features, rows: 3, class: "textarea textarea-bordered w-full", placeholder: "Autres équipements extérieurs..." %>
+        </div>
+        
+        <div class="form-control w-full">
+          <%= v.label :other_features, "Autres équipements", class: "label" %>
+          <div class="card bg-base-200 p-3 mb-2">
+            <div class="grid grid-cols-1 gap-2">
+              <% ["Volant multifonctions", "Ordinateur de bord", "Tapis de sol d'origine", "Cache-bagages", "Prise 12V", "Système Stop & Start", "Suspension sport", "Mode de conduite"].each do |feature| %>
+                <div class="form-control">
+                  <label class="label cursor-pointer justify-start">
+                    <input type="checkbox" class="checkbox checkbox-primary checkbox-sm mr-2" data-feature="other" value="<%= feature %>">
+                    <span class="label-text"><%= feature %></span>
+                  </label>
+                </div>
+              <% end %>
+            </div>
+          </div>
+          <%= v.text_area :other_features, rows: 3, class: "textarea textarea-bordered w-full", placeholder: "Autres équipements..." %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Section État du véhicule -->
+  <div id="vehicle-condition-section" class="section-content hidden">
+    <h2 class="text-xl font-semibold mb-4">État du véhicule et entretien</h2>
+    
+    <%= fields_for :vehicle do |v| %>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <div class="form-control w-full">
+          <%= v.label :body_condition, "État de la carrosserie", class: "label" %>
+          <%= v.text_area :body_condition, rows: 3, class: "textarea textarea-bordered w-full", placeholder: "Décrivez l'état de la carrosserie, rayures, bosses, etc." %>
+        </div>
+        
+        <div class="form-control w-full">
+          <%= v.label :interior_condition, "État de l'intérieur", class: "label" %>
+          <%= v.text_area :interior_condition, rows: 3, class: "textarea textarea-bordered w-full", placeholder: "Décrivez l'état de l'intérieur, usure des sièges, du volant, etc." %>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <div class="form-control w-full">
+          <%= v.label :tire_condition, "État des pneus", class: "label" %>
+          <%= v.text_area :tire_condition, rows: 3, class: "textarea textarea-bordered w-full", placeholder: "Décrivez l'état des pneus, usure, marque, etc." %>
+        </div>
+        
+        <div class="form-control w-full">
+          <%= v.label :recent_works, "Travaux récents effectués", class: "label" %>
+          <%= v.text_area :recent_works, rows: 3, class: "textarea textarea-bordered w-full", placeholder: "Décrivez les travaux récents effectués: distribution, vidange, freins, etc." %>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <div class="form-control w-full">
+          <%= v.label :issues, "Points à signaler", class: "label" %>
+          <%= v.text_area :issues, rows: 3, class: "textarea textarea-bordered w-full", placeholder: "Décrivez les éventuels problèmes mécaniques, électroniques, etc." %>
+        </div>
+        
+        <div class="form-control w-full">
+          <%= v.label :expected_costs, "Frais à prévoir", class: "label" %>
+          <%= v.text_area :expected_costs, rows: 3, class: "textarea textarea-bordered w-full", placeholder: "Décrivez les frais à prévoir prochainement" %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Section Médias -->
+  <div id="media-section" class="section-content hidden">
+    <h2 class="text-xl font-semibold mb-4">Médias</h2>
+    
+    <div class="form-control w-full">
+      <h3 class="text-lg font-semibold mb-4">Médias principaux</h3>
+      
+      <div class="space-y-6">
+        <div class="card bg-base-200 p-4">
+          <h4 class="font-medium mb-3">Photos principales</h4>
+          <div class="flex items-center justify-center w-full">
+            <label class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg border-neutral-content hover:bg-base-300 cursor-pointer">
+              <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                <svg class="w-8 h-8 mb-3 text-neutral-content" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                </svg>
+                <p class="mb-2 text-sm text-neutral-content"><span class="font-semibold">Cliquez pour télécharger</span> ou glissez-déposez</p>
+                <p class="text-xs text-neutral-content">PNG, JPG ou JPEG (MAX. 10MB)</p>
+              </div>
+              <%= f.file_field :photos, multiple: true, class: "hidden", accept: "image/*" %>
+            </label>
+          </div>
+          <div id="photos-preview" class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4"></div>
+        </div>
+        
+        <div class="card bg-base-200 p-4">
+          <h4 class="font-medium mb-3">Vidéos</h4>
+          <div class="flex items-center justify-center w-full">
+            <label class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg border-neutral-content hover:bg-base-300 cursor-pointer">
+              <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                <svg class="w-8 h-8 mb-3 text-neutral-content" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                </svg>
+                <p class="mb-2 text-sm text-neutral-content"><span class="font-semibold">Cliquez pour télécharger</span> ou glissez-déposez</p>
+                <p class="text-xs text-neutral-content">MP4, MOV ou AVI (MAX. 100MB)</p>
+              </div>
+              <%= f.file_field :videos, multiple: true, class: "hidden", accept: "video/*" %>
+            </label>
+          </div>
+          <div id="videos-preview" class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4"></div>
+        </div>
+        
+        <div class="card bg-base-200 p-4">
+          <h4 class="font-medium mb-3">Documents administratifs</h4>
+          <div class="flex items-center justify-center w-full">
+            <label class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg border-neutral-content hover:bg-base-300 cursor-pointer">
+              <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                <svg class="w-8 h-8 mb-3 text-neutral-content" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                </svg>
+                <p class="mb-2 text-sm text-neutral-content"><span class="font-semibold">Cliquez pour télécharger</span> ou glissez-déposez</p>
+                <p class="text-xs text-neutral-content">PDF, JPG, JPEG ou PNG (MAX. 10MB)</p>
+              </div>
+              <%= f.file_field :documents, multiple: true, class: "hidden", accept: ".pdf,.jpg,.jpeg,.png" %>
+            </label>
+          </div>
+          <div id="documents-preview" class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-control w-full mt-8">
+      <h3 class="text-lg font-semibold mb-4">Dossiers média</h3>
+      
+      <div id="media-folders" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <template id="media-folder-template">
+          <div class="media-folder card bg-base-200 hover:bg-base-300 transition-colors duration-200">
+            <div class="card-body p-4">
+              <div class="flex items-center justify-between mb-4">
+                <div class="form-control flex-1 mr-4">
+                  <label class="label">Nom du dossier</label>
+                  <input type="text" name="media_folders[][name]" class="input input-bordered w-full" placeholder="Ex: Photos de la restauration">
+                </div>
+                
+                <div class="form-control">
+                  <label class="label">Visibilité</label>
+                  <select name="media_folders[][visibility]" class="select select-bordered">
+                    <option value="public">Public</option>
+                    <option value="private">Privé</option>
+                  </select>
+                </div>
+              </div>
+              
+              <div class="form-control mb-4">
+                <label class="label">Description</label>
+                <textarea name="media_folders[][description]" class="textarea textarea-bordered" placeholder="Description du contenu du dossier..."></textarea>
+              </div>
+              
+              <div class="grid grid-cols-1 gap-4">
+                <div class="form-control">
+                  <label class="label">Photos</label>
+                  <div class="flex items-center justify-center w-full">
+                    <label class="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed rounded-lg border-neutral-content hover:bg-base-300 cursor-pointer">
+                      <div class="flex flex-col items-center justify-center">
+                        <svg class="w-6 h-6 mb-2 text-neutral-content" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                        <p class="text-xs text-neutral-content">Photos</p>
+                      </div>
+                      <input type="file" name="media_folders[][photos]" multiple accept="image/*" class="hidden">
+                    </label>
+                  </div>
+                </div>
+                
+                <div class="form-control">
+                  <label class="label">Vidéos</label>
+                  <div class="flex items-center justify-center w-full">
+                    <label class="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed rounded-lg border-neutral-content hover:bg-base-300 cursor-pointer">
+                      <div class="flex flex-col items-center justify-center">
+                        <svg class="w-6 h-6 mb-2 text-neutral-content" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                        </svg>
+                        <p class="text-xs text-neutral-content">Vidéos</p>
+                      </div>
+                      <input type="file" name="media_folders[][videos]" multiple accept="video/*" class="hidden">
+                    </label>
+                  </div>
+                </div>
+                
+                <div class="form-control">
+                  <label class="label">Documents</label>
+                  <div class="flex items-center justify-center w-full">
+                    <label class="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed rounded-lg border-neutral-content hover:bg-base-300 cursor-pointer">
+                      <div class="flex flex-col items-center justify-center">
+                        <svg class="w-6 h-6 mb-2 text-neutral-content" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                        </svg>
+                        <p class="text-xs text-neutral-content">Documents</p>
+                      </div>
+                      <input type="file" name="media_folders[][documents]" multiple accept=".pdf,.jpg,.jpeg,.png" class="hidden">
+                    </label>
+                  </div>
+                </div>
+              </div>
+              
+              <button type="button" class="btn btn-error btn-sm mt-4" onclick="this.closest('.media-folder').remove()">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                </svg>
+                Supprimer
+              </button>
+            </div>
+          </div>
+        </template>
+        
+        <button type="button" class="btn btn-outline h-full min-h-[200px]" onclick="addMediaFolder()">
+          <div class="flex flex-col items-center justify-center">
+            <svg class="w-8 h-8 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+            </svg>
+            <span>Ajouter un dossier média</span>
+          </div>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex justify-end space-x-4 mt-8">
+    <%= link_to "Annuler", listings_path, class: "btn btn-ghost" %>
+    <%= f.submit "Publier l'annonce", class: "btn btn-primary" %>
+  </div>
+<% end %>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Gestion des onglets
+  const tabs = document.querySelectorAll('.tab');
+  const sections = document.querySelectorAll('.section-content');
+  
+  tabs.forEach(tab => {
+    tab.addEventListener('click', function() {
+      // Retirer la classe active de tous les onglets
+      tabs.forEach(t => t.classList.remove('tab-active'));
+      // Ajouter la classe active à l'onglet cliqué
+      this.classList.add('tab-active');
+      
+      // Cacher toutes les sections
+      sections.forEach(section => section.classList.add('hidden'));
+      // Afficher la section correspondante
+      const targetId = this.getAttribute('data-target');
+      document.getElementById(targetId).classList.remove('hidden');
+    });
+  });
+
+  // Gestion des cases à cocher pour les équipements
+  document.querySelectorAll('input[type="checkbox"][data-feature]').forEach(checkbox => {
+    checkbox.addEventListener('change', function() {
+      const featureType = this.getAttribute('data-feature');
+      const featureValue = this.value;
+      let textareaId;
+      
+      switch(featureType) {
+        case 'safety':
+          textareaId = 'vehicle_safety_features';
+          break;
+        case 'comfort':
+          textareaId = 'vehicle_comfort_features';
+          break;
+        case 'multimedia':
+          textareaId = 'vehicle_multimedia_features';
+          break;
+        case 'exterior':
+          textareaId = 'vehicle_exterior_features';
+          break;
+        case 'other':
+          textareaId = 'vehicle_other_features';
+          break;
+      }
+      
+      const textarea = document.getElementById(textareaId);
+      if (textarea) {
+        let features = textarea.value ? textarea.value.split('\n').filter(f => f.trim() !== '') : [];
+        
+        if (this.checked) {
+          if (!features.includes(featureValue)) {
+            features.push(featureValue);
+          }
+        } else {
+          features = features.filter(f => f !== featureValue);
+        }
+        
+        textarea.value = features.join('\n');
+      }
+    });
+  });
+
+  // Gestion des aperçus de fichiers
+  function handleFileSelect(event, previewId) {
+    const files = event.target.files;
+    const preview = document.getElementById(previewId);
+    preview.innerHTML = '';
+
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const reader = new FileReader();
+
+      reader.onload = function(e) {
+        const div = document.createElement('div');
+        div.className = 'relative group';
+        
+        if (file.type.startsWith('image/')) {
+          const img = document.createElement('img');
+          img.src = e.target.result;
+          img.className = 'w-full h-32 object-cover rounded-lg';
+          div.appendChild(img);
+        } else if (file.type.startsWith('video/')) {
+          const video = document.createElement('video');
+          video.src = e.target.result;
+          video.className = 'w-full h-32 object-cover rounded-lg';
+          video.controls = true;
+          div.appendChild(video);
+        } else {
+          const icon = document.createElement('div');
+          icon.className = 'w-full h-32 flex items-center justify-center bg-base-300 rounded-lg';
+          icon.innerHTML = `
+            <svg class="w-12 h-12 text-neutral-content" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+            </svg>
+          `;
+          div.appendChild(icon);
+        }
+
+        const overlay = document.createElement('div');
+        overlay.className = 'absolute inset-0 bg-black bg-opacity-40 opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-lg flex items-center justify-center text-white';
+        overlay.innerHTML = `
+          <div class="text-center">
+            <div class="badge badge-accent">${file.name.split('.').pop()}</div>
+            <p class="text-xs mt-1">${(file.size / 1024).toFixed(0)} KB</p>
+          </div>
+        `;
+        
+        div.appendChild(overlay);
+        preview.appendChild(div);
+      };
+
+      reader.readAsDataURL(file);
+    }
+  }
+
+  // Ajouter les écouteurs d'événements pour les aperçus de fichiers
+  document.querySelectorAll('input[type="file"]').forEach(input => {
+    input.addEventListener('change', function(e) {
+      const previewId = this.closest('.form-control').querySelector('div[id$="-preview"]')?.id;
+      if (previewId) {
+        handleFileSelect(e, previewId);
+      }
+    });
+  });
+});
+
+function addMediaFolder() {
+  const template = document.getElementById('media-folder-template');
+  const container = document.getElementById('media-folders');
+  const clone = template.content.cloneNode(true);
+  container.insertBefore(clone, template);
+}
+</script> 
