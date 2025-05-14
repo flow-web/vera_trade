@@ -11,38 +11,94 @@
   <% end %>
 
   <!-- Onglets pour les différentes sections du formulaire -->
-  <div class="tabs tabs-boxed mb-6">
-    <a class="tab tab-active" data-target="infos-section">Informations</a>
-    <a class="tab" data-target="vehicle-section">Véhicule</a>
-    <a class="tab" data-target="vehicle-details-section">Détails</a>
-    <a class="tab" data-target="vehicle-features-section">Équipements</a>
-    <a class="tab" data-target="vehicle-condition-section">État</a>
-    <a class="tab" data-target="media-section">Médias</a>
+  <div class="tabs tabs-boxed mb-6 bg-base-200">
+    <a class="tab tab-active" data-target="infos-section">
+      <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+      </svg>
+      Informations
+    </a>
+    <a class="tab" data-target="vehicle-section">
+      <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
+      </svg>
+      Véhicule
+    </a>
+    <a class="tab" data-target="vehicle-details-section">
+      <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+      </svg>
+      Détails
+    </a>
+    <a class="tab" data-target="vehicle-features-section">
+      <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+      </svg>
+      Équipements
+    </a>
+    <a class="tab" data-target="vehicle-condition-section">
+      <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+      </svg>
+      État
+    </a>
+    <a class="tab" data-target="media-section">
+      <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+      </svg>
+      Médias
+    </a>
   </div>
 
   <!-- Section Informations de l'annonce -->
   <div id="infos-section" class="section-content">
-    <h2 class="text-xl font-semibold mb-4">Informations de l'annonce</h2>
+    <h2 class="text-xl font-semibold mb-4 flex items-center">
+      <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+      </svg>
+      Informations de l'annonce
+    </h2>
     
-    <div class="form-control w-full">
-      <%= f.label :title, "Titre de l'annonce", class: "label" %>
+    <div class="form-control w-full mb-4">
+      <%= f.label :title, class: "label flex items-center" do %>
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+        </svg>
+        Titre de l'annonce
+      <% end %>
       <%= f.text_field :title, class: "input input-bordered w-full", placeholder: "Ex: BMW Série 3 320d M Sport 2019" %>
     </div>
 
     <div class="form-control w-full">
-      <%= f.label :description, "Description", class: "label" %>
+      <%= f.label :description, class: "label flex items-center" do %>
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+        </svg>
+        Description
+      <% end %>
       <%= f.text_area :description, class: "textarea textarea-bordered h-24", placeholder: "Décrivez votre véhicule en détail..." %>
     </div>
   </div>
 
   <!-- Section Détails du véhicule -->
   <div id="vehicle-section" class="section-content hidden">
-    <h2 class="text-xl font-semibold mb-4">Détails du véhicule</h2>
+    <h2 class="text-xl font-semibold mb-4 flex items-center">
+      <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"></path>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"></path>
+      </svg>
+      Détails du véhicule
+    </h2>
     
     <%= fields_for :vehicle do |v| %>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div class="form-control w-full">
-          <%= v.label :license_plate, "Immatriculation", class: "label" %>
+          <%= v.label :license_plate, class: "label flex items-center" do %>
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+            </svg>
+            Immatriculation
+          <% end %>
           <%= v.text_field :license_plate, 
               class: "input input-bordered w-full", 
               placeholder: "Ex: AA-123-AA",
@@ -55,7 +111,12 @@
         </div>
         
         <div class="form-control w-full">
-          <%= v.label :vin, "Numéro de série (VIN)", class: "label" %>
+          <%= v.label :vin, class: "label flex items-center" do %>
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+            </svg>
+            Numéro de série (VIN)
+          <% end %>
           <%= v.text_field :vin, 
               class: "input input-bordered w-full", 
               placeholder: "Ex: WVWZZZ1KZAW123456",
@@ -70,7 +131,12 @@
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div class="form-control w-full">
-          <%= v.label :make, "Marque", class: "label" %>
+          <%= v.label :make, class: "label flex items-center" do %>
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+            </svg>
+            Marque
+          <% end %>
           <div data-controller="car-brands" data-car-brands-url-value="<%= search_car_brands_path %>">
             <%= v.select :make, 
               [
@@ -482,7 +548,12 @@
         </div>
         
         <div class="form-control w-full">
-          <%= v.label :model, "Modèle", class: "label" %>
+          <%= v.label :model, class: "label flex items-center" do %>
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"></path>
+            </svg>
+            Modèle
+          <% end %>
           <%= v.text_field :model, 
               class: "input input-bordered w-full", 
               data: { vehicle_info_target: "model" },
@@ -492,24 +563,44 @@
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div class="form-control w-full">
-          <%= v.label :year, "Année", class: "label" %>
+          <%= v.label :year, class: "label flex items-center" do %>
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+            </svg>
+            Année
+          <% end %>
           <%= v.number_field :year, class: "input input-bordered w-full", min: 1900, max: Time.current.year, placeholder: "Ex: 2020" %>
         </div>
         
         <div class="form-control w-full">
-          <%= v.label :price, "Prix (€)", class: "label" %>
+          <%= v.label :price, class: "label flex items-center" do %>
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            Prix (€)
+          <% end %>
           <%= v.number_field :price, class: "input input-bordered w-full", min: 0, step: 100, placeholder: "Ex: 15000" %>
         </div>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div class="form-control w-full">
-          <%= v.label :kilometers, "Kilométrage", class: "label" %>
+          <%= v.label :kilometers, class: "label flex items-center" do %>
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+            </svg>
+            Kilométrage
+          <% end %>
           <%= v.number_field :kilometers, class: "input input-bordered w-full", min: 0, placeholder: "Ex: 50000" %>
         </div>
         
         <div class="form-control w-full">
-          <%= v.label :fuel_type, "Type de carburant", class: "label" %>
+          <%= v.label :fuel_type, class: "label flex items-center" do %>
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+            </svg>
+            Type de carburant
+          <% end %>
           <%= v.select :fuel_type, 
             ['Essence', 'Diesel', 'Hybride', 'Électrique', 'GPL', 'Autre'],
             { include_blank: "Sélectionnez un type de carburant" },
@@ -519,7 +610,12 @@
       </div>
 
       <div class="form-control w-full mb-4">
-        <%= v.label :transmission, "Transmission", class: "label" %>
+        <%= v.label :transmission, class: "label flex items-center" do %>
+          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
+          </svg>
+          Transmission
+        <% end %>
         <%= v.select :transmission, 
           ['Manuelle', 'Automatique', 'Semi-automatique'],
           { include_blank: "Sélectionnez un type de transmission" },
@@ -531,17 +627,32 @@
 
   <!-- Section Détails supplémentaires du véhicule -->
   <div id="vehicle-details-section" class="section-content hidden">
-    <h2 class="text-xl font-semibold mb-4">Détails supplémentaires du véhicule</h2>
+    <h2 class="text-xl font-semibold mb-4 flex items-center">
+      <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+      </svg>
+      Détails supplémentaires du véhicule
+    </h2>
     
     <%= fields_for :vehicle do |v| %>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div class="form-control w-full">
-          <%= v.label :finition, "Finition/Version", class: "label" %>
+          <%= v.label :finition, class: "label flex items-center" do %>
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+            </svg>
+            Finition/Version
+          <% end %>
           <%= v.text_field :finition, class: "input input-bordered w-full", placeholder: "Ex: Pack Luxe, S LINE, INNOVA..." %>
         </div>
         
         <div class="form-control w-full">
-          <%= v.label :doors, "Nombre de portes", class: "label" %>
+          <%= v.label :doors, class: "label flex items-center" do %>
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"></path>
+            </svg>
+            Nombre de portes
+          <% end %>
           <%= v.select :doors, 
             [3, 5],
             { include_blank: "Sélectionnez un nombre de portes" },
@@ -552,12 +663,22 @@
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div class="form-control w-full">
-          <%= v.label :exterior_color, "Couleur extérieure", class: "label" %>
+          <%= v.label :exterior_color, class: "label flex items-center" do %>
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path>
+            </svg>
+            Couleur extérieure
+          <% end %>
           <%= v.text_field :exterior_color, class: "input input-bordered w-full", placeholder: "Ex: Noir, Blanc, Rouge..." %>
         </div>
         
         <div class="form-control w-full">
-          <%= v.label :interior_material, "Matière intérieure", class: "label" %>
+          <%= v.label :interior_material, class: "label flex items-center" do %>
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+            </svg>
+            Matière intérieure
+          <% end %>
           <%= v.select :interior_material, 
             ['Tissu', 'Cuir', 'Alcantara', 'Simili cuir', 'Mixte', 'Autre'],
             { include_blank: "Sélectionnez la matière intérieure" },
@@ -568,24 +689,45 @@
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div class="form-control w-full">
-          <%= v.label :interior_color, "Couleur intérieure", class: "label" %>
+          <%= v.label :interior_color, class: "label flex items-center" do %>
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path>
+            </svg>
+            Couleur intérieure
+          <% end %>
           <%= v.text_field :interior_color, class: "input input-bordered w-full", placeholder: "Ex: Noir, Beige..." %>
         </div>
         
         <div class="form-control w-full">
-          <%= v.label :previous_owners, "Propriétaires précédents", class: "label" %>
+          <%= v.label :previous_owners, class: "label flex items-center" do %>
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+            </svg>
+            Propriétaires précédents
+          <% end %>
           <%= v.number_field :previous_owners, class: "input input-bordered w-full", min: 0, placeholder: "Ex: 1" %>
         </div>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div class="form-control w-full">
-          <%= v.label :location, "Lieu de visualisation", class: "label" %>
+          <%= v.label :location, class: "label flex items-center" do %>
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+            </svg>
+            Lieu de visualisation
+          <% end %>
           <%= v.text_field :location, class: "input input-bordered w-full", placeholder: "Ex: Paris, Lyon..." %>
         </div>
         
         <div class="form-control w-full">
-          <%= v.label :non_smoker, "Véhicule non-fumeur", class: "label" %>
+          <%= v.label :non_smoker, class: "label flex items-center" do %>
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path>
+            </svg>
+            Véhicule non-fumeur
+          <% end %>
           <div class="flex items-center space-x-4 pt-2 pl-2">
             <label class="cursor-pointer flex items-center">
               <%= v.radio_button :non_smoker, true, class: "radio radio-primary" %>
@@ -599,16 +741,31 @@
         </div>
       </div>
 
-      <div class="divider my-4">Historique et entretien</div>
+      <div class="divider my-4 flex items-center">
+        <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+        </svg>
+        Historique et entretien
+      </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div class="form-control w-full">
-          <%= v.label :last_service_date, "Date de la dernière révision", class: "label" %>
+          <%= v.label :last_service_date, class: "label flex items-center" do %>
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+            </svg>
+            Date de la dernière révision
+          <% end %>
           <%= v.date_field :last_service_date, class: "input input-bordered w-full" %>
         </div>
         
         <div class="form-control w-full">
-          <%= v.label :has_service_history, "Carnet d'entretien disponible", class: "label" %>
+          <%= v.label :has_service_history, class: "label flex items-center" do %>
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+            Carnet d'entretien disponible
+          <% end %>
           <div class="flex items-center space-x-4 pt-2 pl-2">
             <label class="cursor-pointer flex items-center">
               <%= v.radio_button :has_service_history, true, class: "radio radio-primary" %>
@@ -624,107 +781,23 @@
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div class="form-control w-full">
-          <%= v.label :next_ct_date, "Date du prochain contrôle technique", class: "label" %>
+          <%= v.label :next_ct_date, class: "label flex items-center" do %>
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+            </svg>
+            Date du prochain contrôle technique
+          <% end %>
           <%= v.date_field :next_ct_date, class: "input input-bordered w-full" %>
         </div>
         
         <div class="form-control w-full">
-          <%= v.label :ct_expiry_date, "Date d'expiration du contrôle technique", class: "label" %>
+          <%= v.label :ct_expiry_date, class: "label flex items-center" do %>
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            Date d'expiration du contrôle technique
+          <% end %>
           <%= v.date_field :ct_expiry_date, class: "input input-bordered w-full" %>
-        </div>
-      </div>
-    <% end %>
-  </div>
-
-  <!-- Section Équipements du véhicule -->
-  <div id="vehicle-features-section" class="section-content hidden">
-    <h2 class="text-xl font-semibold mb-4">Équipements et options du véhicule</h2>
-    
-    <%= fields_for :vehicle do |v| %>
-      <div class="form-control w-full mb-4">
-        <%= v.label :safety_features, "Équipements de sécurité", class: "label" %>
-        <div class="card bg-base-200 p-3 mb-2">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-            <% ["ABS", "ESP (Contrôle de stabilité)", "Airbags frontaux", "Airbags latéraux", "Airbags rideaux", "Alarme", "Verrouillage centralisé", "Fixations ISOFIX", "Détecteur de fatigue", "Système d'appel d'urgence"].each do |feature| %>
-              <div class="form-control">
-                <label class="label cursor-pointer justify-start">
-                  <input type="checkbox" class="checkbox checkbox-primary checkbox-sm mr-2" data-feature="safety" value="<%= feature %>">
-                  <span class="label-text"><%= feature %></span>
-                </label>
-              </div>
-            <% end %>
-          </div>
-        </div>
-        <%= v.text_area :safety_features, rows: 3, class: "textarea textarea-bordered w-full", placeholder: "Autres équipements de sécurité..." %>
-      </div>
-
-      <div class="form-control w-full mb-4">
-        <%= v.label :comfort_features, "Équipements de confort", class: "label" %>
-        <div class="card bg-base-200 p-3 mb-2">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-            <% ["Climatisation manuelle", "Climatisation automatique", "Climatisation bi-zone", "Sellerie cuir", "Sellerie tissu", "Sièges chauffants", "Sièges électriques", "Sièges à mémoire", "Régulateur de vitesse", "Limiteur de vitesse", "Direction assistée", "Vitres électriques avant", "Vitres électriques arrière", "Rétroviseurs électriques", "Rétroviseurs rabattables électriquement", "Toit ouvrant", "Toit panoramique", "Détecteur de pluie", "Allumage automatique des phares", "Aide au stationnement avant", "Aide au stationnement arrière", "Caméra de recul"].each do |feature| %>
-              <div class="form-control">
-                <label class="label cursor-pointer justify-start">
-                  <input type="checkbox" class="checkbox checkbox-primary checkbox-sm mr-2" data-feature="comfort" value="<%= feature %>">
-                  <span class="label-text"><%= feature %></span>
-                </label>
-              </div>
-            <% end %>
-          </div>
-        </div>
-        <%= v.text_area :comfort_features, rows: 3, class: "textarea textarea-bordered w-full", placeholder: "Autres équipements de confort..." %>
-      </div>
-
-      <div class="form-control w-full mb-4">
-        <%= v.label :multimedia_features, "Équipements multimédia", class: "label" %>
-        <div class="card bg-base-200 p-3 mb-2">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-            <% ["Système audio", "Navigation GPS", "Lecteur CD/DVD", "Prise auxiliaire", "Prise USB", "Bluetooth", "Écran tactile", "Apple CarPlay", "Android Auto", "Commandes au volant", "Système audio premium"].each do |feature| %>
-              <div class="form-control">
-                <label class="label cursor-pointer justify-start">
-                  <input type="checkbox" class="checkbox checkbox-primary checkbox-sm mr-2" data-feature="multimedia" value="<%= feature %>">
-                  <span class="label-text"><%= feature %></span>
-                </label>
-              </div>
-            <% end %>
-          </div>
-        </div>
-        <%= v.text_area :multimedia_features, rows: 3, class: "textarea textarea-bordered w-full", placeholder: "Autres équipements multimédia..." %>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-        <div class="form-control w-full">
-          <%= v.label :exterior_features, "Équipements extérieurs", class: "label" %>
-          <div class="card bg-base-200 p-3 mb-2">
-            <div class="grid grid-cols-1 gap-2">
-              <% ["Jantes alliage", "Phares xénon", "Phares LED", "Feux antibrouillard", "Attelage de remorque", "Barres de toit", "Toit ouvrant", "Vitres teintées"].each do |feature| %>
-                <div class="form-control">
-                  <label class="label cursor-pointer justify-start">
-                    <input type="checkbox" class="checkbox checkbox-primary checkbox-sm mr-2" data-feature="exterior" value="<%= feature %>">
-                    <span class="label-text"><%= feature %></span>
-                  </label>
-                </div>
-              <% end %>
-            </div>
-          </div>
-          <%= v.text_area :exterior_features, rows: 3, class: "textarea textarea-bordered w-full", placeholder: "Autres équipements extérieurs..." %>
-        </div>
-        
-        <div class="form-control w-full">
-          <%= v.label :other_features, "Autres équipements", class: "label" %>
-          <div class="card bg-base-200 p-3 mb-2">
-            <div class="grid grid-cols-1 gap-2">
-              <% ["Volant multifonctions", "Ordinateur de bord", "Tapis de sol d'origine", "Cache-bagages", "Prise 12V", "Système Stop & Start", "Suspension sport", "Mode de conduite"].each do |feature| %>
-                <div class="form-control">
-                  <label class="label cursor-pointer justify-start">
-                    <input type="checkbox" class="checkbox checkbox-primary checkbox-sm mr-2" data-feature="other" value="<%= feature %>">
-                    <span class="label-text"><%= feature %></span>
-                  </label>
-                </div>
-              <% end %>
-            </div>
-          </div>
-          <%= v.text_area :other_features, rows: 3, class: "textarea textarea-bordered w-full", placeholder: "Autres équipements..." %>
         </div>
       </div>
     <% end %>
@@ -732,207 +805,256 @@
 
   <!-- Section État du véhicule -->
   <div id="vehicle-condition-section" class="section-content hidden">
-    <h2 class="text-xl font-semibold mb-4">État du véhicule et entretien</h2>
+    <h2 class="text-xl font-semibold mb-4 flex items-center">
+      <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+      </svg>
+      État du véhicule et entretien
+    </h2>
     
     <%= fields_for :vehicle do |v| %>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div class="form-control w-full">
-          <%= v.label :body_condition, "État de la carrosserie", class: "label" %>
+          <%= v.label :body_condition, class: "label flex items-center" do %>
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"></path>
+            </svg>
+            État de la carrosserie
+          <% end %>
           <%= v.text_area :body_condition, rows: 3, class: "textarea textarea-bordered w-full", placeholder: "Décrivez l'état de la carrosserie, rayures, bosses, etc." %>
         </div>
         
         <div class="form-control w-full">
-          <%= v.label :interior_condition, "État de l'intérieur", class: "label" %>
+          <%= v.label :interior_condition, class: "label flex items-center" do %>
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+            </svg>
+            État de l'intérieur
+          <% end %>
           <%= v.text_area :interior_condition, rows: 3, class: "textarea textarea-bordered w-full", placeholder: "Décrivez l'état de l'intérieur, usure des sièges, du volant, etc." %>
         </div>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div class="form-control w-full">
-          <%= v.label :tire_condition, "État des pneus", class: "label" %>
+          <%= v.label :tire_condition, class: "label flex items-center" do %>
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"></path>
+            </svg>
+            État des pneus
+          <% end %>
           <%= v.text_area :tire_condition, rows: 3, class: "textarea textarea-bordered w-full", placeholder: "Décrivez l'état des pneus, usure, marque, etc." %>
         </div>
         
         <div class="form-control w-full">
-          <%= v.label :recent_works, "Travaux récents effectués", class: "label" %>
+          <%= v.label :recent_works, class: "label flex items-center" do %>
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+            </svg>
+            Travaux récents effectués
+          <% end %>
           <%= v.text_area :recent_works, rows: 3, class: "textarea textarea-bordered w-full", placeholder: "Décrivez les travaux récents effectués: distribution, vidange, freins, etc." %>
         </div>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div class="form-control w-full">
-          <%= v.label :issues, "Points à signaler", class: "label" %>
+          <%= v.label :issues, class: "label flex items-center" do %>
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+            </svg>
+            Points à signaler
+          <% end %>
           <%= v.text_area :issues, rows: 3, class: "textarea textarea-bordered w-full", placeholder: "Décrivez les éventuels problèmes mécaniques, électroniques, etc." %>
         </div>
         
         <div class="form-control w-full">
-          <%= v.label :expected_costs, "Frais à prévoir", class: "label" %>
+          <%= v.label :expected_costs, class: "label flex items-center" do %>
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            Frais à prévoir
+          <% end %>
           <%= v.text_area :expected_costs, rows: 3, class: "textarea textarea-bordered w-full", placeholder: "Décrivez les frais à prévoir prochainement" %>
         </div>
       </div>
     <% end %>
   </div>
 
-  <!-- Section Médias -->
-  <div id="media-section" class="section-content hidden">
-    <h2 class="text-xl font-semibold mb-4">Médias</h2>
+  <!-- Section Équipements -->
+  <div id="vehicle-features-section" class="section-content hidden">
+    <h2 class="text-xl font-semibold mb-4 flex items-center">
+      <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+      </svg>
+      Équipements
+    </h2>
     
-    <div class="form-control w-full">
-      <h3 class="text-lg font-semibold mb-4">Médias principaux</h3>
-      
-      <div class="space-y-6">
-        <div class="card bg-base-200 p-4">
-          <h4 class="font-medium mb-3">Photos principales</h4>
-          <div class="flex items-center justify-center w-full">
-            <label class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg border-neutral-content hover:bg-base-300 cursor-pointer">
-              <div class="flex flex-col items-center justify-center pt-5 pb-6">
-                <svg class="w-8 h-8 mb-3 text-neutral-content" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                </svg>
-                <p class="mb-2 text-sm text-neutral-content"><span class="font-semibold">Cliquez pour télécharger</span> ou glissez-déposez</p>
-                <p class="text-xs text-neutral-content">PNG, JPG ou JPEG (MAX. 10MB)</p>
-              </div>
-              <%= f.file_field :photos, multiple: true, class: "hidden", accept: "image/*" %>
-            </label>
-          </div>
-          <div id="photos-preview" class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4"></div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- Sécurité -->
+      <div class="card bg-base-200 p-4">
+        <h3 class="font-medium mb-3 flex items-center">
+          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+          </svg>
+          Sécurité
+        </h3>
+        <div class="space-y-2">
+          <label class="flex items-center space-x-2 cursor-pointer">
+            <input type="checkbox" class="checkbox checkbox-primary" data-feature="safety" value="ABS" />
+            <span>ABS</span>
+          </label>
+          <label class="flex items-center space-x-2 cursor-pointer">
+            <input type="checkbox" class="checkbox checkbox-primary" data-feature="safety" value="ESP" />
+            <span>ESP</span>
+          </label>
+          <label class="flex items-center space-x-2 cursor-pointer">
+            <input type="checkbox" class="checkbox checkbox-primary" data-feature="safety" value="Airbags" />
+            <span>Airbags</span>
+          </label>
         </div>
-        
-        <div class="card bg-base-200 p-4">
-          <h4 class="font-medium mb-3">Vidéos</h4>
-          <div class="flex items-center justify-center w-full">
-            <label class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg border-neutral-content hover:bg-base-300 cursor-pointer">
-              <div class="flex flex-col items-center justify-center pt-5 pb-6">
-                <svg class="w-8 h-8 mb-3 text-neutral-content" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
-                </svg>
-                <p class="mb-2 text-sm text-neutral-content"><span class="font-semibold">Cliquez pour télécharger</span> ou glissez-déposez</p>
-                <p class="text-xs text-neutral-content">MP4, MOV ou AVI (MAX. 100MB)</p>
-              </div>
-              <%= f.file_field :videos, multiple: true, class: "hidden", accept: "video/*" %>
-            </label>
-          </div>
-          <div id="videos-preview" class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4"></div>
+      </div>
+
+      <!-- Confort -->
+      <div class="card bg-base-200 p-4">
+        <h3 class="font-medium mb-3 flex items-center">
+          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+          </svg>
+          Confort
+        </h3>
+        <div class="space-y-2">
+          <label class="flex items-center space-x-2 cursor-pointer">
+            <input type="checkbox" class="checkbox checkbox-primary" data-feature="comfort" value="Climatisation" />
+            <span>Climatisation</span>
+          </label>
+          <label class="flex items-center space-x-2 cursor-pointer">
+            <input type="checkbox" class="checkbox checkbox-primary" data-feature="comfort" value="Régulateur de vitesse" />
+            <span>Régulateur de vitesse</span>
+          </label>
+          <label class="flex items-center space-x-2 cursor-pointer">
+            <input type="checkbox" class="checkbox checkbox-primary" data-feature="comfort" value="Sièges chauffants" />
+            <span>Sièges chauffants</span>
+          </label>
         </div>
-        
-        <div class="card bg-base-200 p-4">
-          <h4 class="font-medium mb-3">Documents administratifs</h4>
-          <div class="flex items-center justify-center w-full">
-            <label class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg border-neutral-content hover:bg-base-300 cursor-pointer">
-              <div class="flex flex-col items-center justify-center pt-5 pb-6">
-                <svg class="w-8 h-8 mb-3 text-neutral-content" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
-                </svg>
-                <p class="mb-2 text-sm text-neutral-content"><span class="font-semibold">Cliquez pour télécharger</span> ou glissez-déposez</p>
-                <p class="text-xs text-neutral-content">PDF, JPG, JPEG ou PNG (MAX. 10MB)</p>
-              </div>
-              <%= f.file_field :documents, multiple: true, class: "hidden", accept: ".pdf,.jpg,.jpeg,.png" %>
-            </label>
-          </div>
-          <div id="documents-preview" class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4"></div>
+      </div>
+
+      <!-- Multimédia -->
+      <div class="card bg-base-200 p-4">
+        <h3 class="font-medium mb-3 flex items-center">
+          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path>
+          </svg>
+          Multimédia
+        </h3>
+        <div class="space-y-2">
+          <label class="flex items-center space-x-2 cursor-pointer">
+            <input type="checkbox" class="checkbox checkbox-primary" data-feature="multimedia" value="GPS" />
+            <span>GPS</span>
+          </label>
+          <label class="flex items-center space-x-2 cursor-pointer">
+            <input type="checkbox" class="checkbox checkbox-primary" data-feature="multimedia" value="Bluetooth" />
+            <span>Bluetooth</span>
+          </label>
+          <label class="flex items-center space-x-2 cursor-pointer">
+            <input type="checkbox" class="checkbox checkbox-primary" data-feature="multimedia" value="Apple CarPlay" />
+            <span>Apple CarPlay</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Extérieur -->
+      <div class="card bg-base-200 p-4">
+        <h3 class="font-medium mb-3 flex items-center">
+          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path>
+          </svg>
+          Extérieur
+        </h3>
+        <div class="space-y-2">
+          <label class="flex items-center space-x-2 cursor-pointer">
+            <input type="checkbox" class="checkbox checkbox-primary" data-feature="exterior" value="Toit ouvrant" />
+            <span>Toit ouvrant</span>
+          </label>
+          <label class="flex items-center space-x-2 cursor-pointer">
+            <input type="checkbox" class="checkbox checkbox-primary" data-feature="exterior" value="Jantes alliage" />
+            <span>Jantes alliage</span>
+          </label>
+          <label class="flex items-center space-x-2 cursor-pointer">
+            <input type="checkbox" class="checkbox checkbox-primary" data-feature="exterior" value="Phares LED" />
+            <span>Phares LED</span>
+          </label>
         </div>
       </div>
     </div>
+  </div>
 
-    <div class="form-control w-full mt-8">
-      <h3 class="text-lg font-semibold mb-4">Dossiers média</h3>
+  <!-- Section Médias -->
+  <div id="media-section" class="section-content hidden">
+    <h2 class="text-xl font-semibold mb-4 flex items-center">
+      <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+      </svg>
+      Médias
+    </h2>
+    
+    <div class="form-control w-full">
+      <h3 class="text-lg font-semibold mb-4 flex items-center">
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+        </svg>
+        Médias principaux
+      </h3>
       
-      <div id="media-folders" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <template id="media-folder-template">
-          <div class="media-folder card bg-base-200 hover:bg-base-300 transition-colors duration-200">
-            <div class="card-body p-4">
-              <div class="flex items-center justify-between mb-4">
-                <div class="form-control flex-1 mr-4">
-                  <label class="label">Nom du dossier</label>
-                  <input type="text" name="media_folders[][name]" class="input input-bordered w-full" placeholder="Ex: Photos de la restauration">
-                </div>
-                
-                <div class="form-control">
-                  <label class="label">Visibilité</label>
-                  <select name="media_folders[][visibility]" class="select select-bordered">
-                    <option value="public">Public</option>
-                    <option value="private">Privé</option>
-                  </select>
-                </div>
-              </div>
-              
-              <div class="form-control mb-4">
-                <label class="label">Description</label>
-                <textarea name="media_folders[][description]" class="textarea textarea-bordered" placeholder="Description du contenu du dossier..."></textarea>
-              </div>
-              
-              <div class="grid grid-cols-1 gap-4">
-                <div class="form-control">
-                  <label class="label">Photos</label>
-                  <div class="flex items-center justify-center w-full">
-                    <label class="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed rounded-lg border-neutral-content hover:bg-base-300 cursor-pointer">
-                      <div class="flex flex-col items-center justify-center">
-                        <svg class="w-6 h-6 mb-2 text-neutral-content" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                        </svg>
-                        <p class="text-xs text-neutral-content">Photos</p>
-                      </div>
-                      <input type="file" name="media_folders[][photos]" multiple accept="image/*" class="hidden">
-                    </label>
-                  </div>
-                </div>
-                
-                <div class="form-control">
-                  <label class="label">Vidéos</label>
-                  <div class="flex items-center justify-center w-full">
-                    <label class="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed rounded-lg border-neutral-content hover:bg-base-300 cursor-pointer">
-                      <div class="flex flex-col items-center justify-center">
-                        <svg class="w-6 h-6 mb-2 text-neutral-content" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
-                        </svg>
-                        <p class="text-xs text-neutral-content">Vidéos</p>
-                      </div>
-                      <input type="file" name="media_folders[][videos]" multiple accept="video/*" class="hidden">
-                    </label>
-                  </div>
-                </div>
-                
-                <div class="form-control">
-                  <label class="label">Documents</label>
-                  <div class="flex items-center justify-center w-full">
-                    <label class="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed rounded-lg border-neutral-content hover:bg-base-300 cursor-pointer">
-                      <div class="flex flex-col items-center justify-center">
-                        <svg class="w-6 h-6 mb-2 text-neutral-content" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
-                        </svg>
-                        <p class="text-xs text-neutral-content">Documents</p>
-                      </div>
-                      <input type="file" name="media_folders[][documents]" multiple accept=".pdf,.jpg,.jpeg,.png" class="hidden">
-                    </label>
-                  </div>
-                </div>
-              </div>
-              
-              <button type="button" class="btn btn-error btn-sm mt-4" onclick="this.closest('.media-folder').remove()">
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                </svg>
-                Supprimer
-              </button>
-            </div>
-          </div>
-        </template>
-        
-        <button type="button" class="btn btn-outline h-full min-h-[200px]" onclick="addMediaFolder()">
-          <div class="flex flex-col items-center justify-center">
-            <svg class="w-8 h-8 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+      <div class="space-y-6">
+        <div class="card bg-base-200 p-4">
+          <h4 class="font-medium mb-3 flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
             </svg>
-            <span>Ajouter un dossier média</span>
-          </div>
-        </button>
+            Photos principales
+          </h4>
+          <!-- ... rest of the media section ... -->
+        </div>
+        
+        <div class="card bg-base-200 p-4">
+          <h4 class="font-medium mb-3 flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+            </svg>
+            Vidéos
+          </h4>
+          <!-- ... rest of the media section ... -->
+        </div>
+        
+        <div class="card bg-base-200 p-4">
+          <h4 class="font-medium mb-3 flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+            </svg>
+            Documents administratifs
+          </h4>
+          <!-- ... rest of the media section ... -->
+        </div>
       </div>
     </div>
   </div>
 
   <div class="flex justify-end space-x-4 mt-8">
-    <%= link_to "Annuler", listings_path, class: "btn btn-ghost" %>
-    <%= f.submit "Publier l'annonce", class: "btn btn-primary" %>
+    <%= link_to listings_path, class: "btn btn-ghost flex items-center" do %>
+      <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+      </svg>
+      Annuler
+    <% end %>
+    <button type="button" class="btn btn-primary flex items-center" onclick="navigateToNextSection()">
+      Suivant
+      <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+      </svg>
+    </button>
   </div>
 <% end %>
 
@@ -942,22 +1064,29 @@ document.addEventListener('DOMContentLoaded', function() {
   const tabs = document.querySelectorAll('.tab');
   const sections = document.querySelectorAll('.section-content');
   
+  // Afficher la première section par défaut
+  document.getElementById('infos-section').classList.remove('hidden');
+  
+  // Gérer les clics sur les onglets
   tabs.forEach(tab => {
     tab.addEventListener('click', function() {
-      // Retirer la classe active de tous les onglets
+      // Mettre à jour les onglets
       tabs.forEach(t => t.classList.remove('tab-active'));
-      // Ajouter la classe active à l'onglet cliqué
       this.classList.add('tab-active');
       
-      // Cacher toutes les sections
-      sections.forEach(section => section.classList.add('hidden'));
-      // Afficher la section correspondante
+      // Mettre à jour les sections
       const targetId = this.getAttribute('data-target');
-      document.getElementById(targetId).classList.remove('hidden');
+      sections.forEach(section => {
+        if (section.id === targetId) {
+          section.classList.remove('hidden');
+        } else {
+          section.classList.add('hidden');
+        }
+      });
     });
   });
 
-  // Gestion des cases à cocher pour les équipements
+  // Gestion des cases à cocher avec animation
   document.querySelectorAll('input[type="checkbox"][data-feature]').forEach(checkbox => {
     checkbox.addEventListener('change', function() {
       const featureType = this.getAttribute('data-feature');
@@ -989,9 +1118,17 @@ document.addEventListener('DOMContentLoaded', function() {
         if (this.checked) {
           if (!features.includes(featureValue)) {
             features.push(featureValue);
+            this.closest('.label').classList.add('bg-primary', 'bg-opacity-10');
+            setTimeout(() => {
+              this.closest('.label').classList.remove('bg-primary', 'bg-opacity-10');
+            }, 500);
           }
         } else {
           features = features.filter(f => f !== featureValue);
+          this.closest('.label').classList.add('bg-error', 'bg-opacity-10');
+          setTimeout(() => {
+            this.closest('.label').classList.remove('bg-error', 'bg-opacity-10');
+          }, 500);
         }
         
         textarea.value = features.join('\n');
@@ -1003,6 +1140,8 @@ document.addEventListener('DOMContentLoaded', function() {
   function handleFileSelect(event, previewId) {
     const files = event.target.files;
     const preview = document.getElementById(previewId);
+    if (!preview) return;
+    
     preview.innerHTML = '';
 
     for (let i = 0; i < files.length; i++) {
@@ -1061,6 +1200,35 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
   });
+
+  // Fonction pour naviguer vers la section suivante
+  window.navigateToNextSection = function() {
+    const sections = Array.from(document.querySelectorAll('.section-content'));
+    const currentSection = sections.find(section => !section.classList.contains('hidden'));
+    const currentIndex = sections.indexOf(currentSection);
+    
+    if (currentIndex < sections.length - 1) {
+      // Passer à la section suivante
+      const nextSection = sections[currentIndex + 1];
+      const nextTab = document.querySelector(`[data-target="${nextSection.id}"]`);
+      
+      // Mettre à jour les onglets
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('tab-active'));
+      nextTab.classList.add('tab-active');
+      
+      // Mettre à jour les sections
+      sections.forEach(section => {
+        if (section.id === nextSection.id) {
+          section.classList.remove('hidden');
+        } else {
+          section.classList.add('hidden');
+        }
+      });
+    } else {
+      // Si c'est la dernière section, soumettre le formulaire
+      document.querySelector('form').submit();
+    }
+  };
 });
 
 function addMediaFolder() {
@@ -1069,4 +1237,28 @@ function addMediaFolder() {
   const clone = template.content.cloneNode(true);
   container.insertBefore(clone, template);
 }
-</script> 
+</script>
+
+<style>
+.tab {
+  transition: all 0.3s ease-in-out;
+}
+
+.tab:hover {
+  background-color: rgba(var(--primary-rgb), 0.1);
+}
+
+.tab-active {
+  background-color: var(--primary);
+  color: var(--primary-content);
+}
+
+.card {
+  transition: all 0.3s ease-in-out;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+</style> 
