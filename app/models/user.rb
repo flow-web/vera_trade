@@ -14,6 +14,8 @@ class User < ApplicationRecord
 
   has_one :wallet, dependent: :destroy
   has_many :wallet_transactions, through: :wallet
+  
+  has_many :search_presets, dependent: :destroy
 
   after_create :create_wallet
 

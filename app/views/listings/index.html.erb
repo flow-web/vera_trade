@@ -11,27 +11,157 @@
 <div class="container mx-auto px-4 pb-16">
   <!-- Search and Filter Section -->
   <div class="bg-base-100 rounded-lg shadow-lg p-6 mb-8">
-    <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-      <div class="flex-1 w-full">
-        <div class="relative">
-          <input type="text" placeholder="Rechercher un véhicule..." class="input input-bordered w-full pl-10">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-base-content opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
+    <div class="flex flex-col gap-4">
+      <!-- Filtres principaux -->
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <!-- Marque -->
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">Marque</span>
+          </label>
+          <select class="select select-bordered w-full" data-filter="make">
+            <option value="">Toutes les marques</option>
+            <option value="BMW">BMW</option>
+            <option value="Mercedes">Mercedes</option>
+            <option value="Audi">Audi</option>
+            <option value="Renault">Renault</option>
+            <option value="Peugeot">Peugeot</option>
+            <!-- Ajoutez d'autres marques ici -->
+          </select>
+        </div>
+
+        <!-- Type de carburant -->
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">Carburant</span>
+          </label>
+          <select class="select select-bordered w-full" data-filter="fuel_type">
+            <option value="">Tous les types</option>
+            <option value="Essence">Essence</option>
+            <option value="Diesel">Diesel</option>
+            <option value="Hybride">Hybride</option>
+            <option value="Électrique">Électrique</option>
+            <option value="GPL">GPL</option>
+          </select>
+        </div>
+
+        <!-- Transmission -->
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">Transmission</span>
+          </label>
+          <select class="select select-bordered w-full" data-filter="transmission">
+            <option value="">Tous les types</option>
+            <option value="Manuelle">Manuelle</option>
+            <option value="Automatique">Automatique</option>
+            <option value="Semi-automatique">Semi-automatique</option>
+          </select>
+        </div>
+
+        <!-- Trier par -->
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">Trier par</span>
+          </label>
+          <select class="select select-bordered w-full" data-sort>
+            <option value="created_at_desc">Plus récent</option>
+            <option value="price_asc">Prix croissant</option>
+            <option value="price_desc">Prix décroissant</option>
+            <option value="kilometers_asc">Kilométrage croissant</option>
+            <option value="kilometers_desc">Kilométrage décroissant</option>
+            <option value="year_desc">Année décroissante</option>
+            <option value="year_asc">Année croissante</option>
+          </select>
         </div>
       </div>
-      <div class="flex gap-2">
-        <button class="btn btn-outline">
+
+      <!-- Filtres avancés -->
+      <div class="collapse bg-base-200">
+        <input type="checkbox" class="peer" /> 
+        <div class="collapse-title text-primary-content font-medium flex items-center">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
           </svg>
-          Filtres
-        </button>
-        <button class="btn btn-outline">
+          Filtres avancés
+        </div>
+        <div class="collapse-content">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4">
+            <!-- Prix -->
+            <div class="form-control">
+              <label class="label">
+                <span class="label-text">Prix</span>
+              </label>
+              <div class="flex gap-2">
+                <input type="number" placeholder="Min" class="input input-bordered w-full" data-filter="price_min" />
+                <input type="number" placeholder="Max" class="input input-bordered w-full" data-filter="price_max" />
+              </div>
+            </div>
+
+            <!-- Kilométrage -->
+            <div class="form-control">
+              <label class="label">
+                <span class="label-text">Kilométrage</span>
+              </label>
+              <div class="flex gap-2">
+                <input type="number" placeholder="Min" class="input input-bordered w-full" data-filter="kilometers_min" />
+                <input type="number" placeholder="Max" class="input input-bordered w-full" data-filter="kilometers_max" />
+              </div>
+            </div>
+
+            <!-- Année -->
+            <div class="form-control">
+              <label class="label">
+                <span class="label-text">Année</span>
+              </label>
+              <div class="flex gap-2">
+                <input type="number" placeholder="Min" class="input input-bordered w-full" data-filter="year_min" />
+                <input type="number" placeholder="Max" class="input input-bordered w-full" data-filter="year_max" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Boutons d'action -->
+      <div class="flex justify-between items-center gap-2">
+        <div class="flex gap-2">
+          <% if user_signed_in? %>
+            <!-- Presets de recherche -->
+            <div class="dropdown dropdown-hover">
+              <label tabindex="0" class="btn btn-outline">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                </svg>
+                Recherches sauvegardées
+              </label>
+              <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
+                <li>
+                  <button onclick="saveSearchPreset()" class="flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                    </svg>
+                    Sauvegarder cette recherche
+                  </button>
+                </li>
+                <li class="menu-title">Mes recherches</li>
+                <div id="search-presets-list">
+                  <!-- Les presets seront chargés ici dynamiquement -->
+                </div>
+              </ul>
+            </div>
+          <% end %>
+          <button class="btn btn-ghost" onclick="resetFilters()">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            Réinitialiser
+          </button>
+        </div>
+        <button class="btn btn-primary" onclick="applyFilters()">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
-          Trier
+          Appliquer les filtres
         </button>
       </div>
     </div>
@@ -183,4 +313,146 @@
       }
     }
   </style>
+
+  <script>
+    // Fonction pour récupérer les filtres actuels
+    function getCurrentFilters() {
+      const filters = {};
+      
+      // Récupérer les valeurs des filtres
+      document.querySelectorAll('[data-filter]').forEach(element => {
+        if (element.value) {
+          filters[element.dataset.filter] = element.value;
+        }
+      });
+
+      // Récupérer le tri
+      const sortSelect = document.querySelector('[data-sort]');
+      if (sortSelect.value) {
+        filters.sort = sortSelect.value;
+      }
+
+      return filters;
+    }
+
+    // Fonction pour appliquer les filtres
+    function applyFilters() {
+      const filters = getCurrentFilters();
+      const params = new URLSearchParams(filters);
+      window.location.href = `${window.location.pathname}?${params.toString()}`;
+    }
+
+    // Fonction pour réinitialiser les filtres
+    function resetFilters() {
+      document.querySelectorAll('[data-filter]').forEach(element => {
+        element.value = '';
+      });
+      document.querySelector('[data-sort]').value = 'created_at_desc';
+      window.location.href = window.location.pathname;
+    }
+
+    // Fonction pour sauvegarder un preset de recherche
+    function saveSearchPreset() {
+      const name = prompt('Nom de la recherche :');
+      if (!name) return;
+
+      const filters = getCurrentFilters();
+      
+      fetch('/search_presets', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
+        },
+        body: JSON.stringify({
+          search_preset: {
+            name: name,
+            filters: filters
+          }
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          loadSearchPresets();
+          alert('Recherche sauvegardée avec succès !');
+        } else {
+          alert('Erreur : ' + data.errors.join(', '));
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('Une erreur est survenue lors de la sauvegarde.');
+      });
+    }
+
+    // Fonction pour charger les presets de recherche
+    function loadSearchPresets() {
+      fetch('/search_presets')
+        .then(response => response.json())
+        .then(presets => {
+          const container = document.getElementById('search-presets-list');
+          container.innerHTML = presets.map(preset => `
+            <li>
+              <div class="flex justify-between items-center w-full">
+                <button onclick="applyPreset(${preset.id})" class="flex-1 text-left">
+                  ${preset.name}
+                </button>
+                <button onclick="deletePreset(${preset.id})" class="btn btn-ghost btn-xs">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                </button>
+              </div>
+            </li>
+          `).join('');
+        });
+    }
+
+    // Fonction pour appliquer un preset
+    function applyPreset(presetId) {
+      fetch(`/search_presets/${presetId}`)
+        .then(response => response.json())
+        .then(preset => {
+          // Appliquer les filtres
+          Object.entries(preset.filters).forEach(([key, value]) => {
+            const element = document.querySelector(`[data-filter="${key}"]`);
+            if (element) element.value = value;
+          });
+
+          // Appliquer le tri
+          if (preset.filters.sort) {
+            document.querySelector('[data-sort]').value = preset.filters.sort;
+          }
+
+          // Appliquer les filtres
+          applyFilters();
+        });
+    }
+
+    // Fonction pour supprimer un preset
+    function deletePreset(presetId) {
+      if (!confirm('Voulez-vous vraiment supprimer cette recherche sauvegardée ?')) return;
+
+      fetch(`/search_presets/${presetId}`, {
+        method: 'DELETE',
+        headers: {
+          'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          loadSearchPresets();
+        }
+      });
+    }
+
+    // Charger les presets au chargement de la page
+    document.addEventListener('DOMContentLoaded', () => {
+      if (document.getElementById('search-presets-list')) {
+        loadSearchPresets();
+      }
+    });
+  </script>
 <% end %>
