@@ -1,0 +1,17 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+This is the project current tech stack :
+- Web Framework: Ruby on Rails 8.0
+- Hotwire Turbo/Stimulus for SPA-like UI/UX
+- DaisyUI and TailwindCSS for styles
+- Database: PostgreSQL
+- Jobs: Sidekiq + Redis
+- Files: Active Storage + Cloudinary
+
+this project is a rails app that will help people to sell/buy   car and car  parts - services about it - search info about it 
+
+You will follow the best practices in Rails and the best practices to build a robust web app.
+Prefer using Turbo and Stimulus for implement features that need JS but can you use custom JS for not appropriate elements.
