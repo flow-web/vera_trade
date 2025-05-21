@@ -1,4 +1,15 @@
 Rails.application.routes.draw do
+  get "search_presets/index"
+  get "search_presets/create"
+  get "search_presets/update"
+  get "search_presets/destroy"
+  get "search_presets/toggle_notification"
+  get "wallet_transactions/index"
+  get "wallet_transactions/show"
+  get "messages/index"
+  get "messages/show"
+  get "messages/create"
+  devise_for :users
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
@@ -9,7 +20,33 @@ Rails.application.routes.draw do
   # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
-  # Defines the root path route ("/")
+  resources :listings
+  resources :vehicles do
+    collection do
+      get 'fetch_info'
+    end
+  end
+  
+  resources :messages, only: [:index, :create]
+  get 'conversations/:user_id', to: 'messages#show', as: 'conversation'
 
+  resources :car_brands, only: [] do
+    collection do
+      get :search
+    end
+  end
+
+  # Wallet transactions
+  resources :wallet_transactions, path: 'transactions', only: [:index, :show]
+
+  # Routes pour les presets de recherche
+  resources :search_presets, only: [:index, :create, :show, :update, :destroy]
+
+  # Defines the root path route ("/")
   root "pages#home"
+  
+  get 'my_listings', to: 'listings#my_listings'
+
+  # Dashboard
+  get 'dashboard', to: 'dashboard#index', as: :dashboard
 end

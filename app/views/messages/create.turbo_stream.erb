@@ -1,0 +1,12 @@
+<%= turbo_stream.append "message-list", id: "message_#{@message.id}" do %>
+  <%= render "messages/message", message: @message, current_user_id: current_user.id %>
+<% end %>
+
+<%= turbo_stream.update "new_message" do %>
+  <%= form_with model: Message.new, url: messages_path(user_id: @recipient.id), data: { controller: "reset-form", action: "turbo:submit-end->reset-form#reset" } do |f| %>
+    <div class="flex">
+      <%= f.text_field :content, placeholder: "Votre message...", class: "flex-1 border border-gray-300 rounded-l-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500", autofocus: true, required: true %>
+      <%= f.submit "Envoyer", class: "bg-blue-500 text-white px-4 py-2 rounded-r-lg hover:bg-blue-600 transition duration-150" %>
+    </div>
+  <% end %>
+<% end %> 

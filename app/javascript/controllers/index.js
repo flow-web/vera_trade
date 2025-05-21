@@ -4,5 +4,17 @@
 
 import { application } from "./application"
 
+import ChatScrollController from "./chat_scroll_controller"
+application.register("chat-scroll", ChatScrollController)
+
 import HelloController from "./hello_controller"
 application.register("hello", HelloController)
+
+import ResetFormController from "./reset_form_controller"
+application.register("reset-form", ResetFormController)
+
+import DirectUploadController from "./direct_upload_controller"
+application.register("direct-upload", DirectUploadController)
+
+import SearchController from "./search_controller"
+application.register("search", SearchController)

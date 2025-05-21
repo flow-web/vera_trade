@@ -1,0 +1,379 @@
+<div class="container mx-auto px-4 py-8 max-w-5xl">
+  <!-- Breadcrumb -->
+  <div class="text-sm breadcrumbs mb-6">
+    <ul>
+      <li><%= link_to "Annonces", listings_path, class: "link link-hover" %></li>
+      <li class="font-medium"><%= @listing.title %></li>
+    </ul>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <!-- Main Content -->
+    <div class="col-span-2">
+      <div class="container mt-5">
+        <div class="row">
+          <div class="col-md-8 mb-4">
+            <h1 class="h2 mb-3"><%= @listing.title %></h1>
+            
+            <% if @listing.photos.attached? %>
+              <div id="listingCarousel" class="carousel slide mb-4" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                  <% @listing.photos.each_with_index do |photo, index| %>
+                    <div class="carousel-item <%= index == 0 ? 'active' : '' %>">
+                      <div style="height: 400px; background-color: #f8f9fa; display: flex; justify-content: center; align-items: center;">
+                        <%= image_tag photo, style: "max-height: 100%; max-width: 100%; object-fit: contain;" %>
+                      </div>
+                    </div>
+                  <% end %>
+                </div>
+                <% if @listing.photos.count > 1 %>
+                  <button class="carousel-control-prev" type="button" data-bs-target="#listingCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Précédent</span>
+                  </button>
+                  <button class="carousel-control-next" type="button" data-bs-target="#listingCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Suivant</span>
+                  </button>
+                <% end %>
+              </div>
+              
+              <% if @listing.photos.count > 1 %>
+                <div class="row mb-4">
+                  <% @listing.photos.each_with_index do |photo, index| %>
+                    <div class="col-3 col-md-2 mb-2">
+                      <a href="#" data-bs-target="#listingCarousel" data-bs-slide-to="<%= index %>" class="d-block">
+                        <%= image_tag photo, class: "img-thumbnail", style: "height: 60px; width: 100%; object-fit: cover;" %>
+                      </a>
+                    </div>
+                  <% end %>
+                </div>
+              <% end %>
+            <% else %>
+              <div class="card mb-4">
+                <div class="card-body text-center py-5">
+                  <i class="bi bi-camera fs-1 text-muted"></i>
+                  <p class="text-muted mt-2">Aucune photo disponible</p>
+                </div>
+              </div>
+            <% end %>
+            
+            <h2 class="text-xl text-neutral-content mb-6">
+              <%= @listing.vehicle.make %> <%= @listing.vehicle.model %> (<%= @listing.vehicle.year %>)
+            </h2>
+
+            <!-- Vehicle Details Card -->
+            <div class="card bg-base-100 shadow-sm mb-8">
+              <div class="card-body">
+                <!-- Description Section -->
+                <div class="mb-6">
+                  <h3 class="text-lg font-medium mb-2">Description</h3>
+                  <div class="prose max-w-none">
+                    <%= simple_format(@listing.description) %>
+                  </div>
+                </div>
+                
+                <!-- Vehicle Characteristics Section -->
+                <div>
+                  <h3 class="text-lg font-medium mb-2">Caractéristiques du véhicule</h3>
+                  <% if @listing.vehicle.description.present? %>
+                    <div class="prose max-w-none mb-4">
+                      <%= simple_format(@listing.vehicle.description) %>
+                    </div>
+                  <% end %>
+                  
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                    <div>
+                      <div class="flex flex-col space-y-2">
+                        <div class="flex justify-between">
+                          <span class="font-medium">Marque:</span>
+                          <span><%= @listing.vehicle.make %></span>
+                        </div>
+                        <div class="flex justify-between">
+                          <span class="font-medium">Modèle:</span>
+                          <span><%= @listing.vehicle.model %></span>
+                        </div>
+                        <div class="flex justify-between">
+                          <span class="font-medium">Année:</span>
+                          <span><%= @listing.vehicle.year %></span>
+                        </div>
+                        <% if @listing.vehicle.finition.present? %>
+                          <div class="flex justify-between">
+                            <span class="font-medium">Finition/Version:</span>
+                            <span><%= @listing.vehicle.finition %></span>
+                          </div>
+                        <% end %>
+                        <% if @listing.vehicle.doors.present? %>
+                          <div class="flex justify-between">
+                            <span class="font-medium">Nombre de portes:</span>
+                            <span><%= @listing.vehicle.doors %> portes</span>
+                          </div>
+                        <% end %>
+                        <% if @listing.vehicle.exterior_color.present? %>
+                          <div class="flex justify-between">
+                            <span class="font-medium">Couleur extérieure:</span>
+                            <span><%= @listing.vehicle.exterior_color %></span>
+                          </div>
+                        <% end %>
+                        <% if @listing.vehicle.interior_material.present? || @listing.vehicle.interior_color.present? %>
+                          <div class="flex justify-between">
+                            <span class="font-medium">Intérieur:</span>
+                            <span>
+                              <% if @listing.vehicle.interior_material.present? %>
+                                <%= @listing.vehicle.interior_material %>
+                              <% end %>
+                              <% if @listing.vehicle.interior_color.present? %>
+                                <%= @listing.vehicle.interior_material.present? ? " - " : "" %><%= @listing.vehicle.interior_color %>
+                              <% end %>
+                            </span>
+                          </div>
+                        <% end %>
+                      </div>
+                    </div>
+                    <div>
+                      <div class="flex flex-col space-y-2">
+                        <% if @listing.vehicle.kilometers.present? %>
+                          <div class="flex justify-between">
+                            <span class="font-medium">Kilométrage:</span>
+                            <span><%= number_with_delimiter(@listing.vehicle.kilometers) %> km</span>
+                          </div>
+                        <% end %>
+                        <% if @listing.vehicle.fuel_type.present? %>
+                          <div class="flex justify-between">
+                            <span class="font-medium">Carburant:</span>
+                            <span><%= @listing.vehicle.fuel_type %></span>
+                          </div>
+                        <% end %>
+                        <% if @listing.vehicle.transmission.present? %>
+                          <div class="flex justify-between">
+                            <span class="font-medium">Transmission:</span>
+                            <span><%= @listing.vehicle.transmission %></span>
+                          </div>
+                        <% end %>
+                        <% if @listing.vehicle.previous_owners.present? %>
+                          <div class="flex justify-between">
+                            <span class="font-medium">Propriétaires précédents:</span>
+                            <span><%= @listing.vehicle.previous_owners %></span>
+                          </div>
+                        <% end %>
+                        <% if @listing.vehicle.non_smoker.present? %>
+                          <div class="flex justify-between">
+                            <span class="font-medium">Non-fumeur:</span>
+                            <span><%= @listing.vehicle.non_smoker ? "Oui" : "Non" %></span>
+                          </div>
+                        <% end %>
+                        <% if @listing.vehicle.location.present? %>
+                          <div class="flex justify-between">
+                            <span class="font-medium">Lieu de visualisation:</span>
+                            <span><%= @listing.vehicle.location %></span>
+                          </div>
+                        <% end %>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- Historique entretien -->
+                  <% if @listing.vehicle.last_service_date.present? || @listing.vehicle.next_ct_date.present? || @listing.vehicle.ct_expiry_date.present? || @listing.vehicle.has_service_history.present? %>
+                    <div class="mt-6">
+                      <h4 class="text-md font-medium mb-2">Historique et entretien</h4>
+                      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="flex flex-col space-y-2">
+                          <% if @listing.vehicle.last_service_date.present? %>
+                            <div class="flex justify-between">
+                              <span class="font-medium">Dernière révision:</span>
+                              <span><%= @listing.vehicle.last_service_date.strftime("%d/%m/%Y") %></span>
+                            </div>
+                          <% end %>
+                          <% if @listing.vehicle.has_service_history.present? %>
+                            <div class="flex justify-between">
+                              <span class="font-medium">Carnet d'entretien:</span>
+                              <span><%= @listing.vehicle.has_service_history ? "Disponible" : "Non disponible" %></span>
+                            </div>
+                          <% end %>
+                        </div>
+                        <div class="flex flex-col space-y-2">
+                          <% if @listing.vehicle.next_ct_date.present? %>
+                            <div class="flex justify-between">
+                              <span class="font-medium">Prochain contrôle technique:</span>
+                              <span><%= @listing.vehicle.next_ct_date.strftime("%d/%m/%Y") %></span>
+                            </div>
+                          <% end %>
+                          <% if @listing.vehicle.ct_expiry_date.present? %>
+                            <div class="flex justify-between">
+                              <span class="font-medium">Validité du CT:</span>
+                              <span><%= @listing.vehicle.ct_expiry_date.strftime("%d/%m/%Y") %></span>
+                            </div>
+                          <% end %>
+                        </div>
+                      </div>
+                    </div>
+                  <% end %>
+                  
+                  <!-- Équipements -->
+                  <% if @listing.vehicle.safety_features.present? || @listing.vehicle.comfort_features.present? || @listing.vehicle.multimedia_features.present? || @listing.vehicle.exterior_features.present? || @listing.vehicle.other_features.present? %>
+                    <div class="mt-6">
+                      <h4 class="text-md font-medium mb-2">Équipements et options</h4>
+                      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <% if @listing.vehicle.safety_features.present? %>
+                          <div>
+                            <div class="font-medium mb-1">Sécurité</div>
+                            <div class="prose max-w-none">
+                              <%= simple_format(@listing.vehicle.safety_features) %>
+                            </div>
+                          </div>
+                        <% end %>
+                        
+                        <% if @listing.vehicle.comfort_features.present? %>
+                          <div>
+                            <div class="font-medium mb-1">Confort</div>
+                            <div class="prose max-w-none">
+                              <%= simple_format(@listing.vehicle.comfort_features) %>
+                            </div>
+                          </div>
+                        <% end %>
+                        
+                        <% if @listing.vehicle.multimedia_features.present? %>
+                          <div>
+                            <div class="font-medium mb-1">Multimédia</div>
+                            <div class="prose max-w-none">
+                              <%= simple_format(@listing.vehicle.multimedia_features) %>
+                            </div>
+                          </div>
+                        <% end %>
+                        
+                        <% if @listing.vehicle.exterior_features.present? %>
+                          <div>
+                            <div class="font-medium mb-1">Extérieur</div>
+                            <div class="prose max-w-none">
+                              <%= simple_format(@listing.vehicle.exterior_features) %>
+                            </div>
+                          </div>
+                        <% end %>
+                        
+                        <% if @listing.vehicle.other_features.present? %>
+                          <div>
+                            <div class="font-medium mb-1">Autres</div>
+                            <div class="prose max-w-none">
+                              <%= simple_format(@listing.vehicle.other_features) %>
+                            </div>
+                          </div>
+                        <% end %>
+                      </div>
+                    </div>
+                  <% end %>
+                  
+                  <!-- État et frais à prévoir -->
+                  <% if @listing.vehicle.body_condition.present? || @listing.vehicle.interior_condition.present? || @listing.vehicle.tire_condition.present? || @listing.vehicle.recent_works.present? || @listing.vehicle.issues.present? || @listing.vehicle.expected_costs.present? %>
+                    <div class="mt-6">
+                      <h4 class="text-md font-medium mb-2">État du véhicule et entretien</h4>
+                      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <% if @listing.vehicle.body_condition.present? %>
+                          <div>
+                            <div class="font-medium mb-1">État de la carrosserie</div>
+                            <div class="prose max-w-none">
+                              <%= simple_format(@listing.vehicle.body_condition) %>
+                            </div>
+                          </div>
+                        <% end %>
+                        
+                        <% if @listing.vehicle.interior_condition.present? %>
+                          <div>
+                            <div class="font-medium mb-1">État de l'intérieur</div>
+                            <div class="prose max-w-none">
+                              <%= simple_format(@listing.vehicle.interior_condition) %>
+                            </div>
+                          </div>
+                        <% end %>
+                        
+                        <% if @listing.vehicle.tire_condition.present? %>
+                          <div>
+                            <div class="font-medium mb-1">État des pneus</div>
+                            <div class="prose max-w-none">
+                              <%= simple_format(@listing.vehicle.tire_condition) %>
+                            </div>
+                          </div>
+                        <% end %>
+                        
+                        <% if @listing.vehicle.recent_works.present? %>
+                          <div>
+                            <div class="font-medium mb-1">Travaux récents effectués</div>
+                            <div class="prose max-w-none">
+                              <%= simple_format(@listing.vehicle.recent_works) %>
+                            </div>
+                          </div>
+                        <% end %>
+                        
+                        <% if @listing.vehicle.issues.present? %>
+                          <div>
+                            <div class="font-medium mb-1">Points à signaler</div>
+                            <div class="prose max-w-none">
+                              <%= simple_format(@listing.vehicle.issues) %>
+                            </div>
+                          </div>
+                        <% end %>
+                        
+                        <% if @listing.vehicle.expected_costs.present? %>
+                          <div>
+                            <div class="font-medium mb-1">Frais à prévoir</div>
+                            <div class="prose max-w-none">
+                              <%= simple_format(@listing.vehicle.expected_costs) %>
+                            </div>
+                          </div>
+                        <% end %>
+                      </div>
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sidebar with Price and Contact Info -->
+    <div class="col-span-1">
+      <div class="card bg-base-100 shadow-sm sticky top-4">
+        <div class="card-body">
+          <h3 class="card-title text-2xl text-primary mb-4">
+            <%= number_to_currency(@listing.vehicle.price, unit: "€", precision: 0) %>
+          </h3>
+          
+          <div class="flex items-center gap-2 mb-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 opacity-70" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+            <span>Vendu par: <%= @listing.user.email %></span>
+          </div>
+          
+          <div class="flex items-center gap-2 mb-6">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 opacity-70" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            <span>Publiée le: <%= @listing.created_at.strftime("%d/%m/%Y") %></span>
+          </div>
+          
+          <div class="divider"></div>
+          
+          <% if user_signed_in? %>
+            <% if current_user == @listing.user %>
+              <div class="space-y-2">
+                <%= link_to "Modifier l'annonce", edit_listing_path(@listing), class: "btn btn-outline btn-primary w-full" %>
+                <%= button_to "Supprimer l'annonce", @listing, method: :delete, class: "btn btn-outline btn-error w-full", form: { data: { turbo_confirm: "Êtes-vous sûr de vouloir supprimer cette annonce?" } } %>
+              </div>
+            <% else %>
+              <a href="mailto:<%= @listing.user.email %>" class="btn btn-primary w-full">Contacter le vendeur</a>
+            <% end %>
+          <% else %>
+            <div class="alert alert-info shadow-sm">
+              <div>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <span><%= link_to "Connectez-vous", new_user_session_path, class: "link link-hover font-medium" %> pour contacter le vendeur.</span>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
