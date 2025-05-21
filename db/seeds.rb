@@ -266,7 +266,7 @@ boat_listings = [
     has_service_history: true,
     location: "Nice",
     license_plate: "MN-012-OP",
-    vin: "FR1JN00X67000001",
+    vin: "FR1JN00X670000018",
     length: 5.5,
     width: 2.3,
     draft: 0.5,
@@ -318,6 +318,7 @@ construction_listings = [
 # Création des annonces
 [car_listings, motorcycle_listings, boat_listings, construction_listings].each do |listings|
   listings.each do |listing_data|
+    puts "Création de l'annonce #{listing_data[:title]}"
     # Création du véhicule
     vehicle = Vehicle.create!(
       listing_data.except(:title, :description)

@@ -8,8 +8,9 @@ This is the project current tech stack :
 - Hotwire Turbo/Stimulus for SPA-like UI/UX
 - DaisyUI and TailwindCSS for styles
 - Database: PostgreSQL
-- Jobs: Sidekiq + Redis
-- Files: Active Storage + Cloudinary
+- Jobs: solid queue
+- action cable : solid cable
+- Files: Active Storage 
 
 this project is a rails app that will help people to sell/buy   car and car  parts - services about it - search info about it 
 

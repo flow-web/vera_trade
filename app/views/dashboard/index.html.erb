@@ -84,15 +84,15 @@
         <div class="space-y-4">
           <% @my_listings.limit(3).each do |listing| %>
             <div class="flex items-center space-x-4 p-4 rounded-lg hover:bg-base-200 transition-colors duration-200">
-              <% if listing.vehicle.images.attached? %>
-                <%= image_tag listing.vehicle.images.first, class: "w-16 h-16 object-cover rounded-lg" %>
+              <% if listing.photos.attached? %>
+                <%= image_tag listing.photos.first, class: "w-16 h-16 object-cover rounded-lg" %>
               <% end %>
               <div class="flex-1">
-                <h3 class="font-medium"><%= listing.vehicle.title %></h3>
+                <h3 class="font-medium"><%= listing.title %></h3>
                 <p class="text-sm text-base-content opacity-70"><%= listing.status %></p>
               </div>
               <div class="text-right">
-                <p class="font-bold"><%= number_to_currency(listing.price) %></p>
+                <p class="font-bold"><%= number_to_currency(listing.vehicle.price) %></p>
                 <p class="text-xs text-base-content opacity-50"><%= time_ago_in_words(listing.created_at) %></p>
               </div>
             </div>
