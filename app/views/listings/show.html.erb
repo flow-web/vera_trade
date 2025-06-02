@@ -15,52 +15,54 @@
           <div class="col-md-8 mb-4">
             <h1 class="h2 mb-3"><%= @listing.title %></h1>
             
-            <% if @listing.photos.attached? %>
-              <div id="listingCarousel" class="carousel slide mb-4" data-bs-ride="carousel">
-                <div class="carousel-inner">
-                  <% @listing.photos.each_with_index do |photo, index| %>
-                    <div class="carousel-item <%= index == 0 ? 'active' : '' %>">
-                      <div style="height: 400px; background-color: #f8f9fa; display: flex; justify-content: center; align-items: center;">
-                        <%= image_tag photo, style: "max-height: 100%; max-width: 100%; object-fit: contain;" %>
-                      </div>
-                    </div>
-                  <% end %>
-                </div>
-                <% if @listing.photos.count > 1 %>
-                  <button class="carousel-control-prev" type="button" data-bs-target="#listingCarousel" data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Précédent</span>
-                  </button>
-                  <button class="carousel-control-next" type="button" data-bs-target="#listingCarousel" data-bs-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Suivant</span>
-                  </button>
-                <% end %>
-              </div>
-              
-              <% if @listing.photos.count > 1 %>
-                <div class="row mb-4">
-                  <% @listing.photos.each_with_index do |photo, index| %>
-                    <div class="col-3 col-md-2 mb-2">
-                      <a href="#" data-bs-target="#listingCarousel" data-bs-slide-to="<%= index %>" class="d-block">
-                        <%= image_tag photo, class: "img-thumbnail", style: "height: 60px; width: 100%; object-fit: cover;" %>
-                      </a>
-                    </div>
-                  <% end %>
+            <!-- Carousel for Photos and Videos -->
+            <div class="carousel w-full">
+              <% @listing.photos.each do |photo| %>
+                <div class="carousel-item">
+                  <%= image_tag photo, class: "w-full h-64 object-cover" %>
                 </div>
               <% end %>
-            <% else %>
-              <div class="card mb-4">
-                <div class="card-body text-center py-5">
-                  <i class="bi bi-camera fs-1 text-muted"></i>
-                  <p class="text-muted mt-2">Aucune photo disponible</p>
+              <% @listing.videos.each do |video| %>
+                <div class="carousel-item">
+                  <%= video_tag video, controls: true, class: "w-full h-64 object-cover" %>
                 </div>
-              </div>
-            <% end %>
+              <% end %>
+            </div>
             
             <h2 class="text-xl text-neutral-content mb-6">
               <%= @listing.vehicle.make %> <%= @listing.vehicle.model %> (<%= @listing.vehicle.year %>)
             </h2>
+
+            <!-- Characteristics Section -->
+            <div class="mt-8">
+              <h2 class="text-2xl font-bold mb-4">Caractéristiques</h2>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="flex items-center">
+                  <svg class="w-6 h-6 mr-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                  </svg>
+                  <span class="font-semibold">Kilométrage:</span> <%= @listing.vehicle.kilometers %>
+                </div>
+                <div class="flex items-center">
+                  <svg class="w-6 h-6 mr-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg>
+                  <span class="font-semibold">Prix:</span> <%= @listing.vehicle.price %> €
+                </div>
+                <div class="flex items-center">
+                  <svg class="w-6 h-6 mr-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                  </svg>
+                  <span class="font-semibold">Année:</span> <%= @listing.vehicle.year %>
+                </div>
+                <div class="flex items-center">
+                  <svg class="w-6 h-6 mr-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                  </svg>
+                  <span class="font-semibold">Marque:</span> <%= @listing.vehicle.make %>
+                </div>
+              </div>
+            </div>
 
             <!-- Vehicle Details Card -->
             <div class="card bg-base-100 shadow-sm mb-8">

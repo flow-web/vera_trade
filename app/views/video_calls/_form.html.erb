@@ -1,0 +1,29 @@
+<%= form_with model: [conversation, video_call], local: false, class: "space-y-4" do |form| %>
+  <div class="form-control">
+    <%= form.label :scheduled_at, class: "label" do %>
+      <span class="label-text font-semibold">Date et heure de l'appel</span>
+    <% end %>
+    <%= form.datetime_local_field :scheduled_at, 
+        class: "input input-bordered w-full", 
+        min: Time.current.strftime("%Y-%m-%dT%H:%M"),
+        value: (Time.current + 1.hour).strftime("%Y-%m-%dT%H:%M") %>
+    <label class="label">
+      <span class="label-text-alt">Proposez un créneau pour l'appel vidéo</span>
+    </label>
+  </div>
+
+  <div class="alert alert-info">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+    </svg>
+    <div>
+      <h3 class="font-bold">Appel vidéo sécurisé</h3>
+      <div class="text-sm">L'autre personne recevra une notification et pourra accepter ou refuser l'appel.</div>
+    </div>
+  </div>
+
+  <div class="modal-action">
+    <button type="button" class="btn" onclick="video_call_modal.close()">Annuler</button>
+    <%= form.submit "Proposer l'appel", class: "btn btn-primary" %>
+  </div>
+<% end %> 

@@ -1,0 +1,21 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user: one
+  profile_type: MyString
+  is_main: false
+  permissions: MyText
+  name: MyString
+  position: MyString
+  department: MyString
+  access_level: MyString
+
+two:
+  user: two
+  profile_type: MyString
+  is_main: false
+  permissions: MyText
+  name: MyString
+  position: MyString
+  department: MyString
+  access_level: MyString

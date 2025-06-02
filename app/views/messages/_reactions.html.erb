@@ -1,0 +1,27 @@
+<% reactions = message.parse_reactions %>
+<% if reactions.any? %>
+  <div class="flex flex-wrap gap-1">
+    <% reactions.each do |emoji, user_ids| %>
+      <% next if user_ids.empty? %>
+      <button class="btn btn-ghost btn-xs <%= 'btn-active' if user_ids.include?(current_user.id) %> 
+                     flex items-center space-x-1 px-2 py-1 rounded-full"
+              onclick="<%= user_ids.include?(current_user.id) ? 'removeReaction' : 'addReaction' %>(<%= message.id %>, '<%= emoji %>')">
+        <span><%= emoji %></span>
+        <span class="text-xs"><%= user_ids.count %></span>
+      </button>
+    <% end %>
+  </div>
+<% end %>
+
+<script>
+function removeReaction(messageId, emoji) {
+  fetch(`/messages/${messageId}/remove_reaction`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRF-Token': document.querySelector('[name="csrf-token"]').content
+    },
+    body: JSON.stringify({ emoji: emoji })
+  });
+}
+</script> 

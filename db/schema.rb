@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_11_110412) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_02_220149) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -42,6 +42,22 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_11_110412) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
+  create_table "calendar_events", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "title"
+    t.text "description"
+    t.string "event_type"
+    t.datetime "start_time"
+    t.datetime "end_time"
+    t.boolean "all_day"
+    t.string "related_model"
+    t.integer "related_id"
+    t.string "color"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_calendar_events_on_user_id"
+  end
+
   create_table "categories", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
@@ -59,9 +75,36 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_11_110412) do
     t.bigint "other_user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "archived_by_user"
+    t.boolean "archived_by_other_user"
+    t.bigint "listing_id", null: false
+    t.string "status"
+    t.datetime "last_activity_at"
+    t.index ["listing_id"], name: "index_conversations_on_listing_id"
     t.index ["other_user_id"], name: "index_conversations_on_other_user_id"
     t.index ["user_id", "other_user_id"], name: "index_conversations_on_user_id_and_other_user_id", unique: true
     t.index ["user_id"], name: "index_conversations_on_user_id"
+  end
+
+  create_table "events", force: :cascade do |t|
+    t.string "title"
+    t.datetime "start_time"
+    t.datetime "end_time"
+    t.bigint "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_events_on_user_id"
+  end
+
+  create_table "favorites", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "favoritable_type"
+    t.integer "favoritable_id"
+    t.string "name"
+    t.text "notes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_favorites_on_user_id"
   end
 
   create_table "guest_accounts", force: :cascade do |t|
@@ -118,6 +161,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_11_110412) do
     t.index ["media_folder_id"], name: "index_media_items_on_media_folder_id"
   end
 
+  create_table "message_templates", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "title"
+    t.text "content"
+    t.string "category"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_message_templates_on_user_id"
+  end
+
   create_table "messages", force: :cascade do |t|
     t.text "content"
     t.integer "sender_id"
@@ -125,6 +178,27 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_11_110412) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "read", default: false, null: false
+    t.string "status"
+    t.string "message_type"
+    t.datetime "read_at"
+    t.text "attachment_data"
+    t.text "reactions"
+  end
+
+  create_table "notifications", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "title"
+    t.text "message"
+    t.string "notification_type"
+    t.boolean "read"
+    t.string "priority"
+    t.string "action_url"
+    t.datetime "expires_at"
+    t.string "related_model"
+    t.integer "related_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_notifications_on_user_id"
   end
 
   create_table "reports", force: :cascade do |t|
@@ -149,6 +223,20 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_11_110412) do
     t.datetime "updated_at", null: false
     t.index ["guest_account_id"], name: "index_temporary_listings_on_guest_account_id"
     t.index ["vehicle_id"], name: "index_temporary_listings_on_vehicle_id"
+  end
+
+  create_table "user_profiles", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "profile_type"
+    t.boolean "is_main"
+    t.text "permissions"
+    t.string "name"
+    t.string "position"
+    t.string "department"
+    t.string "access_level"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_user_profiles_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -252,6 +340,19 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_11_110412) do
     t.index ["vin"], name: "index_vehicles_on_vin", unique: true
   end
 
+  create_table "video_calls", force: :cascade do |t|
+    t.bigint "conversation_id", null: false
+    t.string "status"
+    t.datetime "scheduled_at"
+    t.datetime "started_at"
+    t.datetime "ended_at"
+    t.string "recording_url"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "room_id"
+    t.index ["conversation_id"], name: "index_video_calls_on_conversation_id"
+  end
+
   create_table "wallet_transactions", force: :cascade do |t|
     t.bigint "wallet_id", null: false
     t.integer "amount_cents", null: false
@@ -279,9 +380,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_11_110412) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "calendar_events", "users"
   add_foreign_key "categories", "categories", column: "parent_id"
+  add_foreign_key "conversations", "listings"
   add_foreign_key "conversations", "users"
   add_foreign_key "conversations", "users", column: "other_user_id"
+  add_foreign_key "events", "users"
+  add_foreign_key "favorites", "users"
   add_foreign_key "guest_accounts", "users"
   add_foreign_key "listings", "users"
   add_foreign_key "listings", "users", column: "buyer_id"
@@ -289,10 +394,14 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_11_110412) do
   add_foreign_key "media_folders", "listings"
   add_foreign_key "media_items", "listings"
   add_foreign_key "media_items", "media_folders"
+  add_foreign_key "message_templates", "users"
+  add_foreign_key "notifications", "users"
   add_foreign_key "reports", "users"
   add_foreign_key "temporary_listings", "guest_accounts"
   add_foreign_key "temporary_listings", "vehicles"
+  add_foreign_key "user_profiles", "users"
   add_foreign_key "vehicles", "categories"
+  add_foreign_key "video_calls", "conversations"
   add_foreign_key "wallet_transactions", "wallets"
   add_foreign_key "wallets", "users"
 end

@@ -1,168 +1,323 @@
-<!-- Hero Section -->
-<div class="relative bg-gradient-to-r from-primary to-primary-focus text-primary-content py-16 mb-12">
-  <div class="absolute inset-0 bg-[url('/images/car-pattern.svg')] opacity-10"></div>
-  <div class="container mx-auto px-4 relative">
+<!-- Header avec sélecteur de profil -->
+<div class="bg-gradient-to-r from-primary to-primary-focus text-primary-content p-6 mb-8">
+  <div class="max-w-7xl mx-auto">
     <div class="flex items-center justify-between">
       <div>
-        <h1 class="text-4xl md:text-5xl font-bold mb-4">Tableau de Bord</h1>
-        <p class="text-lg opacity-90">Bienvenue, <%= current_user.name %></p>
+        <h1 class="text-3xl font-bold">Tableau de bord</h1>
+        <p class="text-lg opacity-90">Bienvenue, <%= @current_profile.display_name %></p>
       </div>
-      <div class="flex items-center space-x-4">
-        <div class="text-right">
-          <p class="text-sm opacity-80">Solde actuel</p>
-          <p class="text-2xl font-bold"><%= number_to_currency(@wallet&.balance || 0) %></p>
+      
+      <!-- Sélecteur de profil -->
+      <% if @user_profiles.count > 1 %>
+        <div class="dropdown dropdown-end">
+          <label tabindex="0" class="btn btn-primary-content text-primary">
+            <div class="avatar">
+              <div class="w-8 h-8 rounded-full bg-primary text-primary-content flex items-center justify-center text-sm">
+                <%= @current_profile.initials %>
+              </div>
+            </div>
+            <span class="ml-2"><%= @current_profile.display_name %></span>
+            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </label>
+          <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-64 mt-2">
+            <% @user_profiles.each do |profile| %>
+              <li>
+                <%= link_to dashboard_path(profile_id: profile.id), class: "#{'active' if profile == @current_profile}" do %>
+                  <div class="flex items-center space-x-2">
+                    <div class="avatar">
+                      <div class="w-6 h-6 rounded-full bg-primary text-primary-content flex items-center justify-center text-xs">
+                        <%= profile.initials %>
+                      </div>
+                    </div>
+                    <div>
+                      <p class="font-medium"><%= profile.display_name %></p>
+                      <p class="text-xs opacity-70"><%= profile.profile_type.humanize %></p>
+                    </div>
+                  </div>
+                <% end %>
+              </li>
+            <% end %>
+            <div class="divider"></div>
+            <li><%= link_to "Gérer les profils", "#", class: "opacity-50", title: "Fonctionnalité en développement" %></li>
+          </ul>
         </div>
-        <button class="btn btn-primary">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-          </svg>
-          Recharger
-        </button>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<!-- Notifications urgentes -->
+<% if @urgent_notifications.any? %>
+  <div class="max-w-7xl mx-auto px-6 mb-6">
+    <div class="alert alert-warning">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+      </svg>
+      <div>
+        <h3 class="font-bold">Notifications urgentes</h3>
+        <div class="text-sm">
+          <%= pluralize(@urgent_notifications.count, 'notification') %> nécessite<%= 'nt' if @urgent_notifications.count > 1 %> votre attention immédiate.
+        </div>
+      </div>
+      <div>
+        <%= link_to "Voir tout", notifications_path, class: "btn btn-sm" %>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<!-- Statistiques principales -->
+<div class="max-w-7xl mx-auto px-6 mb-8">
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <!-- Annonces actives -->
+    <div class="stat bg-base-100 rounded-lg shadow">
+      <div class="stat-figure text-primary">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+        </svg>
+      </div>
+      <div class="stat-title">Annonces actives</div>
+      <div class="stat-value text-primary"><%= @user_stats[:active_listings] %></div>
+    </div>
+
+    <!-- Portefeuille -->
+    <div class="stat bg-base-100 rounded-lg shadow">
+      <div class="stat-figure text-success">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+        </svg>
+      </div>
+      <div class="stat-title">Solde portefeuille</div>
+      <div class="stat-value text-success">
+        <%= number_to_currency(@user_stats[:wallet_balance], unit: "€", separator: ",", delimiter: " ") %>
+      </div>
+    </div>
+
+    <!-- Messages non lus -->
+    <div class="stat bg-base-100 rounded-lg shadow">
+      <div class="stat-figure text-info">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+        </svg>
+      </div>
+      <div class="stat-title">Messages non lus</div>
+      <div class="stat-value text-info"><%= @unread_messages %></div>
+      <% if @unread_notifications > 0 %>
+        <div class="stat-desc">+ <%= @unread_notifications %> notifications</div>
+      <% end %>
+    </div>
+
+    <!-- Événements aujourd'hui -->
+    <div class="stat bg-base-100 rounded-lg shadow">
+      <div class="stat-figure text-warning">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+        </svg>
+      </div>
+      <div class="stat-title">Événements aujourd'hui</div>
+      <div class="stat-value text-warning">0</div>
+      <div class="stat-desc">0 à venir</div>
+    </div>
+  </div>
+</div>
+
+<!-- Contenu principal -->
+<div class="max-w-7xl mx-auto px-6">
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Colonne principale -->
+    <div class="lg:col-span-2 space-y-8">
+      <!-- Événements d'aujourd'hui -->
+      <div class="card bg-base-100 shadow-xl">
+        <div class="card-body">
+          <div class="flex items-center justify-between">
+            <h2 class="card-title">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+              </svg>
+              Événements d'aujourd'hui
+            </h2>
+            <a href="#" class="btn btn-primary btn-sm opacity-50" title="Calendrier en développement">Voir le calendrier</a>
+          </div>
+          
+          <div class="text-center py-8">
+            <svg class="w-16 h-16 mx-auto text-base-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+            </svg>
+            <p class="text-base-content opacity-70">Aucun événement prévu aujourd'hui</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mes annonces récentes -->
+      <div class="card bg-base-100 shadow-xl">
+        <div class="card-body">
+          <div class="flex items-center justify-between">
+            <h2 class="card-title">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+              </svg>
+              Mes annonces récentes
+            </h2>
+            <%= link_to "Voir toutes", listings_path, class: "btn btn-primary btn-sm" %>
+          </div>
+          
+          <div class="text-center py-8">
+            <svg class="w-16 h-16 mx-auto text-base-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+            </svg>
+            <p class="text-base-content opacity-70 mb-4">Aucune annonce pour le moment</p>
+            <%= link_to "Créer une annonce", new_listing_path, class: "btn btn-primary" %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Colonne latérale -->
+    <div class="space-y-8">
+      <!-- Prochains événements -->
+      <div class="card bg-base-100 shadow-xl">
+        <div class="card-body">
+          <h3 class="card-title text-sm">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            Prochains événements
+          </h3>
+          
+          <div class="text-center py-4">
+            <p class="text-sm text-base-content opacity-70">Aucun événement à venir</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Notifications récentes -->
+      <div class="card bg-base-100 shadow-xl">
+        <div class="card-body">
+          <div class="flex items-center justify-between">
+            <h3 class="card-title text-sm">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19H3V5h12v4"></path>
+              </svg>
+              Notifications récentes
+            </h3>
+            <a href="#" class="btn btn-primary btn-sm opacity-50" title="Notifications en développement">Voir toutes</a>
+          </div>
+          
+          <div class="text-center py-4">
+            <p class="text-sm text-base-content opacity-70">Aucune notification récente</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mes favoris -->
+      <div class="card bg-base-100 shadow-xl">
+        <div class="card-body">
+          <div class="flex items-center justify-between">
+            <h3 class="card-title text-sm">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+              </svg>
+              Mes favoris
+            </h3>
+            <a href="#" class="btn btn-primary btn-sm opacity-50" title="Favoris en développement">Voir tous</a>
+          </div>
+          
+          <div class="text-center py-4">
+            <p class="text-sm text-base-content opacity-70">Aucun favori pour le moment</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Analyses -->
+      <div class="card bg-base-100 shadow-xl">
+        <div class="card-body">
+          <div class="flex items-center justify-between">
+            <h3 class="card-title text-sm">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+              </svg>
+              Analytics
+            </h3>
+            <a href="#" class="btn btn-primary btn-sm opacity-50" title="Analytics en développement">Analyses détaillées</a>
+          </div>
+          
+          <div class="text-center py-4">
+            <p class="text-sm text-base-content opacity-70">Données en préparation</p>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Main Content -->
-<div class="container mx-auto px-4 pb-16">
-  <!-- Stats Grid -->
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-    <!-- Active Listings -->
-    <div class="stat bg-base-100 shadow-xl rounded-lg">
-      <div class="stat-figure text-primary">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-        </svg>
-      </div>
-      <div class="stat-title">Annonces actives</div>
-      <div class="stat-value text-primary"><%= @stats[:active_listings] %></div>
-    </div>
-
-    <!-- Total Sales -->
-    <div class="stat bg-base-100 shadow-xl rounded-lg">
-      <div class="stat-figure text-success">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-      </div>
-      <div class="stat-title">Ventes totales</div>
-      <div class="stat-value text-success"><%= @stats[:total_sales] %></div>
-    </div>
-
-    <!-- Total Purchases -->
-    <div class="stat bg-base-100 shadow-xl rounded-lg">
-      <div class="stat-figure text-info">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-        </svg>
-      </div>
-      <div class="stat-title">Achats totaux</div>
-      <div class="stat-value text-info"><%= @stats[:total_purchases] %></div>
-    </div>
-
-    <!-- Unread Messages -->
-    <div class="stat bg-base-100 shadow-xl rounded-lg">
-      <div class="stat-figure text-warning">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-        </svg>
-      </div>
-      <div class="stat-title">Messages non lus</div>
-      <div class="stat-value text-warning"><%= @stats[:unread_messages] %></div>
-    </div>
-  </div>
-
-  <!-- Main Grid -->
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-    <!-- My Listings -->
+<!-- Statistiques mensuelles (si autorisé) -->
+<% if @monthly_stats && @current_profile.can_access?('view_analytics') %>
+  <div class="max-w-7xl mx-auto px-6 mt-12">
     <div class="card bg-base-100 shadow-xl">
       <div class="card-body">
-        <div class="flex items-center justify-between mb-4">
-          <h2 class="card-title">Mes Annonces</h2>
-          <%= link_to "Voir tout", my_listings_path, class: "btn btn-primary btn-sm" %>
+        <div class="flex items-center justify-between">
+          <h2 class="card-title">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v4"></path>
+            </svg>
+            Évolution mensuelle
+          </h2>
+          <%= link_to "Analyses détaillées", dashboard_analytics_path, class: "btn btn-primary btn-sm" %>
         </div>
-        <div class="space-y-4">
-          <% @my_listings.limit(3).each do |listing| %>
-            <div class="flex items-center space-x-4 p-4 rounded-lg hover:bg-base-200 transition-colors duration-200">
-              <% if listing.photos.attached? %>
-                <%= image_tag listing.photos.first, class: "w-16 h-16 object-cover rounded-lg" %>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+          <div class="stat">
+            <div class="stat-title">Annonces ce mois</div>
+            <div class="stat-value text-primary"><%= @monthly_stats[:listings_this_month] %></div>
+            <div class="stat-desc">
+              <% if @monthly_stats[:listings_last_month] > 0 %>
+                <% change = ((@monthly_stats[:listings_this_month] - @monthly_stats[:listings_last_month]).to_f / @monthly_stats[:listings_last_month] * 100).round(1) %>
+                <span class="<%= change >= 0 ? 'text-success' : 'text-error' %>">
+                  <%= change >= 0 ? '+' : '' %><%= change %>%
+                </span>
+                par rapport au mois dernier
+              <% else %>
+                <%= @monthly_stats[:listings_last_month] %> le mois dernier
               <% end %>
-              <div class="flex-1">
-                <h3 class="font-medium"><%= listing.title %></h3>
-                <p class="text-sm text-base-content opacity-70"><%= listing.status %></p>
-              </div>
-              <div class="text-right">
-                <p class="font-bold"><%= number_to_currency(listing.vehicle.price) %></p>
-                <p class="text-xs text-base-content opacity-50"><%= time_ago_in_words(listing.created_at) %></p>
-              </div>
             </div>
-          <% end %>
-        </div>
-      </div>
-    </div>
-
-    <!-- Recent Messages -->
-    <div class="card bg-base-100 shadow-xl">
-      <div class="card-body">
-        <div class="flex items-center justify-between mb-4">
-          <h2 class="card-title">Messages récents</h2>
-          <%= link_to "Voir tout", messages_path, class: "btn btn-primary btn-sm" %>
-        </div>
-        <div class="space-y-4">
-          <% @conversations.each do |conversation| %>
-            <div class="flex items-center space-x-4 p-4 rounded-lg hover:bg-base-200 transition-colors duration-200">
-              <div class="avatar">
-                <div class="w-12 h-12 rounded-full">
-                  <img src="<%= conversation.other_user.avatar_url || 'https://ui-avatars.com/api/?name=' + conversation.other_user.name %>" alt="<%= conversation.other_user.name %>">
-                </div>
-              </div>
-              <div class="flex-1 min-w-0">
-                <p class="font-medium"><%= conversation.other_user.name %></p>
-                <p class="text-sm text-base-content opacity-70 truncate"><%= conversation.last_message&.content %></p>
-              </div>
-              <div class="text-right">
-                <p class="text-xs text-base-content opacity-50"><%= time_ago_in_words(conversation.last_message&.created_at) %></p>
-                <% if conversation.unread_count > 0 %>
-                  <span class="badge badge-primary badge-sm"><%= conversation.unread_count %></span>
-                <% end %>
-              </div>
+          </div>
+          
+          <div class="stat">
+            <div class="stat-title">Ventes ce mois</div>
+            <div class="stat-value text-success"><%= @monthly_stats[:sales_this_month] %></div>
+            <div class="stat-desc">
+              <% if @monthly_stats[:sales_last_month] > 0 %>
+                <% change = ((@monthly_stats[:sales_this_month] - @monthly_stats[:sales_last_month]).to_f / @monthly_stats[:sales_last_month] * 100).round(1) %>
+                <span class="<%= change >= 0 ? 'text-success' : 'text-error' %>">
+                  <%= change >= 0 ? '+' : '' %><%= change %>%
+                </span>
+                par rapport au mois dernier
+              <% else %>
+                <%= @monthly_stats[:sales_last_month] %> le mois dernier
+              <% end %>
             </div>
-          <% end %>
-        </div>
-      </div>
-    </div>
-
-    <!-- Recent Transactions -->
-    <div class="card bg-base-100 shadow-xl">
-      <div class="card-body">
-        <div class="flex items-center justify-between mb-4">
-          <h2 class="card-title">Transactions récentes</h2>
-          <%= link_to "Voir tout", wallet_transactions_path, class: "btn btn-primary btn-sm" %>
-        </div>
-        <div class="space-y-4">
-          <% @transactions.each do |transaction| %>
-            <div class="flex items-center justify-between p-4 rounded-lg hover:bg-base-200 transition-colors duration-200">
-              <div class="flex items-center space-x-4">
-                <div class="<%= transaction.amount.positive? ? 'text-success' : 'text-error' %>">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
-                <div>
-                  <p class="font-medium"><%= transaction.description %></p>
-                  <p class="text-sm text-base-content opacity-70"><%= transaction.transaction_type %></p>
-                </div>
-              </div>
-              <div class="text-right">
-                <p class="font-bold <%= transaction.amount.positive? ? 'text-success' : 'text-error' %>">
-                  <%= transaction.amount.positive? ? '+' : '' %><%= number_to_currency(transaction.amount) %>
-                </p>
-                <p class="text-xs text-base-content opacity-50"><%= time_ago_in_words(transaction.created_at) %></p>
-              </div>
+          </div>
+          
+          <div class="stat">
+            <div class="stat-title">Messages ce mois</div>
+            <div class="stat-value text-info"><%= @monthly_stats[:messages_this_month] %></div>
+            <div class="stat-desc">
+              <% if @monthly_stats[:messages_last_month] > 0 %>
+                <% change = ((@monthly_stats[:messages_this_month] - @monthly_stats[:messages_last_month]).to_f / @monthly_stats[:messages_last_month] * 100).round(1) %>
+                <span class="<%= change >= 0 ? 'text-success' : 'text-error' %>">
+                  <%= change >= 0 ? '+' : '' %><%= change %>%
+                </span>
+                par rapport au mois dernier
+              <% else %>
+                <%= @monthly_stats[:messages_last_month] %> le mois dernier
+              <% end %>
             </div>
-          <% end %>
+          </div>
         </div>
       </div>
     </div>
   </div>
-</div> 
+<% end %> 

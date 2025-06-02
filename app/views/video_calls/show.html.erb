@@ -1,0 +1,318 @@
+<div class="max-w-6xl mx-auto p-6">
+  <div class="bg-base-100 shadow-xl rounded-xl overflow-hidden">
+    <!-- Call Header -->
+    <div class="bg-gradient-to-r from-primary to-primary-focus text-primary-content p-6">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-4">
+          <h1 class="text-2xl font-bold">Appel vidéo</h1>
+          <div class="badge badge-primary-content text-primary">
+            <%= @video_call.status.humanize %>
+          </div>
+        </div>
+        
+        <div class="flex items-center space-x-2">
+          <span class="text-sm opacity-90">
+            Avec <%= @other_participant.email %>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Video Container -->
+    <div class="relative bg-black h-[500px] flex items-center justify-center">
+      <!-- Remote Video -->
+      <video id="remoteVideo" autoplay playsinline class="w-full h-full object-cover"></video>
+      
+      <!-- Local Video (Picture in Picture) -->
+      <div class="absolute bottom-4 right-4 w-48 h-36 bg-gray-800 rounded-lg overflow-hidden border-2 border-white">
+        <video id="localVideo" autoplay playsinline muted class="w-full h-full object-cover"></video>
+      </div>
+      
+      <!-- Call Status Overlay -->
+      <div id="callStatus" class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+        <div class="text-center text-white">
+          <div class="text-6xl mb-4">📞</div>
+          <h2 class="text-2xl font-bold mb-2">Connexion en cours...</h2>
+          <p class="opacity-80">Veuillez patienter pendant que nous établissons la connexion</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Call Controls -->
+    <div class="p-6 bg-base-100 border-t border-base-300">
+      <div class="flex items-center justify-center space-x-4">
+        <!-- Mute Audio -->
+        <button id="muteBtn" class="btn btn-circle btn-lg" onclick="toggleMute()">
+          <svg id="muteIcon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path>
+          </svg>
+        </button>
+        
+        <!-- Toggle Video -->
+        <button id="videoBtn" class="btn btn-circle btn-lg" onclick="toggleVideo()">
+          <svg id="videoIcon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+          </svg>
+        </button>
+        
+        <!-- End Call -->
+        <button id="endCallBtn" class="btn btn-error btn-circle btn-lg" onclick="endCall()">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2M3 3l18 18"></path>
+          </svg>
+        </button>
+        
+        <!-- Share Screen -->
+        <button id="shareBtn" class="btn btn-circle btn-lg" onclick="toggleScreenShare()">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+          </svg>
+        </button>
+      </div>
+      
+      <!-- Call Info -->
+      <div class="mt-4 text-center text-sm text-base-content opacity-70">
+        <div id="callTimer">00:00</div>
+        <div class="mt-1">
+          Salle: <%= @video_call.room_id %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// WebRTC Configuration
+const configuration = {
+  iceServers: [
+    { urls: 'stun:stun.l.google.com:19302' },
+    { urls: 'stun:stun1.l.google.com:19302' }
+  ]
+};
+
+let localStream;
+let remoteStream;
+let peerConnection;
+let isAudioMuted = false;
+let isVideoMuted = false;
+let isScreenSharing = false;
+let callStartTime;
+let callTimer;
+
+// Initialize the call
+document.addEventListener('DOMContentLoaded', function() {
+  initializeCall();
+});
+
+async function initializeCall() {
+  try {
+    // Get user media
+    localStream = await navigator.mediaDevices.getUserMedia({ 
+      video: true, 
+      audio: true 
+    });
+    
+    document.getElementById('localVideo').srcObject = localStream;
+    
+    // Create peer connection
+    peerConnection = new RTCPeerConnection(configuration);
+    
+    // Add local stream to peer connection
+    localStream.getTracks().forEach(track => {
+      peerConnection.addTrack(track, localStream);
+    });
+    
+    // Handle remote stream
+    peerConnection.ontrack = (event) => {
+      remoteStream = event.streams[0];
+      document.getElementById('remoteVideo').srcObject = remoteStream;
+      hideCallStatus();
+      startCallTimer();
+    };
+    
+    // Handle ICE candidates
+    peerConnection.onicecandidate = (event) => {
+      if (event.candidate) {
+        // Send candidate to remote peer via signaling server
+        sendSignalingMessage({
+          type: 'ice-candidate',
+          candidate: event.candidate
+        });
+      }
+    };
+    
+    // Start the call
+    if ('<%= @video_call.status %>' === 'scheduled') {
+      // Update call status to active
+      fetch('<%= video_call_path(@video_call) %>', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': document.querySelector('[name="csrf-token"]').content
+        },
+        body: JSON.stringify({ action_type: 'start' })
+      });
+    }
+    
+  } catch (error) {
+    console.error('Error initializing call:', error);
+    showError('Impossible d\'accéder à la caméra ou au microphone');
+  }
+}
+
+function toggleMute() {
+  isAudioMuted = !isAudioMuted;
+  localStream.getAudioTracks().forEach(track => {
+    track.enabled = !isAudioMuted;
+  });
+  
+  const muteBtn = document.getElementById('muteBtn');
+  const muteIcon = document.getElementById('muteIcon');
+  
+  if (isAudioMuted) {
+    muteBtn.classList.add('btn-error');
+    muteIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" clip-rule="evenodd"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"></path>';
+  } else {
+    muteBtn.classList.remove('btn-error');
+    muteIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path>';
+  }
+}
+
+function toggleVideo() {
+  isVideoMuted = !isVideoMuted;
+  localStream.getVideoTracks().forEach(track => {
+    track.enabled = !isVideoMuted;
+  });
+  
+  const videoBtn = document.getElementById('videoBtn');
+  const videoIcon = document.getElementById('videoIcon');
+  
+  if (isVideoMuted) {
+    videoBtn.classList.add('btn-error');
+    videoIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636m12.728 12.728L18.364 5.636M5.636 18.364l12.728-12.728"></path>';
+  } else {
+    videoBtn.classList.remove('btn-error');
+    videoIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>';
+  }
+}
+
+async function toggleScreenShare() {
+  if (!isScreenSharing) {
+    try {
+      const screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+      
+      // Replace video track
+      const videoTrack = screenStream.getVideoTracks()[0];
+      const sender = peerConnection.getSenders().find(s => 
+        s.track && s.track.kind === 'video'
+      );
+      
+      if (sender) {
+        await sender.replaceTrack(videoTrack);
+      }
+      
+      isScreenSharing = true;
+      document.getElementById('shareBtn').classList.add('btn-active');
+      
+      // Handle screen share end
+      videoTrack.onended = () => {
+        stopScreenShare();
+      };
+      
+    } catch (error) {
+      console.error('Error sharing screen:', error);
+    }
+  } else {
+    stopScreenShare();
+  }
+}
+
+async function stopScreenShare() {
+  // Replace with camera track
+  const videoTrack = localStream.getVideoTracks()[0];
+  const sender = peerConnection.getSenders().find(s => 
+    s.track && s.track.kind === 'video'
+  );
+  
+  if (sender && videoTrack) {
+    await sender.replaceTrack(videoTrack);
+  }
+  
+  isScreenSharing = false;
+  document.getElementById('shareBtn').classList.remove('btn-active');
+}
+
+function endCall() {
+  // Stop all tracks
+  if (localStream) {
+    localStream.getTracks().forEach(track => track.stop());
+  }
+  
+  // Close peer connection
+  if (peerConnection) {
+    peerConnection.close();
+  }
+  
+  // Stop call timer
+  if (callTimer) {
+    clearInterval(callTimer);
+  }
+  
+  // Update call status
+  fetch('<%= video_call_path(@video_call) %>', {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRF-Token': document.querySelector('[name="csrf-token"]').content
+    },
+    body: JSON.stringify({ action_type: 'end' })
+  }).then(() => {
+    // Redirect back to conversation
+    window.location.href = '<%= conversation_path(@video_call.conversation) %>';
+  });
+}
+
+function hideCallStatus() {
+  document.getElementById('callStatus').style.display = 'none';
+}
+
+function startCallTimer() {
+  callStartTime = Date.now();
+  callTimer = setInterval(() => {
+    const elapsed = Math.floor((Date.now() - callStartTime) / 1000);
+    const minutes = Math.floor(elapsed / 60);
+    const seconds = elapsed % 60;
+    document.getElementById('callTimer').textContent = 
+      `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  }, 1000);
+}
+
+function showError(message) {
+  const callStatus = document.getElementById('callStatus');
+  callStatus.innerHTML = `
+    <div class="text-center text-white">
+      <div class="text-6xl mb-4">⚠️</div>
+      <h2 class="text-2xl font-bold mb-2">Erreur</h2>
+      <p class="opacity-80">${message}</p>
+      <button class="btn btn-primary mt-4" onclick="window.location.href='<%= conversation_path(@video_call.conversation) %>'">
+        Retour à la conversation
+      </button>
+    </div>
+  `;
+}
+
+function sendSignalingMessage(message) {
+  // In a real implementation, this would send the message via WebSocket or similar
+  console.log('Signaling message:', message);
+}
+
+// Handle page unload
+window.addEventListener('beforeunload', () => {
+  if (localStream) {
+    localStream.getTracks().forEach(track => track.stop());
+  }
+  if (peerConnection) {
+    peerConnection.close();
+  }
+});
+</script>

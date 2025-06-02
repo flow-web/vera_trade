@@ -1,0 +1,267 @@
+<div class="max-w-6xl mx-auto p-6">
+  <div class="bg-base-100 shadow-xl rounded-xl overflow-hidden">
+    <!-- Conversation Header -->
+    <div class="bg-gradient-to-r from-primary to-primary-focus text-primary-content p-6">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-4">
+          <%= link_to messages_path, class: "btn btn-ghost btn-circle" do %>
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+            </svg>
+          <% end %>
+          
+          <div class="avatar">
+            <div class="w-12 h-12 rounded-full bg-primary-content text-primary flex items-center justify-center">
+              <%= @other_participant.email.first.upcase %>
+            </div>
+          </div>
+          
+          <div>
+            <h1 class="text-xl font-bold"><%= @other_participant.email %></h1>
+            <% if @conversation.listing %>
+              <p class="opacity-90 text-sm">
+                🚗 <%= @conversation.listing.title %>
+              </p>
+            <% end %>
+            <p class="opacity-70 text-xs">
+              <span class="online-indicator"></span>
+              En ligne
+            </p>
+          </div>
+        </div>
+        
+        <div class="flex items-center space-x-2">
+          <!-- Video Call Button -->
+          <button class="btn btn-primary-content text-primary" onclick="video_call_modal.showModal()">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+            </svg>
+            Appel vidéo
+          </button>
+          
+          <!-- Archive Button -->
+          <%= button_to "Archiver", archive_conversation_messages_path, 
+              params: { conversation_id: @conversation.id },
+              method: :post,
+              class: "btn btn-ghost btn-sm",
+              data: { turbo_method: :post, confirm: "Êtes-vous sûr de vouloir archiver cette conversation ?" } %>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex h-[600px]">
+      <!-- Messages Area -->
+      <div class="flex-1 flex flex-col">
+        <!-- Messages List -->
+        <div class="flex-1 p-6 overflow-y-auto bg-base-50" id="message-list">
+          <% @messages.each do |message| %>
+            <%= render 'messages/message', message: message, current_user: current_user %>
+          <% end %>
+        </div>
+
+        <!-- Message Input Area -->
+        <div class="p-6 bg-base-100 border-t border-base-300">
+          <%= render 'messages/form', message: @message, conversation: @conversation %>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="w-80 bg-base-50 border-l border-base-300 p-4">
+        <!-- Quick Templates -->
+        <div class="mb-6">
+          <h3 class="font-semibold mb-3">Réponses rapides</h3>
+          <div class="space-y-2">
+            <% @message_templates.each do |template| %>
+              <button class="btn btn-outline btn-sm w-full text-left justify-start" 
+                      data-template-content="<%= template.content %>"
+                      onclick="useTemplate(this)">
+                <span class="truncate"><%= template.title %></span>
+              </button>
+            <% end %>
+          </div>
+        </div>
+
+        <!-- Listing Info -->
+        <% if @conversation.listing %>
+          <div class="card bg-base-100 shadow-sm mb-6">
+            <div class="card-body p-4">
+              <h4 class="card-title text-sm">Annonce concernée</h4>
+              <div class="flex items-center space-x-3">
+                <% if @conversation.listing.photos.attached? %>
+                  <%= image_tag @conversation.listing.photos.first, class: "w-12 h-12 rounded object-cover" %>
+                <% else %>
+                  <div class="w-12 h-12 bg-base-300 rounded flex items-center justify-center">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                  </div>
+                <% end %>
+                <div class="flex-1 min-w-0">
+                  <p class="font-medium text-sm truncate"><%= @conversation.listing.title %></p>
+                  <p class="text-xs text-primary font-semibold">
+                    <%= number_to_currency(@conversation.listing.vehicle.price, unit: "€", separator: ",", delimiter: " ") %>
+                  </p>
+                </div>
+              </div>
+              <div class="card-actions justify-end mt-2">
+                <%= link_to "Voir l'annonce", @conversation.listing, class: "btn btn-primary btn-xs" %>
+              </div>
+            </div>
+          </div>
+        <% end %>
+
+        <!-- Conversation Actions -->
+        <div class="space-y-2">
+          <button class="btn btn-outline btn-sm w-full" onclick="report_modal.showModal()">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+            </svg>
+            Signaler
+          </button>
+          
+          <button class="btn btn-outline btn-sm w-full" onclick="block_modal.showModal()">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636m12.728 12.728L18.364 5.636M5.636 18.364l12.728-12.728"></path>
+            </svg>
+            Bloquer
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Video Call Modal -->
+<dialog id="video_call_modal" class="modal">
+  <div class="modal-box">
+    <h3 class="font-bold text-lg">Planifier un appel vidéo</h3>
+    <div id="video-call-form">
+      <%= render 'video_calls/form', video_call: @video_call, conversation: @conversation %>
+    </div>
+  </div>
+</dialog>
+
+<!-- Report Modal -->
+<dialog id="report_modal" class="modal">
+  <div class="modal-box">
+    <h3 class="font-bold text-lg">Signaler cette conversation</h3>
+    <p class="py-4">Pourquoi souhaitez-vous signaler cette conversation ?</p>
+    
+    <div class="space-y-2">
+      <label class="label cursor-pointer">
+        <span class="label-text">Contenu inapproprié</span>
+        <input type="radio" name="report_reason" class="radio" value="inappropriate">
+      </label>
+      <label class="label cursor-pointer">
+        <span class="label-text">Spam ou arnaque</span>
+        <input type="radio" name="report_reason" class="radio" value="spam">
+      </label>
+      <label class="label cursor-pointer">
+        <span class="label-text">Harcèlement</span>
+        <input type="radio" name="report_reason" class="radio" value="harassment">
+      </label>
+      <label class="label cursor-pointer">
+        <span class="label-text">Autre</span>
+        <input type="radio" name="report_reason" class="radio" value="other">
+      </label>
+    </div>
+    
+    <div class="form-control mt-4">
+      <textarea class="textarea textarea-bordered" placeholder="Détails supplémentaires (optionnel)"></textarea>
+    </div>
+    
+    <div class="modal-action">
+      <button type="button" class="btn" onclick="report_modal.close()">Annuler</button>
+      <button type="button" class="btn btn-error">Signaler</button>
+    </div>
+  </div>
+</dialog>
+
+<!-- Block Modal -->
+<dialog id="block_modal" class="modal">
+  <div class="modal-box">
+    <h3 class="font-bold text-lg">Bloquer cet utilisateur</h3>
+    <p class="py-4">Êtes-vous sûr de vouloir bloquer <%= @other_participant.email %> ? Vous ne recevrez plus de messages de cette personne.</p>
+    
+    <div class="modal-action">
+      <button type="button" class="btn" onclick="block_modal.close()">Annuler</button>
+      <button type="button" class="btn btn-error">Bloquer</button>
+    </div>
+  </div>
+</dialog>
+
+<script>
+document.addEventListener('turbo:load', function() {
+  // Auto-scroll to bottom of messages
+  const messageList = document.getElementById('message-list');
+  if (messageList) {
+    messageList.scrollTop = messageList.scrollHeight;
+  }
+  
+  // Subscribe to message updates
+  const conversationId = '<%= @conversation.id %>';
+  const userId = '<%= current_user.id %>';
+  
+  // Turbo Stream subscription for real-time updates
+  const eventSource = new EventSource(`/conversations/${conversationId}/messages.turbo_stream`);
+  
+  eventSource.addEventListener('message', function(event) {
+    // Handle new messages
+    if (messageList) {
+      messageList.scrollTop = messageList.scrollHeight;
+    }
+  });
+});
+
+// Template usage function
+function useTemplate(button) {
+  const content = button.dataset.templateContent;
+  const messageInput = document.querySelector('#message_content');
+  if (messageInput) {
+    messageInput.value = content;
+    messageInput.focus();
+  }
+}
+
+// Emoji reactions
+function addReaction(messageId, emoji) {
+  fetch(`/messages/${messageId}/add_reaction`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRF-Token': document.querySelector('[name="csrf-token"]').content
+    },
+    body: JSON.stringify({ emoji: emoji })
+  });
+}
+
+// Mark messages as read when they come into view
+const observerOptions = {
+  root: document.getElementById('message-list'),
+  rootMargin: '0px',
+  threshold: 0.5
+};
+
+const messageObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const messageId = entry.target.dataset.messageId;
+      const isFromOther = entry.target.dataset.fromOther === 'true';
+      
+      if (messageId && isFromOther) {
+        fetch(`/messages/${messageId}/mark_as_read`, {
+          method: 'PATCH',
+          headers: {
+            'X-CSRF-Token': document.querySelector('[name="csrf-token"]').content
+          }
+        });
+      }
+    }
+  });
+}, observerOptions);
+
+// Observe all message elements
+document.querySelectorAll('[data-message-id]').forEach(message => {
+  messageObserver.observe(message);
+});
+</script>

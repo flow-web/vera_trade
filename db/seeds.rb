@@ -367,3 +367,191 @@ construction_listings = [
 end
 
 puts "Seed terminé avec succès !"
+
+# Création d'un utilisateur de test si il n'existe pas
+user = User.find_or_create_by(email: 'test@example.com') do |u|
+  u.password = 'password123'
+  u.password_confirmation = 'password123'
+end
+
+puts "Utilisateur de test créé : #{user.email}"
+
+# Vérifier que le profil principal a été créé
+main_profile = user.main_profile
+if main_profile
+  puts "Profil principal créé : #{main_profile.display_name}"
+else
+  puts "Création du profil principal..."
+  main_profile = user.user_profiles.create!(
+    name: user.email.split('@').first.humanize,
+    profile_type: 'personal',
+    is_main: true,
+    access_level: 'full_access'
+  )
+end
+
+# Créer quelques profils d'employés pour démontrer le système multi-profils
+unless user.user_profiles.count > 1
+  puts "Création de profils d'employés..."
+  
+  # Profil manager
+  manager_profile = user.user_profiles.create!(
+    name: 'Jean Dupont',
+    profile_type: 'manager',
+    position: 'Directeur des ventes',
+    department: 'Ventes',
+    is_main: false,
+    access_level: 'manager_access'
+  )
+  
+  # Profil vendeur
+  sales_profile = user.user_profiles.create!(
+    name: 'Marie Martin',
+    profile_type: 'sales',
+    position: 'Conseillère commerciale',
+    department: 'Ventes',
+    is_main: false,
+    access_level: 'sales_only'
+  )
+  
+  # Profil support
+  support_profile = user.user_profiles.create!(
+    name: 'Pierre Durand',
+    profile_type: 'support',
+    position: 'Agent support',
+    department: 'Support client',
+    is_main: false,
+    access_level: 'support_only'
+  )
+  
+  puts "Profils d'employés créés : #{user.user_profiles.count} profils au total"
+end
+
+# Créer des événements de calendrier d'exemple
+unless user.calendar_events.any?
+  puts "Création d'événements de calendrier..."
+  
+  # Événement aujourd'hui
+  user.calendar_events.create!(
+    title: "Appel client - Vente BMW X3",
+    description: "Appel programmé avec M. Leblanc pour finaliser la vente",
+    event_type: 'video_call',
+    start_time: DateTime.current.change(hour: 14, min: 0),
+    end_time: DateTime.current.change(hour: 14, min: 30),
+    color: '#3B82F6'
+  )
+  
+  # Événement demain
+  user.calendar_events.create!(
+    title: "Réunion équipe commerciale",
+    description: "Point hebdomadaire avec l'équipe de vente",
+    event_type: 'meeting',
+    start_time: DateTime.current.tomorrow.change(hour: 9, min: 0),
+    end_time: DateTime.current.tomorrow.change(hour: 10, min: 0),
+    color: '#10B981'
+  )
+  
+  # Rappel dans 3 jours
+  user.calendar_events.create!(
+    title: "Rappel - Livraison Mercedes Classe A",
+    description: "Vérifier que la livraison s'est bien passée",
+    event_type: 'reminder',
+    start_time: 3.days.from_now.change(hour: 10, min: 0),
+    end_time: 3.days.from_now.change(hour: 10, min: 15),
+    color: '#F59E0B'
+  )
+  
+  # Rendez-vous la semaine prochaine
+  user.calendar_events.create!(
+    title: "RDV garage - Inspection Audi A4",
+    description: "Inspection pré-vente chez le garage partenaire",
+    event_type: 'appointment',
+    start_time: 1.week.from_now.change(hour: 14, min: 0),
+    end_time: 1.week.from_now.change(hour: 16, min: 0),
+    color: '#8B5CF6'
+  )
+  
+  puts "#{user.calendar_events.count} événements de calendrier créés"
+end
+
+# Créer des notifications d'exemple
+unless user.notifications.any?
+  puts "Création de notifications..."
+  
+  # Notification urgente
+  user.notifications.create!(
+    title: "Nouveau message urgent",
+    message: "Vous avez reçu un message important concernant la vente de votre Renault Clio",
+    notification_type: 'message',
+    priority: 'urgent',
+    read: false,
+    action_url: '/messages'
+  )
+  
+  # Notification de succès
+  user.notifications.create!(
+    title: "Vente réalisée !",
+    message: "Félicitations ! Votre BMW X1 a été vendue pour 25 000€",
+    notification_type: 'success',
+    priority: 'high',
+    read: false
+  )
+  
+  # Notification de rappel
+  user.notifications.create!(
+    title: "Rappel - Appel vidéo dans 1h",
+    message: "N'oubliez pas votre appel vidéo avec M. Leblanc à 14h00",
+    notification_type: 'video_call',
+    priority: 'normal',
+    read: false,
+    expires_at: DateTime.current + 2.hours
+  )
+  
+  # Notification d'information
+  user.notifications.create!(
+    title: "Mise à jour de votre annonce",
+    message: "Votre annonce Peugeot 308 a été mise à jour avec succès",
+    notification_type: 'listing_update',
+    priority: 'low',
+    read: true,
+    created_at: 2.days.ago
+  )
+  
+  # Notification de contrat
+  user.notifications.create!(
+    title: "Contrat à signer",
+    message: "Le contrat de vente pour la Ford Focus est prêt à être signé",
+    notification_type: 'contract',
+    priority: 'high',
+    read: false,
+    action_url: '/contracts/123'
+  )
+  
+  puts "#{user.notifications.count} notifications créées"
+end
+
+# Créer quelques favoris d'exemple si des listings existent
+if Listing.any? && user.favorites.empty?
+  puts "Création de favoris..."
+  
+  Listing.limit(3).each do |listing|
+    user.add_to_favorites(
+      listing,
+      name: "Favori - #{listing.title}",
+      notes: "Ajouté automatiquement lors du seed"
+    )
+  end
+  
+  puts "#{user.favorites.count} favoris créés"
+end
+
+puts "\n=== Résumé des données créées ==="
+puts "👤 Utilisateur : #{user.email}"
+puts "📋 Profils : #{user.user_profiles.count}"
+puts "📅 Événements : #{user.calendar_events.count}"
+puts "🔔 Notifications : #{user.notifications.count}"
+puts "❤️ Favoris : #{user.favorites.count}"
+puts "\n✅ Données de démonstration créées avec succès !"
+puts "\nConnectez-vous avec :"
+puts "Email: #{user.email}"
+puts "Mot de passe: password123"
