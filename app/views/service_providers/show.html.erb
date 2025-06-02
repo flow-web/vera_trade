@@ -1,0 +1,388 @@
+<% content_for :title, @service_provider.business_name %>
+
+<div class="min-h-screen bg-base-100">
+  <!-- Header du profil -->
+  <div class="bg-gradient-to-r from-primary to-secondary text-primary-content">
+    <div class="container mx-auto px-4 py-8">
+      <div class="flex flex-col md:flex-row items-start gap-6">
+        <!-- Avatar et infos principales -->
+        <div class="flex-shrink-0">
+          <%= service_provider_avatar(@service_provider, 'w-32 h-32') %>
+        </div>
+        
+        <div class="flex-1">
+          <div class="flex flex-wrap items-center gap-2 mb-2">
+            <h1 class="text-4xl font-bold"><%= @service_provider.business_name %></h1>
+            <% @service_provider.badge_types.each do |badge| %>
+              <div class="badge badge-<%= badge_color(badge) %>">
+                <%= badge_text(badge) %>
+              </div>
+            <% end %>
+          </div>
+          
+          <div class="flex items-center gap-4 mb-4">
+            <div class="flex items-center gap-2">
+              <%= rating_stars(@average_rating) %>
+              <span class="font-semibold"><%= number_with_precision(@average_rating, precision: 1) %></span>
+              <span class="opacity-80">(<%= pluralize(@total_reviews, 'avis') %>)</span>
+            </div>
+            
+            <div class="flex items-center gap-1">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
+              </svg>
+              <span><%= @service_provider.city %></span>
+            </div>
+            
+            <div class="flex items-center gap-1">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path>
+              </svg>
+              <span><%= @service_provider.phone %></span>
+            </div>
+          </div>
+          
+          <p class="text-lg opacity-90 mb-4"><%= @service_provider.description %></p>
+          
+          <!-- Catégories -->
+          <div class="flex flex-wrap gap-2 mb-4">
+            <% @service_provider.categories.each do |category| %>
+              <span class="badge badge-outline badge-lg">
+                <%= category_icon(category.name) %> <%= category.name %>
+              </span>
+            <% end %>
+          </div>
+          
+          <!-- Actions -->
+          <div class="flex gap-2">
+            <button class="btn btn-accent" onclick="contact_modal.showModal()">
+              Contacter
+            </button>
+            <% if @service_provider.website.present? %>
+              <%= link_to "Site web", @service_provider.website, 
+                  target: "_blank", class: "btn btn-outline" %>
+            <% end %>
+            <% if current_user == @service_provider.user %>
+              <%= link_to "Modifier", edit_service_provider_path(@service_provider), 
+                  class: "btn btn-outline" %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container mx-auto px-4 py-8">
+    <div class="grid lg:grid-cols-3 gap-8">
+      <!-- Contenu principal -->
+      <div class="lg:col-span-2 space-y-8">
+        <!-- Services proposés -->
+        <section class="card bg-base-200 shadow-lg">
+          <div class="card-body">
+            <h2 class="card-title text-2xl mb-4">Services Proposés</h2>
+            
+            <% if @service_offers.any? %>
+              <div class="space-y-4">
+                <% @service_offers.each do |offer| %>
+                  <div class="border border-base-300 rounded-lg p-4">
+                    <div class="flex justify-between items-start mb-2">
+                      <h3 class="font-semibold text-lg"><%= offer.title %></h3>
+                      <div class="text-right">
+                        <div class="text-lg font-bold text-primary">
+                          <%= offer.formatted_price %>
+                        </div>
+                        <% if offer.duration_estimate.present? %>
+                          <div class="text-sm opacity-70">
+                            Durée: <%= offer.duration_estimate %>
+                          </div>
+                        <% end %>
+                      </div>
+                    </div>
+                    
+                    <p class="text-sm opacity-80 mb-3"><%= offer.description %></p>
+                    
+                    <div class="flex justify-between items-center">
+                      <span class="badge badge-outline">
+                        <%= category_icon(offer.category.name) %> <%= offer.category.name %>
+                      </span>
+                      <button class="btn btn-primary btn-sm" 
+                              onclick="book_service_modal.showModal()"
+                              data-offer-id="<%= offer.id %>">
+                        Réserver
+                      </button>
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+            <% else %>
+              <div class="text-center py-8">
+                <div class="text-4xl mb-2">📋</div>
+                <p class="text-lg opacity-70">Aucun service proposé pour le moment</p>
+              </div>
+            <% end %>
+          </div>
+        </section>
+
+        <!-- Portfolio/Galerie -->
+        <section class="card bg-base-200 shadow-lg">
+          <div class="card-body">
+            <h2 class="card-title text-2xl mb-4">Portfolio</h2>
+            
+            <% if @service_provider.portfolio_images.any? %>
+              <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                <% @service_provider.portfolio_images.each do |image| %>
+                  <div class="aspect-square rounded-lg overflow-hidden cursor-pointer hover:opacity-80 transition-opacity"
+                       onclick="image_modal.showModal(); document.getElementById('modal_image').src='<%= url_for(image) %>'">
+                    <%= image_tag image, class: "w-full h-full object-cover" %>
+                  </div>
+                <% end %>
+              </div>
+            <% else %>
+              <div class="text-center py-8">
+                <div class="text-4xl mb-2">📸</div>
+                <p class="text-lg opacity-70">Aucune réalisation à afficher</p>
+              </div>
+            <% end %>
+          </div>
+        </section>
+
+        <!-- Avis et évaluations -->
+        <section class="card bg-base-200 shadow-lg">
+          <div class="card-body">
+            <div class="flex justify-between items-center mb-6">
+              <h2 class="card-title text-2xl">Avis Clients</h2>
+              <% if current_user && current_user != @service_provider.user %>
+                <button class="btn btn-outline btn-sm" onclick="review_modal.showModal()">
+                  Laisser un avis
+                </button>
+              <% end %>
+            </div>
+            
+            <!-- Résumé des évaluations -->
+            <div class="grid md:grid-cols-4 gap-4 mb-6 p-4 bg-base-100 rounded-lg">
+              <div class="text-center">
+                <div class="text-3xl font-bold text-primary">
+                  <%= number_with_precision(@average_rating, precision: 1) %>
+                </div>
+                <div class="text-sm opacity-70">Note moyenne</div>
+                <%= rating_stars(@average_rating) %>
+              </div>
+              
+              <div class="text-center">
+                <div class="text-2xl font-bold">
+                  <%= @service_provider.service_reviews.average(:communication_rating)&.round(1) || 0 %>
+                </div>
+                <div class="text-sm opacity-70">Communication</div>
+              </div>
+              
+              <div class="text-center">
+                <div class="text-2xl font-bold">
+                  <%= @service_provider.service_reviews.average(:quality_rating)&.round(1) || 0 %>
+                </div>
+                <div class="text-sm opacity-70">Qualité</div>
+              </div>
+              
+              <div class="text-center">
+                <div class="text-2xl font-bold">
+                  <%= @service_provider.service_reviews.average(:value_rating)&.round(1) || 0 %>
+                </div>
+                <div class="text-sm opacity-70">Rapport qualité/prix</div>
+              </div>
+            </div>
+            
+            <!-- Liste des avis -->
+            <% if @service_reviews.any? %>
+              <div class="space-y-4">
+                <% @service_reviews.each do |review| %>
+                  <div class="border border-base-300 rounded-lg p-4">
+                    <div class="flex justify-between items-start mb-2">
+                      <div class="flex items-center gap-3">
+                        <div class="avatar placeholder">
+                          <div class="bg-neutral text-neutral-content rounded-full w-10">
+                            <span class="text-sm"><%= review.user.email.first.upcase %></span>
+                          </div>
+                        </div>
+                        <div>
+                          <div class="font-semibold"><%= review.user.email.split('@').first.humanize %></div>
+                          <div class="text-sm opacity-70">
+                            <%= time_ago_in_words(review.created_at) %>
+                            <% if review.verified? %>
+                              <span class="badge badge-success badge-xs ml-2">Vérifié</span>
+                            <% end %>
+                          </div>
+                        </div>
+                      </div>
+                      <%= rating_stars(review.rating) %>
+                    </div>
+                    
+                    <h4 class="font-semibold mb-2"><%= review.title %></h4>
+                    <p class="text-sm mb-3"><%= review.comment %></p>
+                    
+                    <% if review.images.any? %>
+                      <div class="flex gap-2 mb-3">
+                        <% review.images.each do |image| %>
+                          <div class="w-16 h-16 rounded overflow-hidden cursor-pointer"
+                               onclick="image_modal.showModal(); document.getElementById('modal_image').src='<%= url_for(image) %>'">
+                            <%= image_tag image, class: "w-full h-full object-cover" %>
+                          </div>
+                        <% end %>
+                      </div>
+                    <% end %>
+                    
+                    <div class="flex gap-4 text-xs opacity-70">
+                      <span>Communication: <%= review.communication_rating %>/5</span>
+                      <span>Qualité: <%= review.quality_rating %>/5</span>
+                      <span>Rapport qualité/prix: <%= review.value_rating %>/5</span>
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+            <% else %>
+              <div class="text-center py-8">
+                <div class="text-4xl mb-2">💬</div>
+                <p class="text-lg opacity-70">Aucun avis pour le moment</p>
+              </div>
+            <% end %>
+          </div>
+        </section>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="space-y-6">
+        <!-- Informations de contact -->
+        <div class="card bg-base-200 shadow-lg">
+          <div class="card-body">
+            <h3 class="card-title mb-4">Informations</h3>
+            
+            <div class="space-y-3">
+              <div class="flex items-center gap-2">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
+                </svg>
+                <span class="text-sm"><%= @service_provider.full_address %></span>
+              </div>
+              
+              <div class="flex items-center gap-2">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path>
+                </svg>
+                <span class="text-sm"><%= @service_provider.phone %></span>
+              </div>
+              
+              <% if @service_provider.website.present? %>
+                <div class="flex items-center gap-2">
+                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M4.083 9h1.946c.089-1.546.383-2.97.837-4.118A6.004 6.004 0 004.083 9zM10 2a8 8 0 100 16 8 8 0 000-16zm0 2c-.076 0-.232.032-.465.262-.238.234-.497.623-.737 1.182-.389.907-.673 2.142-.766 3.556h3.936c-.093-1.414-.377-2.649-.766-3.556-.24-.559-.499-.948-.737-1.182C10.232 4.032 10.076 4 10 4zm3.971 5c-.089-1.546-.383-2.97-.837-4.118A6.004 6.004 0 0115.917 9h-1.946zm-2.003 2H8.032c.093 1.414.377 2.649.766 3.556.24.559.499.948.737 1.182.233.23.389.262.465.262.076 0 .232-.032.465-.262.238-.234.497-.623.737-1.182.389-.907.673-2.142.766-3.556zm1.166 4.118c.454-1.147.748-2.572.837-4.118h1.946a6.004 6.004 0 01-2.783 4.118zm-6.268 0C6.412 13.97 6.118 12.546 6.03 11H4.083a6.004 6.004 0 002.783 4.118z" clip-rule="evenodd"></path>
+                  </svg>
+                  <%= link_to @service_provider.website, @service_provider.website, 
+                      target: "_blank", class: "text-sm link link-primary" %>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+
+        <!-- Statistiques -->
+        <div class="card bg-base-200 shadow-lg">
+          <div class="card-body">
+            <h3 class="card-title mb-4">Statistiques</h3>
+            
+            <div class="space-y-3">
+              <div class="flex justify-between">
+                <span class="text-sm opacity-70">Services réalisés</span>
+                <span class="font-semibold"><%= @service_provider.completed_services %></span>
+              </div>
+              
+              <div class="flex justify-between">
+                <span class="text-sm opacity-70">Temps de réponse</span>
+                <span class="font-semibold"><%= format_response_time(@service_provider.response_time) %></span>
+              </div>
+              
+              <div class="flex justify-between">
+                <span class="text-sm opacity-70">Membre depuis</span>
+                <span class="font-semibold"><%= @service_provider.created_at.strftime("%m/%Y") %></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Spécialités -->
+        <% if @service_provider.specialties_list.any? %>
+          <div class="card bg-base-200 shadow-lg">
+            <div class="card-body">
+              <h3 class="card-title mb-4">Spécialités</h3>
+              
+              <div class="flex flex-wrap gap-2">
+                <% @service_provider.specialties_list.each do |specialty| %>
+                  <span class="badge badge-outline"><%= specialty %></span>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        <% end %>
+
+        <!-- Certifications -->
+        <% if @service_provider.certificates.any? %>
+          <div class="card bg-base-200 shadow-lg">
+            <div class="card-body">
+              <h3 class="card-title mb-4">Certifications</h3>
+              
+              <div class="space-y-2">
+                <% @service_provider.certificates.each do |certificate| %>
+                  <%= link_to url_for(certificate), target: "_blank", 
+                      class: "flex items-center gap-2 p-2 rounded hover:bg-base-300 transition-colors" do %>
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"></path>
+                    </svg>
+                    <span class="text-sm">Certificat <%= certificate.filename %></span>
+                  <% end %>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modals -->
+<!-- Modal de contact -->
+<dialog id="contact_modal" class="modal">
+  <div class="modal-box">
+    <h3 class="font-bold text-lg mb-4">Contacter <%= @service_provider.business_name %></h3>
+    
+    <%= form_with url: conversations_path, method: :post, local: true do |form| %>
+      <%= form.hidden_field :other_user_id, value: @service_provider.user.id %>
+      
+      <div class="form-control mb-4">
+        <%= form.label :message, "Votre message", class: "label" %>
+        <%= form.text_area :message, 
+            placeholder: "Décrivez votre besoin...",
+            class: "textarea textarea-bordered h-24",
+            required: true %>
+      </div>
+      
+      <div class="modal-action">
+        <button type="button" class="btn" onclick="contact_modal.close()">Annuler</button>
+        <%= form.submit "Envoyer", class: "btn btn-primary" %>
+      </div>
+    <% end %>
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <button>close</button>
+  </form>
+</dialog>
+
+<!-- Modal d'image -->
+<dialog id="image_modal" class="modal">
+  <div class="modal-box max-w-4xl">
+    <img id="modal_image" src="" alt="Image" class="w-full h-auto rounded-lg">
+    <div class="modal-action">
+      <button class="btn" onclick="image_modal.close()">Fermer</button>
+    </div>
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <button>close</button>
+  </form>
+</dialog> 

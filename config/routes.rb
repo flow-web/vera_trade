@@ -82,12 +82,46 @@ Rails.application.routes.draw do
   # Routes pour les presets de recherche
   resources :search_presets, only: [:index, :create, :show, :update, :destroy]
 
+  # Services routes
+  resources :services, only: [:index, :show] do
+    collection do
+      get :search
+      get :map_data
+    end
+  end
+
+  resources :service_providers do
+    member do
+      get :dashboard
+    end
+    resources :service_offers, except: [:index]
+    resources :service_reviews, only: [:create, :update, :destroy]
+  end
+
+  resources :service_requests do
+    member do
+      post :respond
+    end
+    collection do
+      get :my_requests
+    end
+  end
+
+  resources :service_bookings, only: [:index, :show, :create, :update, :destroy] do
+    member do
+      patch :accept
+      patch :complete
+      patch :cancel
+    end
+  end
+
   # Dashboard routes
   get '/dashboard', to: 'dashboard#index'
   get '/dashboard/analytics', to: 'dashboard#analytics'
   get '/dashboard/calendar', to: 'dashboard#calendar'
   get '/dashboard/notifications', to: 'dashboard#notifications'
   get '/dashboard/favorites', to: 'dashboard#favorites'
+  get '/dashboard/services', to: 'service_providers#dashboard'
 
   # Test route for login debugging
   get '/test_login', to: 'application#test_login'

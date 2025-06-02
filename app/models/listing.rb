@@ -5,6 +5,10 @@ class Listing < ApplicationRecord
   has_many_attached :photos
   has_many_attached :videos
   
+  # Relations pour les services
+  has_many :service_requests, dependent: :destroy
+  has_many :service_bookings, dependent: :destroy
+  
   validates :title, :description, :status, presence: true
   
   enum :status, { active: 'active', pending: 'pending', sold: 'sold' }, default: 'active'
@@ -13,6 +17,21 @@ class Listing < ApplicationRecord
   
   # Validation for video files
   validate :acceptable_videos
+  
+  # Méthodes pour les services
+  def has_service_requests?
+    service_requests.open.any?
+  end
+
+  def active_service_requests_count
+    service_requests.open.count
+  end
+
+  def needs_services?
+    # Logique pour déterminer si l'annonce nécessite des services
+    # Peut être basée sur des mots-clés, catégories, etc.
+    description.downcase.match?(/réparation|entretien|révision|carrosserie|mécanique|transport/)
+  end
   
   private
   

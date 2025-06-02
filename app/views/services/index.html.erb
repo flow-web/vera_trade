@@ -1,0 +1,231 @@
+<% content_for :title, "Services Automobiles" %>
+
+<div class="min-h-screen bg-base-100">
+  <!-- Hero Section avec Barre de Recherche -->
+  <div class="hero bg-gradient-to-r from-primary to-secondary text-primary-content py-16">
+    <div class="hero-content text-center max-w-4xl">
+      <div class="max-w-md mx-auto">
+        <h1 class="text-5xl font-bold mb-6">Trouvez votre prestataire automobile</h1>
+        <p class="text-xl mb-8">Mécanique, carrosserie, transport... Tous les services pour votre véhicule</p>
+        
+        <!-- Barre de Recherche -->
+        <%= form_with url: services_path, method: :get, local: true, class: "w-full" do |form| %>
+          <div class="join w-full">
+            <%= form.text_field :search, 
+                placeholder: "Ex: carrosserie Lyon, transport national...", 
+                value: params[:search],
+                class: "input input-bordered join-item flex-1 text-base-content" %>
+            <%= form.submit "Rechercher", class: "btn btn-accent join-item" %>
+          </div>
+          
+          <!-- Filtres avancés -->
+          <div class="mt-4 flex flex-wrap gap-2 justify-center">
+            <%= form.select :category, 
+                options_from_collection_for_select(@popular_categories, :id, :name, params[:category]),
+                { prompt: "Toutes catégories" },
+                { class: "select select-bordered select-sm" } %>
+            <%= form.text_field :location, 
+                placeholder: "Ville ou code postal",
+                value: params[:location],
+                class: "input input-bordered input-sm" %>
+            <%= form.range_field :radius, 
+                min: 10, max: 200, step: 10,
+                value: params[:radius] || 50,
+                class: "range range-sm range-accent" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <div class="container mx-auto px-4 py-8">
+    <!-- Catégories Populaires -->
+    <section class="mb-12">
+      <h2 class="text-3xl font-bold text-center mb-8">Catégories Populaires</h2>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <% @popular_categories.each do |category| %>
+          <%= link_to services_path(category: category.id), 
+              class: "card bg-base-200 hover:bg-base-300 transition-colors" do %>
+            <div class="card-body items-center text-center p-6">
+              <div class="text-4xl mb-2">
+                <%= category_icon(category.name) %>
+              </div>
+              <h3 class="card-title text-lg"><%= category.name %></h3>
+              <p class="text-sm opacity-70"><%= pluralize(category.service_providers_count, 'prestataire') %></p>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+    </section>
+
+    <!-- Prestataires Vérifiés -->
+    <section class="mb-12">
+      <div class="flex justify-between items-center mb-8">
+        <h2 class="text-3xl font-bold">Prestataires Vérifiés</h2>
+        <%= link_to "Voir tous", services_path(verified: true), class: "btn btn-outline" %>
+      </div>
+      
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <% @verified_providers.each do |provider| %>
+          <div class="card bg-base-200 shadow-lg hover:shadow-xl transition-shadow">
+            <div class="card-body">
+              <div class="flex items-start justify-between">
+                <div class="flex-1">
+                  <h3 class="card-title text-lg">
+                    <%= provider.business_name %>
+                    <div class="flex gap-1 ml-2">
+                      <% provider.badge_types.each do |badge| %>
+                        <div class="badge badge-<%= badge_color(badge) %> badge-sm">
+                          <%= badge_text(badge) %>
+                        </div>
+                      <% end %>
+                    </div>
+                  </h3>
+                  <p class="text-sm opacity-70 mb-2"><%= provider.city %></p>
+                  <p class="text-sm mb-3"><%= truncate(provider.description, length: 100) %></p>
+                  
+                  <!-- Rating -->
+                  <div class="flex items-center gap-2 mb-3">
+                    <div class="rating rating-sm">
+                      <% 5.times do |i| %>
+                        <input type="radio" class="mask mask-star-2 bg-orange-400" 
+                               disabled <%= 'checked' if i < provider.average_rating.round %> />
+                      <% end %>
+                    </div>
+                    <span class="text-sm">
+                      <%= number_with_precision(provider.average_rating, precision: 1) %>
+                      (<%= pluralize(provider.total_reviews, 'avis') %>)
+                    </span>
+                  </div>
+                  
+                  <!-- Catégories -->
+                  <div class="flex flex-wrap gap-1 mb-4">
+                    <% provider.categories.limit(3).each do |category| %>
+                      <span class="badge badge-outline badge-sm"><%= category.name %></span>
+                    <% end %>
+                  </div>
+                </div>
+                
+                <% if provider.profile_image.attached? %>
+                  <%= image_tag provider.profile_image, 
+                      class: "w-16 h-16 rounded-full object-cover" %>
+                <% else %>
+                  <div class="avatar placeholder">
+                    <div class="bg-neutral text-neutral-content rounded-full w-16">
+                      <span class="text-xl"><%= provider.business_name.first.upcase %></span>
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+              
+              <div class="card-actions justify-end">
+                <%= link_to "Voir le profil", service_provider_path(provider), 
+                    class: "btn btn-primary btn-sm" %>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </section>
+
+    <!-- Nouveaux Prestataires -->
+    <section class="mb-12">
+      <h2 class="text-3xl font-bold text-center mb-8">Nouveaux Prestataires</h2>
+      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <% @recent_providers.each do |provider| %>
+          <div class="card bg-base-200 shadow-md hover:shadow-lg transition-shadow">
+            <div class="card-body p-4">
+              <div class="text-center">
+                <% if provider.profile_image.attached? %>
+                  <%= image_tag provider.profile_image, 
+                      class: "w-12 h-12 rounded-full object-cover mx-auto mb-2" %>
+                <% else %>
+                  <div class="avatar placeholder mx-auto mb-2">
+                    <div class="bg-neutral text-neutral-content rounded-full w-12">
+                      <span><%= provider.business_name.first.upcase %></span>
+                    </div>
+                  </div>
+                <% end %>
+                
+                <h3 class="font-semibold text-sm mb-1"><%= provider.business_name %></h3>
+                <p class="text-xs opacity-70 mb-2"><%= provider.city %></p>
+                
+                <div class="badge badge-success badge-xs mb-2">Nouveau</div>
+                
+                <%= link_to "Découvrir", service_provider_path(provider), 
+                    class: "btn btn-outline btn-xs" %>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </section>
+
+    <!-- Carte Interactive -->
+    <section class="mb-12">
+      <h2 class="text-3xl font-bold text-center mb-8">Carte des Prestataires</h2>
+      <div class="card bg-base-200 shadow-lg">
+        <div class="card-body">
+          <div id="services-map" class="w-full h-96 rounded-lg bg-base-300 flex items-center justify-center">
+            <div class="text-center">
+              <div class="text-4xl mb-2">🗺️</div>
+              <p class="text-lg font-semibold">Carte Interactive</p>
+              <p class="text-sm opacity-70">Trouvez les prestataires près de chez vous</p>
+              <button class="btn btn-primary btn-sm mt-2" onclick="initServicesMap()">
+                Charger la carte
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Résultats de Recherche -->
+    <% if params[:search].present? || params[:category].present? %>
+      <section>
+        <h2 class="text-3xl font-bold mb-8">
+          Résultats de recherche
+          <% if params[:search].present? %>
+            pour "<%= params[:search] %>"
+          <% end %>
+        </h2>
+        
+        <% if @service_providers.any? %>
+          <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <% @service_providers.each do |provider| %>
+              <!-- Même structure que les prestataires vérifiés -->
+              <div class="card bg-base-200 shadow-lg hover:shadow-xl transition-shadow">
+                <!-- Contenu identique aux prestataires vérifiés -->
+              </div>
+            <% end %>
+          </div>
+          
+          <%= paginate @service_providers if respond_to?(:paginate) %>
+        <% else %>
+          <div class="text-center py-12">
+            <div class="text-6xl mb-4">🔍</div>
+            <h3 class="text-2xl font-bold mb-2">Aucun prestataire trouvé</h3>
+            <p class="text-lg opacity-70 mb-4">Essayez de modifier vos critères de recherche</p>
+            <%= link_to "Voir tous les prestataires", services_path, class: "btn btn-primary" %>
+          </div>
+        <% end %>
+      </section>
+    <% end %>
+  </div>
+</div>
+
+<script>
+function initServicesMap() {
+  // Logique pour initialiser la carte avec les prestataires
+  console.log('Initialisation de la carte des services');
+  // Intégration avec l'API de carte existante
+}
+
+// Auto-complétion pour la recherche
+document.addEventListener('DOMContentLoaded', function() {
+  const searchInput = document.querySelector('input[name="search"]');
+  if (searchInput) {
+    // Logique d'auto-complétion
+  }
+});
+</script> 

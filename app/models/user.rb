@@ -24,6 +24,12 @@ class User < ApplicationRecord
   has_many :user_profiles, dependent: :destroy
   has_many :favorites, dependent: :destroy
 
+  # Associations pour les services
+  has_one :service_provider, dependent: :destroy
+  has_many :service_bookings, dependent: :destroy
+  has_many :service_reviews, dependent: :destroy
+  has_many :service_requests, dependent: :destroy
+
   after_create :create_wallet, :create_default_message_templates, :create_main_profile, :create_welcome_notification
 
   def other_users
@@ -103,6 +109,23 @@ class User < ApplicationRecord
   
   def has_favorited?(object)
     favorites.exists?(favoritable: object)
+  end
+
+  # Méthodes pour les services
+  def is_service_provider?
+    service_provider.present? && service_provider.active?
+  end
+
+  def can_provide_services?
+    is_service_provider?
+  end
+
+  def pending_service_bookings
+    service_bookings.pending.recent.limit(5)
+  end
+
+  def active_service_requests
+    service_requests.open.recent.limit(5)
   end
 
   private

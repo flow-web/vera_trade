@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_02_220149) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_02_232613) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -213,6 +213,116 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_02_220149) do
     t.index ["user_id"], name: "index_reports_on_user_id"
   end
 
+  create_table "service_bookings", force: :cascade do |t|
+    t.bigint "service_provider_id", null: false
+    t.bigint "user_id", null: false
+    t.bigint "service_offer_id", null: false
+    t.bigint "listing_id", null: false
+    t.text "description"
+    t.date "proposed_date"
+    t.decimal "total_amount"
+    t.integer "status"
+    t.integer "payment_status"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["listing_id"], name: "index_service_bookings_on_listing_id"
+    t.index ["service_offer_id"], name: "index_service_bookings_on_service_offer_id"
+    t.index ["service_provider_id"], name: "index_service_bookings_on_service_provider_id"
+    t.index ["user_id"], name: "index_service_bookings_on_user_id"
+  end
+
+  create_table "service_categories", force: :cascade do |t|
+    t.bigint "service_provider_id", null: false
+    t.bigint "category_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["category_id"], name: "index_service_categories_on_category_id"
+    t.index ["service_provider_id"], name: "index_service_categories_on_service_provider_id"
+  end
+
+  create_table "service_offers", force: :cascade do |t|
+    t.bigint "service_provider_id", null: false
+    t.bigint "category_id", null: false
+    t.string "title"
+    t.text "description"
+    t.integer "pricing_type"
+    t.decimal "base_price"
+    t.string "duration_estimate"
+    t.integer "status"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["category_id"], name: "index_service_offers_on_category_id"
+    t.index ["service_provider_id"], name: "index_service_offers_on_service_provider_id"
+  end
+
+  create_table "service_providers", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "business_name"
+    t.text "description"
+    t.string "phone"
+    t.text "address"
+    t.string "city"
+    t.string "postal_code"
+    t.decimal "latitude"
+    t.decimal "longitude"
+    t.text "specialties"
+    t.string "website"
+    t.integer "status"
+    t.integer "verification_status"
+    t.decimal "average_rating"
+    t.integer "total_reviews"
+    t.datetime "suspended_until"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_service_providers_on_user_id"
+  end
+
+  create_table "service_request_responses", force: :cascade do |t|
+    t.bigint "service_request_id", null: false
+    t.bigint "service_provider_id", null: false
+    t.text "message"
+    t.decimal "proposed_price"
+    t.string "estimated_duration"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["service_provider_id"], name: "index_service_request_responses_on_service_provider_id"
+    t.index ["service_request_id"], name: "index_service_request_responses_on_service_request_id"
+  end
+
+  create_table "service_requests", force: :cascade do |t|
+    t.bigint "listing_id", null: false
+    t.bigint "user_id", null: false
+    t.bigint "category_id", null: false
+    t.string "title"
+    t.text "description"
+    t.decimal "budget_min"
+    t.decimal "budget_max"
+    t.date "deadline"
+    t.integer "status"
+    t.integer "urgency"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["category_id"], name: "index_service_requests_on_category_id"
+    t.index ["listing_id"], name: "index_service_requests_on_listing_id"
+    t.index ["user_id"], name: "index_service_requests_on_user_id"
+  end
+
+  create_table "service_reviews", force: :cascade do |t|
+    t.bigint "service_provider_id", null: false
+    t.bigint "user_id", null: false
+    t.integer "service_booking_id"
+    t.integer "rating"
+    t.string "title"
+    t.text "comment"
+    t.integer "communication_rating"
+    t.integer "quality_rating"
+    t.integer "value_rating"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["service_provider_id"], name: "index_service_reviews_on_service_provider_id"
+    t.index ["user_id"], name: "index_service_reviews_on_user_id"
+  end
+
   create_table "temporary_listings", force: :cascade do |t|
     t.bigint "guest_account_id", null: false
     t.bigint "vehicle_id", null: false
@@ -397,6 +507,23 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_02_220149) do
   add_foreign_key "message_templates", "users"
   add_foreign_key "notifications", "users"
   add_foreign_key "reports", "users"
+  add_foreign_key "service_bookings", "listings"
+  add_foreign_key "service_bookings", "service_offers"
+  add_foreign_key "service_bookings", "service_providers"
+  add_foreign_key "service_bookings", "users"
+  add_foreign_key "service_categories", "categories"
+  add_foreign_key "service_categories", "service_providers"
+  add_foreign_key "service_offers", "categories"
+  add_foreign_key "service_offers", "service_providers"
+  add_foreign_key "service_providers", "users"
+  add_foreign_key "service_request_responses", "service_providers"
+  add_foreign_key "service_request_responses", "service_requests"
+  add_foreign_key "service_requests", "categories"
+  add_foreign_key "service_requests", "listings"
+  add_foreign_key "service_requests", "users"
+  add_foreign_key "service_reviews", "service_bookings"
+  add_foreign_key "service_reviews", "service_providers"
+  add_foreign_key "service_reviews", "users"
   add_foreign_key "temporary_listings", "guest_accounts"
   add_foreign_key "temporary_listings", "vehicles"
   add_foreign_key "user_profiles", "users"

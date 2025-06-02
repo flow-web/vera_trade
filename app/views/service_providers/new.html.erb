@@ -1,0 +1,287 @@
+<% content_for :title, "Devenir Prestataire de Services" %>
+
+<div class="min-h-screen bg-base-100">
+  <div class="container mx-auto px-4 py-8">
+    <div class="max-w-4xl mx-auto">
+      <!-- Header -->
+      <div class="text-center mb-8">
+        <h1 class="text-4xl font-bold mb-4">Devenir Prestataire de Services</h1>
+        <p class="text-lg opacity-70">Rejoignez notre réseau de professionnels et développez votre activité</p>
+      </div>
+
+      <!-- Avantages -->
+      <div class="grid md:grid-cols-3 gap-6 mb-12">
+        <div class="card bg-base-200 shadow-lg">
+          <div class="card-body text-center">
+            <div class="text-4xl mb-4">🎯</div>
+            <h3 class="card-title justify-center mb-2">Visibilité</h3>
+            <p class="text-sm">Augmentez votre visibilité auprès de milliers de propriétaires de véhicules</p>
+          </div>
+        </div>
+        
+        <div class="card bg-base-200 shadow-lg">
+          <div class="card-body text-center">
+            <div class="text-4xl mb-4">💼</div>
+            <h3 class="card-title justify-center mb-2">Opportunités</h3>
+            <p class="text-sm">Accédez à de nouvelles opportunités d'affaires dans votre région</p>
+          </div>
+        </div>
+        
+        <div class="card bg-base-200 shadow-lg">
+          <div class="card-body text-center">
+            <div class="text-4xl mb-4">⭐</div>
+            <h3 class="card-title justify-center mb-2">Réputation</h3>
+            <p class="text-sm">Construisez votre réputation grâce aux avis clients vérifiés</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Formulaire -->
+      <div class="card bg-base-200 shadow-xl">
+        <div class="card-body">
+          <h2 class="card-title text-2xl mb-6">Créer votre profil professionnel</h2>
+          
+          <%= form_with model: @service_provider, local: true, multipart: true, class: "space-y-6" do |form| %>
+            <% if @service_provider.errors.any? %>
+              <div class="alert alert-error">
+                <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <div>
+                  <h3 class="font-bold">Erreurs dans le formulaire :</h3>
+                  <ul class="list-disc list-inside">
+                    <% @service_provider.errors.full_messages.each do |message| %>
+                      <li><%= message %></li>
+                    <% end %>
+                  </ul>
+                </div>
+              </div>
+            <% end %>
+
+            <!-- Informations générales -->
+            <div class="grid md:grid-cols-2 gap-6">
+              <div class="form-control">
+                <%= form.label :business_name, "Nom de l'entreprise/Activité", class: "label" %>
+                <%= form.text_field :business_name, 
+                    placeholder: "Ex: Garage Martin, Auto Detailing Pro...",
+                    class: "input input-bordered #{'input-error' if @service_provider.errors[:business_name].any?}",
+                    required: true %>
+                <% if @service_provider.errors[:business_name].any? %>
+                  <label class="label">
+                    <span class="label-text-alt text-error"><%= @service_provider.errors[:business_name].first %></span>
+                  </label>
+                <% end %>
+              </div>
+
+              <div class="form-control">
+                <%= form.label :phone, "Téléphone", class: "label" %>
+                <%= form.tel_field :phone, 
+                    placeholder: "06 12 34 56 78",
+                    class: "input input-bordered #{'input-error' if @service_provider.errors[:phone].any?}",
+                    required: true %>
+                <% if @service_provider.errors[:phone].any? %>
+                  <label class="label">
+                    <span class="label-text-alt text-error"><%= @service_provider.errors[:phone].first %></span>
+                  </label>
+                <% end %>
+              </div>
+            </div>
+
+            <!-- Description -->
+            <div class="form-control">
+              <%= form.label :description, "Description de votre activité", class: "label" %>
+              <%= form.text_area :description, 
+                  placeholder: "Décrivez votre expertise, vos services, votre expérience... (minimum 50 caractères)",
+                  class: "textarea textarea-bordered h-32 #{'textarea-error' if @service_provider.errors[:description].any?}",
+                  required: true %>
+              <label class="label">
+                <span class="label-text-alt">Minimum 50 caractères</span>
+                <% if @service_provider.errors[:description].any? %>
+                  <span class="label-text-alt text-error"><%= @service_provider.errors[:description].first %></span>
+                <% end %>
+              </label>
+            </div>
+
+            <!-- Adresse -->
+            <div class="grid md:grid-cols-3 gap-4">
+              <div class="form-control md:col-span-2">
+                <%= form.label :address, "Adresse", class: "label" %>
+                <%= form.text_field :address, 
+                    placeholder: "123 Rue de la République",
+                    class: "input input-bordered #{'input-error' if @service_provider.errors[:address].any?}",
+                    required: true %>
+                <% if @service_provider.errors[:address].any? %>
+                  <label class="label">
+                    <span class="label-text-alt text-error"><%= @service_provider.errors[:address].first %></span>
+                  </label>
+                <% end %>
+              </div>
+
+              <div class="form-control">
+                <%= form.label :postal_code, "Code postal", class: "label" %>
+                <%= form.text_field :postal_code, 
+                    placeholder: "75001",
+                    class: "input input-bordered #{'input-error' if @service_provider.errors[:postal_code].any?}",
+                    required: true %>
+                <% if @service_provider.errors[:postal_code].any? %>
+                  <label class="label">
+                    <span class="label-text-alt text-error"><%= @service_provider.errors[:postal_code].first %></span>
+                  </label>
+                <% end %>
+              </div>
+            </div>
+
+            <div class="form-control">
+              <%= form.label :city, "Ville", class: "label" %>
+              <%= form.text_field :city, 
+                  placeholder: "Paris",
+                  class: "input input-bordered #{'input-error' if @service_provider.errors[:city].any?}",
+                  required: true %>
+              <% if @service_provider.errors[:city].any? %>
+                <label class="label">
+                  <span class="label-text-alt text-error"><%= @service_provider.errors[:city].first %></span>
+                </label>
+              <% end %>
+            </div>
+
+            <!-- Catégories de services -->
+            <div class="form-control">
+              <label class="label">
+                <span class="label-text">Catégories de services proposés</span>
+              </label>
+              <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                <% @categories.each do |category| %>
+                  <label class="label cursor-pointer justify-start gap-3">
+                    <%= check_box_tag "category_ids[]", category.id, false, 
+                        class: "checkbox checkbox-primary" %>
+                    <span class="label-text">
+                      <%= category_icon(category.name) %> <%= category.name %>
+                    </span>
+                  </label>
+                <% end %>
+              </div>
+            </div>
+
+            <!-- Spécialités -->
+            <div class="form-control">
+              <%= form.label :specialties, "Spécialités (optionnel)", class: "label" %>
+              <%= form.text_field :specialties, 
+                  placeholder: "Ex: BMW, Mercedes, Véhicules électriques... (séparez par des virgules)",
+                  class: "input input-bordered" %>
+              <label class="label">
+                <span class="label-text-alt">Séparez vos spécialités par des virgules</span>
+              </label>
+            </div>
+
+            <!-- Site web -->
+            <div class="form-control">
+              <%= form.label :website, "Site web (optionnel)", class: "label" %>
+              <%= form.url_field :website, 
+                  placeholder: "https://www.monsite.com",
+                  class: "input input-bordered" %>
+            </div>
+
+            <!-- Images -->
+            <div class="grid md:grid-cols-2 gap-6">
+              <div class="form-control">
+                <%= form.label :profile_image, "Photo de profil/Logo", class: "label" %>
+                <%= form.file_field :profile_image, 
+                    accept: "image/*",
+                    class: "file-input file-input-bordered" %>
+                <label class="label">
+                  <span class="label-text-alt">Format JPG, PNG. Max 5MB</span>
+                </label>
+              </div>
+
+              <div class="form-control">
+                <%= form.label :cv_document, "CV/Présentation (optionnel)", class: "label" %>
+                <%= form.file_field :cv_document, 
+                    accept: ".pdf,.doc,.docx",
+                    class: "file-input file-input-bordered" %>
+                <label class="label">
+                  <span class="label-text-alt">Format PDF, DOC. Max 10MB</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Portfolio -->
+            <div class="form-control">
+              <%= form.label :portfolio_images, "Images de vos réalisations (optionnel)", class: "label" %>
+              <%= form.file_field :portfolio_images, 
+                  multiple: true,
+                  accept: "image/*",
+                  class: "file-input file-input-bordered" %>
+              <label class="label">
+                <span class="label-text-alt">Sélectionnez plusieurs images. Max 5MB chacune</span>
+              </label>
+            </div>
+
+            <!-- Certifications -->
+            <div class="form-control">
+              <%= form.label :certificates, "Certificats/Diplômes (optionnel)", class: "label" %>
+              <%= form.file_field :certificates, 
+                  multiple: true,
+                  accept: ".pdf,.jpg,.jpeg,.png",
+                  class: "file-input file-input-bordered" %>
+              <label class="label">
+                <span class="label-text-alt">Formats PDF, JPG, PNG. Max 5MB chacun</span>
+              </label>
+            </div>
+
+            <!-- Conditions -->
+            <div class="form-control">
+              <label class="label cursor-pointer justify-start gap-3">
+                <%= check_box_tag "terms", "1", false, 
+                    class: "checkbox checkbox-primary",
+                    required: true %>
+                <span class="label-text">
+                  J'accepte les 
+                  <%= link_to "conditions d'utilisation", "#", class: "link link-primary" %> 
+                  et la 
+                  <%= link_to "politique de confidentialité", "#", class: "link link-primary" %>
+                </span>
+              </label>
+            </div>
+
+            <!-- Actions -->
+            <div class="card-actions justify-end pt-6">
+              <%= link_to "Annuler", services_path, class: "btn btn-outline" %>
+              <%= form.submit "Créer mon profil professionnel", class: "btn btn-primary" %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Aide -->
+      <div class="mt-8 text-center">
+        <p class="text-sm opacity-70">
+          Besoin d'aide ? 
+          <%= link_to "Contactez notre équipe", "#", class: "link link-primary" %>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Validation en temps réel
+document.addEventListener('DOMContentLoaded', function() {
+  const descriptionField = document.querySelector('textarea[name="service_provider[description]"]');
+  if (descriptionField) {
+    descriptionField.addEventListener('input', function() {
+      const length = this.value.length;
+      const minLength = 50;
+      const label = this.parentNode.querySelector('.label-text-alt');
+      
+      if (length < minLength) {
+        label.textContent = `${length}/${minLength} caractères minimum`;
+        label.classList.add('text-warning');
+      } else {
+        label.textContent = `${length} caractères`;
+        label.classList.remove('text-warning');
+        label.classList.add('text-success');
+      }
+    });
+  }
+});
+</script> 
