@@ -61,7 +61,7 @@ class MapController < ApplicationController
   private
 
   def set_mapbox_token
-    @mapbox_token = 'sk.eyJ1IjoiZmxvdzY5ODMiLCJhIjoiY21iZ2ZpMzNnMG1waDJpc2g3dzM5b3VrNiJ9.vWRxFY0U6rN5SlSuCWNZoQ'
+    @mapbox_token = 'pk.eyJ1IjoiZmxvdzY5ODMiLCJhIjoiY21iZ2Y2NDZxMm5qcDJscDl5aTdtNmtuMyJ9.8Mjv50_lwztHZHTBNwtnIw'
     
     if @mapbox_token.blank?
       flash[:alert] = "Token Mapbox manquant. Veuillez configurer MAPBOX_ACCESS_TOKEN dans les credentials ou variables d'environnement."
@@ -178,7 +178,7 @@ class MapController < ApplicationController
         url: listing_path(listing),
         user: {
           id: listing.user.id,
-          name: listing.user.user_profile&.first_name || listing.user.email.split('@').first
+          name: listing.user.main_profile&.name || listing.user.email.split('@').first
         },
         created_at: listing.created_at.iso8601
       }
