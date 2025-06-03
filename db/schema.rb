@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_02_232613) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_03_111446) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -445,7 +445,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_02_232613) do
     t.decimal "average_consumption", precision: 5, scale: 2
     t.integer "co2_emissions"
     t.boolean "is_draft", default: false
+    t.decimal "latitude", precision: 10, scale: 6
+    t.decimal "longitude", precision: 10, scale: 6
+    t.text "address"
     t.index ["category_id"], name: "index_vehicles_on_category_id"
+    t.index ["latitude", "longitude"], name: "index_vehicles_on_latitude_and_longitude"
     t.index ["license_plate"], name: "index_vehicles_on_license_plate", unique: true
     t.index ["vin"], name: "index_vehicles_on_vin", unique: true
   end

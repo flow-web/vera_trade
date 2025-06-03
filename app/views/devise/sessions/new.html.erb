@@ -8,7 +8,7 @@
       </p>
     </div>
     
-    <%= form_for(resource, as: resource_name, url: session_path(resource_name), html: { class: "mt-8 space-y-6" }) do |f| %>
+    <%= form_for(resource, as: resource_name, url: session_path(resource_name), html: { class: "mt-8 space-y-6", data: { turbo: true } }) do |f| %>
       <div class="rounded-md space-y-4">
         <div>
           <%= f.label :email, class: "block text-sm font-medium" %>

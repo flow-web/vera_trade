@@ -1,4 +1,10 @@
 Rails.application.routes.draw do
+  get "map/index"
+  get "map/search", to: "map#search"
+  post "map/geocode", to: "map#geocode_address"
+  
+  # Route alternative pour la carte
+  get "carte", to: "map#index", as: "carte"
   devise_for :users
   
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
