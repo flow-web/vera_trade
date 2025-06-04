@@ -212,6 +212,47 @@
         </div>
       </div>
 
+      <!-- Litiges récents -->
+      <div class="card bg-base-100 shadow-xl">
+        <div class="card-body">
+          <div class="flex items-center justify-between">
+            <h3 class="card-title text-sm">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              Litiges récents
+            </h3>
+            <%= link_to disputes_path, class: "btn btn-primary btn-sm" do %>
+              Voir tous
+            <% end %>
+          </div>
+          
+          <% if @recent_disputes&.any? %>
+            <div class="space-y-3">
+              <% @recent_disputes.each do |dispute| %>
+                <div class="flex items-center justify-between p-3 bg-base-200 rounded-lg">
+                  <div class="flex-1">
+                    <h4 class="font-medium"><%= link_to dispute.title, dispute, class: "link link-hover" %></h4>
+                    <p class="text-sm text-gray-500"><%= dispute.reference_number %></p>
+                  </div>
+                  <div class="badge <%= dispute.status == 'open' ? 'badge-primary' : 
+                                      dispute.status == 'resolved' ? 'badge-success' : 'badge-secondary' %>">
+                    <%= dispute.status_label %>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          <% else %>
+            <div class="text-center py-4">
+              <p class="text-sm text-base-content opacity-70">Aucun litige récent</p>
+              <%= link_to new_dispute_path, class: "btn btn-sm btn-primary mt-3" do %>
+                Ouvrir un litige
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
       <!-- Mes favoris -->
       <div class="card bg-base-100 shadow-xl">
         <div class="card-body">

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_03_111446) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_04_203332) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -84,6 +84,104 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_03_111446) do
     t.index ["other_user_id"], name: "index_conversations_on_other_user_id"
     t.index ["user_id", "other_user_id"], name: "index_conversations_on_user_id_and_other_user_id", unique: true
     t.index ["user_id"], name: "index_conversations_on_user_id"
+  end
+
+  create_table "dispute_evidences", force: :cascade do |t|
+    t.bigint "dispute_id", null: false
+    t.bigint "user_id", null: false
+    t.string "evidence_type", null: false
+    t.string "title", null: false
+    t.text "description"
+    t.string "file_type"
+    t.bigint "file_size"
+    t.string "status", default: "pending_review"
+    t.text "review_notes"
+    t.datetime "reviewed_at"
+    t.bigint "reviewed_by"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_dispute_evidences_on_created_at"
+    t.index ["dispute_id", "evidence_type"], name: "index_dispute_evidences_on_dispute_id_and_evidence_type"
+    t.index ["dispute_id"], name: "index_dispute_evidences_on_dispute_id"
+    t.index ["evidence_type"], name: "index_dispute_evidences_on_evidence_type"
+    t.index ["status"], name: "index_dispute_evidences_on_status"
+    t.index ["user_id", "dispute_id"], name: "index_dispute_evidences_on_user_id_and_dispute_id"
+    t.index ["user_id"], name: "index_dispute_evidences_on_user_id"
+  end
+
+  create_table "dispute_messages", force: :cascade do |t|
+    t.bigint "dispute_id", null: false
+    t.bigint "user_id", null: false
+    t.text "message", null: false
+    t.string "message_type", default: "user_message"
+    t.string "visibility", default: "all_parties"
+    t.boolean "read_by_user", default: false
+    t.boolean "read_by_other_user", default: false
+    t.boolean "read_by_mediator", default: false
+    t.datetime "edited_at"
+    t.text "edit_reason"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_dispute_messages_on_created_at"
+    t.index ["dispute_id", "created_at"], name: "index_dispute_messages_on_dispute_id_and_created_at"
+    t.index ["dispute_id"], name: "index_dispute_messages_on_dispute_id"
+    t.index ["message_type"], name: "index_dispute_messages_on_message_type"
+    t.index ["user_id", "dispute_id"], name: "index_dispute_messages_on_user_id_and_dispute_id"
+    t.index ["user_id"], name: "index_dispute_messages_on_user_id"
+    t.index ["visibility"], name: "index_dispute_messages_on_visibility"
+  end
+
+  create_table "dispute_resolutions", force: :cascade do |t|
+    t.bigint "dispute_id", null: false
+    t.bigint "proposed_by", null: false
+    t.string "resolution_type", null: false
+    t.text "details", null: false
+    t.decimal "amount", precision: 10, scale: 2
+    t.string "status", default: "pending"
+    t.text "accepted_by_users"
+    t.datetime "expires_at"
+    t.datetime "implemented_at"
+    t.text "implementation_notes"
+    t.text "rejection_reason"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_dispute_resolutions_on_created_at"
+    t.index ["dispute_id", "status"], name: "index_dispute_resolutions_on_dispute_id_and_status"
+    t.index ["dispute_id"], name: "index_dispute_resolutions_on_dispute_id"
+    t.index ["expires_at"], name: "index_dispute_resolutions_on_expires_at"
+    t.index ["proposed_by"], name: "index_dispute_resolutions_on_proposed_by"
+    t.index ["resolution_type"], name: "index_dispute_resolutions_on_resolution_type"
+    t.index ["status"], name: "index_dispute_resolutions_on_status"
+  end
+
+  create_table "disputes", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "disputed_item_type", null: false
+    t.bigint "disputed_item_id", null: false
+    t.string "dispute_type", null: false
+    t.string "status", default: "open", null: false
+    t.string "title", null: false
+    t.text "description", null: false
+    t.decimal "amount", precision: 10, scale: 2
+    t.string "priority", default: "normal"
+    t.text "resolution"
+    t.datetime "resolved_at"
+    t.bigint "mediator_id"
+    t.datetime "escalated_at"
+    t.text "metadata"
+    t.string "reference_number"
+    t.boolean "auto_resolved", default: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_disputes_on_created_at"
+    t.index ["dispute_type"], name: "index_disputes_on_dispute_type"
+    t.index ["disputed_item_type", "disputed_item_id"], name: "index_disputes_on_disputed_item"
+    t.index ["disputed_item_type", "disputed_item_id"], name: "index_disputes_on_disputed_item_type_and_disputed_item_id"
+    t.index ["mediator_id"], name: "index_disputes_on_mediator_id"
+    t.index ["priority"], name: "index_disputes_on_priority"
+    t.index ["reference_number"], name: "index_disputes_on_reference_number", unique: true
+    t.index ["user_id", "status"], name: "index_disputes_on_user_id_and_status"
+    t.index ["user_id"], name: "index_disputes_on_user_id"
   end
 
   create_table "events", force: :cascade do |t|
@@ -323,6 +421,31 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_03_111446) do
     t.index ["user_id"], name: "index_service_reviews_on_user_id"
   end
 
+  create_table "support_tickets", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "title", null: false
+    t.text "description", null: false
+    t.string "priority", default: "normal"
+    t.string "status", default: "open", null: false
+    t.string "category", null: false
+    t.bigint "assigned_to"
+    t.string "ticket_number"
+    t.text "tags"
+    t.datetime "resolved_at"
+    t.text "resolution_notes"
+    t.decimal "satisfaction_rating", precision: 3, scale: 2
+    t.text "satisfaction_feedback"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["assigned_to"], name: "index_support_tickets_on_assigned_to"
+    t.index ["category"], name: "index_support_tickets_on_category"
+    t.index ["created_at"], name: "index_support_tickets_on_created_at"
+    t.index ["priority"], name: "index_support_tickets_on_priority"
+    t.index ["ticket_number"], name: "index_support_tickets_on_ticket_number", unique: true
+    t.index ["user_id", "status"], name: "index_support_tickets_on_user_id_and_status"
+    t.index ["user_id"], name: "index_support_tickets_on_user_id"
+  end
+
   create_table "temporary_listings", force: :cascade do |t|
     t.bigint "guest_account_id", null: false
     t.bigint "vehicle_id", null: false
@@ -333,6 +456,27 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_03_111446) do
     t.datetime "updated_at", null: false
     t.index ["guest_account_id"], name: "index_temporary_listings_on_guest_account_id"
     t.index ["vehicle_id"], name: "index_temporary_listings_on_vehicle_id"
+  end
+
+  create_table "ticket_messages", force: :cascade do |t|
+    t.bigint "support_ticket_id", null: false
+    t.bigint "user_id", null: false
+    t.text "message", null: false
+    t.string "message_type", default: "user_message"
+    t.boolean "internal", default: false
+    t.boolean "read_by_user", default: false
+    t.boolean "read_by_admin", default: false
+    t.datetime "edited_at"
+    t.text "edit_reason"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_ticket_messages_on_created_at"
+    t.index ["internal"], name: "index_ticket_messages_on_internal"
+    t.index ["message_type"], name: "index_ticket_messages_on_message_type"
+    t.index ["support_ticket_id", "created_at"], name: "index_ticket_messages_on_support_ticket_id_and_created_at"
+    t.index ["support_ticket_id"], name: "index_ticket_messages_on_support_ticket_id"
+    t.index ["user_id", "support_ticket_id"], name: "index_ticket_messages_on_user_id_and_support_ticket_id"
+    t.index ["user_id"], name: "index_ticket_messages_on_user_id"
   end
 
   create_table "user_profiles", force: :cascade do |t|
@@ -499,6 +643,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_03_111446) do
   add_foreign_key "conversations", "listings"
   add_foreign_key "conversations", "users"
   add_foreign_key "conversations", "users", column: "other_user_id"
+  add_foreign_key "dispute_evidences", "disputes"
+  add_foreign_key "dispute_evidences", "users"
+  add_foreign_key "dispute_evidences", "users", column: "reviewed_by"
+  add_foreign_key "dispute_messages", "disputes"
+  add_foreign_key "dispute_messages", "users"
+  add_foreign_key "dispute_resolutions", "disputes"
+  add_foreign_key "dispute_resolutions", "users", column: "proposed_by"
+  add_foreign_key "disputes", "users"
+  add_foreign_key "disputes", "users", column: "mediator_id"
   add_foreign_key "events", "users"
   add_foreign_key "favorites", "users"
   add_foreign_key "guest_accounts", "users"
@@ -528,8 +681,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_03_111446) do
   add_foreign_key "service_reviews", "service_bookings"
   add_foreign_key "service_reviews", "service_providers"
   add_foreign_key "service_reviews", "users"
+  add_foreign_key "support_tickets", "users"
+  add_foreign_key "support_tickets", "users", column: "assigned_to"
   add_foreign_key "temporary_listings", "guest_accounts"
   add_foreign_key "temporary_listings", "vehicles"
+  add_foreign_key "ticket_messages", "support_tickets"
+  add_foreign_key "ticket_messages", "users"
   add_foreign_key "user_profiles", "users"
   add_foreign_key "vehicles", "categories"
   add_foreign_key "video_calls", "conversations"

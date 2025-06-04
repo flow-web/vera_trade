@@ -20,6 +20,9 @@ class DashboardController < ApplicationController
     @current_profile = @main_profile || OpenStruct.new(display_name: current_user.email.split('@').first.humanize)
     @user_profiles = current_user.user_profiles rescue []
     @user_profiles = [@current_profile] if @user_profiles.empty?
+    
+    # Charger les litiges récents
+    @recent_disputes = current_user.disputes.recent.limit(5)
   end
 
   def analytics

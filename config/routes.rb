@@ -1,4 +1,9 @@
 Rails.application.routes.draw do
+  # Help and documentation routes
+  get "help", to: "help#index"
+  get "help/dispute_guidelines", to: "help#dispute_guidelines"
+  get "help/support_faq", to: "help#support_faq"
+  
   get "map/index"
   get "map/search", to: "map#search"
   post "map/geocode", to: "map#geocode_address"
@@ -121,6 +126,38 @@ Rails.application.routes.draw do
     end
   end
 
+  # Disputes and Support System Routes
+  resources :disputes do
+    member do
+      patch :escalate
+      patch :resolve
+      patch :reopen
+    end
+    resources :dispute_messages, only: [:create, :destroy]
+    resources :dispute_evidences, only: [:create, :show, :destroy] do
+      member do
+        patch :approve
+        patch :reject
+      end
+    end
+    resources :dispute_resolutions, only: [:create, :show, :update, :destroy] do
+      member do
+        patch :accept
+        patch :reject
+        patch :implement
+      end
+    end
+  end
+
+  resources :support_tickets, path: 'support' do
+    member do
+      patch :close
+      patch :reopen
+      post :rate
+    end
+    resources :ticket_messages, only: [:create, :destroy]
+  end
+
   # Dashboard routes
   get '/dashboard', to: 'dashboard#index'
   get '/dashboard/analytics', to: 'dashboard#analytics'
@@ -128,6 +165,8 @@ Rails.application.routes.draw do
   get '/dashboard/notifications', to: 'dashboard#notifications'
   get '/dashboard/favorites', to: 'dashboard#favorites'
   get '/dashboard/services', to: 'service_providers#dashboard'
+  get '/dashboard/disputes', to: 'disputes#index'
+  get '/dashboard/support', to: 'support_tickets#index'
 
   # Test route for login debugging
   get '/test_login', to: 'application#test_login'

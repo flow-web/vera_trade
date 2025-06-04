@@ -340,6 +340,12 @@ export default class extends Controller {
     this.map.on('mouseleave', 'unclustered-listings', () => {
       this.map.getCanvas().style.cursor = ''
     })
+
+    // Listen for search filter events
+    this.element.addEventListener('search:filter', (event) => {
+      console.log("Received search:filter event", event.detail)
+      this.handleSearchFilter(event.detail)
+    })
   }
 
   setupDrawingTools() {
@@ -652,35 +658,86 @@ export default class extends Controller {
     }
   }
 
-  filterListings(event) {
-    const filters = new FormData(this.searchFiltersTarget)
+  handleSearchFilter(eventDetail) {
+    const { filters } = eventDetail
+    this.filterListings(filters)
+  }
+
+  filterListings(filters) {
+    // If filters is an event (old behavior), extract form data
+    if (filters && filters.target && filters.preventDefault) {
+      const form = filters.target
+      const formData = new FormData(form)
+      filters = {}
+      for (let [key, value] of formData.entries()) {
+        filters[key] = value
+      }
+    }
+    
+    console.log("Filtering listings with:", filters)
+    
+    if (!this.listingsValue || this.listingsValue.length === 0) {
+      console.warn("No listings available to filter")
+      return
+    }
+    
     const filteredListings = this.listingsValue.filter(listing => {
       let matches = true
 
       // Filter by make
-      if (filters.get('make') && filters.get('make') !== '') {
-        matches = matches && listing.make.toLowerCase().includes(filters.get('make').toLowerCase())
+      if (filters.make && filters.make !== '') {
+        matches = matches && listing.make.toLowerCase().includes(filters.make.toLowerCase())
+      }
+
+      // Filter by model
+      if (filters.model && filters.model !== '') {
+        matches = matches && listing.model.toLowerCase().includes(filters.model.toLowerCase())
       }
 
       // Filter by price range
-      if (filters.get('min_price')) {
-        matches = matches && listing.price >= parseInt(filters.get('min_price'))
+      if (filters.min_price) {
+        matches = matches && listing.price >= parseInt(filters.min_price)
       }
-      if (filters.get('max_price')) {
-        matches = matches && listing.price <= parseInt(filters.get('max_price'))
+      if (filters.max_price) {
+        matches = matches && listing.price <= parseInt(filters.max_price)
       }
 
-      // Filter by distance if user location is available
-      if (this.userLocation && filters.get('max_distance')) {
+      // Filter by year range
+      if (filters.min_year) {
+        matches = matches && listing.year >= parseInt(filters.min_year)
+      }
+      if (filters.max_year) {
+        matches = matches && listing.year <= parseInt(filters.max_year)
+      }
+
+      // Filter by fuel type
+      if (filters.fuel_type && filters.fuel_type !== '') {
+        matches = matches && listing.fuel_type === filters.fuel_type
+      }
+
+      // Filter by transmission
+      if (filters.transmission && filters.transmission !== '') {
+        matches = matches && listing.transmission === filters.transmission
+      }
+
+      // Filter by kilometers
+      if (filters.max_kilometers) {
+        matches = matches && listing.kilometers <= parseInt(filters.max_kilometers)
+      }
+
+      // Filter by distance if user location is available and radius is specified
+      if (this.userLocation && filters.radius && filters.radius !== '') {
         const distance = this.calculateDistance(
           this.userLocation[1], this.userLocation[0],
           parseFloat(listing.latitude), parseFloat(listing.longitude)
         )
-        matches = matches && distance <= parseInt(filters.get('max_distance'))
+        matches = matches && distance <= parseInt(filters.radius)
       }
 
       return matches
     })
+
+    console.log(`Filtered ${filteredListings.length} listings out of ${this.listingsValue.length}`)
 
     // Update map with filtered listings
     const features = filteredListings.map(listing => ({
@@ -705,10 +762,32 @@ export default class extends Controller {
       feature.geometry.coordinates[0] && feature.geometry.coordinates[1]
     )
 
-    this.map.getSource('listings').setData({
-      type: 'FeatureCollection',
-      features: features
-    })
+    // Ensure map and source are available
+    if (this.map && this.map.getSource('listings')) {
+      this.map.getSource('listings').setData({
+        type: 'FeatureCollection',
+        features: features
+      })
+
+      // Update the count display
+      if (this.hasDistanceInfoTarget) {
+        this.distanceInfoTarget.innerHTML = `
+          <div class="alert alert-success">
+            <div>
+              <h4 class="font-bold">Résultats filtrés</h4>
+              <p>${filteredListings.length} annonce(s) trouvée(s)</p>
+            </div>
+          </div>
+        `
+      }
+
+      // Optionally fit the map to the filtered results
+      if (features.length > 0) {
+        this.fitMapToListings(features)
+      }
+    } else {
+      console.error("Map or listings source not available")
+    }
   }
 
   // Method to load service providers

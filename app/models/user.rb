@@ -30,6 +30,17 @@ class User < ApplicationRecord
   has_many :service_reviews, dependent: :destroy
   has_many :service_requests, dependent: :destroy
 
+  # Associations pour les litiges et le support
+  has_many :disputes, dependent: :destroy
+  has_many :mediated_disputes, class_name: 'Dispute', foreign_key: 'mediator_id', dependent: :nullify
+  has_many :dispute_messages, dependent: :destroy
+  has_many :dispute_evidences, dependent: :destroy
+  has_many :dispute_resolutions, foreign_key: 'proposed_by', dependent: :destroy
+  
+  has_many :support_tickets, dependent: :destroy
+  has_many :assigned_tickets, class_name: 'SupportTicket', foreign_key: 'assigned_to', dependent: :nullify
+  has_many :ticket_messages, dependent: :destroy
+
   after_create :create_wallet, :create_default_message_templates, :create_main_profile, :create_welcome_notification
 
   def other_users
@@ -126,6 +137,64 @@ class User < ApplicationRecord
 
   def active_service_requests
     service_requests.open.recent.limit(5)
+  end
+
+  # Méthodes pour les litiges
+  def open_disputes
+    disputes.open.recent.limit(5)
+  end
+
+  def involved_disputes
+    Dispute.involving_user(self).open.recent.limit(5)
+  end
+
+  def unread_dispute_messages_count
+    dispute_messages.joins(:dispute).where(disputes: { status: ['open', 'waiting_response', 'in_mediation', 'escalated'] }).count
+  end
+
+  def pending_dispute_resolutions
+    dispute_resolutions.pending.recent.limit(5)
+  end
+
+  def can_mediate_disputes?
+    admin? || has_role?(:mediator)
+  end
+
+  # Méthodes pour le support client
+  def open_support_tickets
+    support_tickets.open.recent.limit(5)
+  end
+
+  def assigned_support_tickets
+    assigned_tickets.open.recent.limit(10) if admin?
+  end
+
+  def unread_ticket_messages_count
+    ticket_messages.joins(:support_ticket).where(support_tickets: { status: ['open', 'in_progress', 'waiting_user'] }).count
+  end
+
+  def can_handle_support?
+    admin? || has_role?(:support_agent)
+  end
+
+  def admin?
+    # Implement admin check logic here
+    # For now, return false - you can implement role-based logic
+    false
+  end
+
+  def has_role?(role)
+    # Implement role-based logic here
+    # For now, return false - you can implement with a roles system
+    false
+  end
+
+  # System user for automated messages
+  def self.system_user
+    @system_user ||= find_or_create_by(email: 'system@veratrade.com') do |user|
+      user.password = SecureRandom.hex(20)
+      user.password_confirmation = user.password
+    end
   end
 
   private
