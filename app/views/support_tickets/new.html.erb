@@ -1,0 +1,182 @@
+<div class="container mx-auto px-4 py-8 max-w-4xl">
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold text-gray-900">Créer un Ticket de Support</h1>
+    <p class="text-gray-600 mt-2">Décrivez votre problème en détail pour recevoir une aide rapide et efficace</p>
+  </div>
+
+  <div class="card bg-base-100 shadow-xl">
+    <div class="card-body">
+      <%= form_with model: @support_ticket, local: true, multipart: true, class: "space-y-6" do |form| %>
+        <% if @support_ticket.errors.any? %>
+          <div class="alert alert-error">
+            <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <div>
+              <h3 class="font-bold">Erreurs dans le formulaire :</h3>
+              <ul class="list-disc list-inside">
+                <% @support_ticket.errors.full_messages.each do |message| %>
+                  <li><%= message %></li>
+                <% end %>
+              </ul>
+            </div>
+          </div>
+        <% end %>
+
+        <!-- Category and Priority -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="form-control">
+            <%= form.label :category, "Catégorie", class: "label" %>
+            <%= form.select :category, 
+                options_for_select([
+                  ['Sélectionnez une catégorie', ''],
+                  *SupportTicket::CATEGORIES.map { |k, v| [v, k] }
+                ], @support_ticket.category), 
+                {}, 
+                { class: "select select-bordered", required: true } %>
+            <label class="label">
+              <span class="label-text-alt">Choisissez la catégorie qui correspond le mieux à votre demande</span>
+            </label>
+          </div>
+
+          <div class="form-control">
+            <%= form.label :priority, "Priorité", class: "label" %>
+            <%= form.select :priority, 
+                options_for_select([
+                  *SupportTicket::PRIORITIES.map { |k, v| [v, k] }
+                ], @support_ticket.priority || 'normal'), 
+                {}, 
+                { class: "select select-bordered" } %>
+            <label class="label">
+              <span class="label-text-alt">Urgent seulement pour les problèmes critiques</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Title -->
+        <div class="form-control">
+          <%= form.label :title, "Titre de votre demande", class: "label" %>
+          <%= form.text_field :title, 
+              class: "input input-bordered", 
+              placeholder: "Résumez votre problème en quelques mots",
+              required: true %>
+          <label class="label">
+            <span class="label-text-alt">Minimum 10 caractères, maximum 200</span>
+          </label>
+        </div>
+
+        <!-- Description -->
+        <div class="form-control">
+          <%= form.label :description, "Description détaillée", class: "label" %>
+          <%= form.text_area :description, 
+              class: "textarea textarea-bordered h-32", 
+              placeholder: "Décrivez votre problème en détail : que s'est-il passé ? Quand ? Avez-vous des messages d'erreur ? Quelles étapes avez-vous déjà tentées ?",
+              required: true %>
+          <label class="label">
+            <span class="label-text-alt">Plus vous donnez de détails, plus nous pourrons vous aider efficacement</span>
+          </label>
+        </div>
+
+        <!-- Attachments -->
+        <div class="form-control">
+          <%= form.label :attachments, "Pièces jointes (optionnel)", class: "label" %>
+          <%= form.file_field :attachments, 
+              multiple: true,
+              accept: "image/*,application/pdf,.doc,.docx",
+              class: "file-input file-input-bordered" %>
+          <label class="label">
+            <span class="label-text-alt">Captures d'écran, documents, images. Maximum 5 fichiers de 10MB chacun.</span>
+          </label>
+        </div>
+
+        <!-- Help Tips -->
+        <div class="alert alert-info">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          <div>
+            <h3 class="font-bold">Conseils pour une résolution rapide :</h3>
+            <ul class="list-disc list-inside text-sm mt-2">
+              <li>Incluez tous les détails pertinents (navigateur, appareil, étapes pour reproduire)</li>
+              <li>Joignez des captures d'écran si possible</li>
+              <li>Mentionnez les messages d'erreur exacts</li>
+              <li>Indiquez quand le problème a commencé</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex justify-between items-center pt-6">
+          <%= link_to "Annuler", support_tickets_path, class: "btn btn-ghost" %>
+          <div class="flex gap-3">
+            <%= form.submit "Créer le ticket", class: "btn btn-primary" %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Quick Help Links -->
+  <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div class="card bg-base-100 shadow">
+      <div class="card-body">
+        <h3 class="card-title text-sm">💡 Besoin d'aide immédiate ?</h3>
+        <p class="text-xs text-gray-600 mb-3">Consultez notre FAQ avant de créer un ticket</p>
+        <%= link_to "Voir la FAQ", help_support_faq_path, class: "btn btn-sm btn-outline" %>
+      </div>
+    </div>
+
+    <div class="card bg-base-100 shadow">
+      <div class="card-body">
+        <h3 class="card-title text-sm">⚖️ Problème avec une transaction ?</h3>
+        <p class="text-xs text-gray-600 mb-3">Utilisez le système de litiges pour les problèmes de vente</p>
+        <%= link_to "Ouvrir un litige", new_dispute_path, class: "btn btn-sm btn-outline" %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Auto-resize textarea
+  document.addEventListener('DOMContentLoaded', function() {
+    const textarea = document.querySelector('textarea[name="support_ticket[description]"]');
+    if (textarea) {
+      textarea.addEventListener('input', function() {
+        this.style.height = 'auto';
+        this.style.height = this.scrollHeight + 'px';
+      });
+    }
+
+    // Update help text based on category
+    const categorySelect = document.querySelector('select[name="support_ticket[category]"]');
+    if (categorySelect) {
+      categorySelect.addEventListener('change', function() {
+        const titleInput = document.querySelector('input[name="support_ticket[title]"]');
+        const category = this.value;
+        
+        let placeholder = "Résumez votre problème en quelques mots";
+        switch(category) {
+          case 'technical_issue':
+            placeholder = "Ex: Erreur lors du chargement de la page d'annonces";
+            break;
+          case 'account_problem':
+            placeholder = "Ex: Impossible de me connecter à mon compte";
+            break;
+          case 'billing_inquiry':
+            placeholder = "Ex: Question sur ma facture du 15/06";
+            break;
+          case 'feature_request':
+            placeholder = "Ex: Suggestion pour améliorer la recherche";
+            break;
+          case 'dispute_support':
+            placeholder = "Ex: Besoin d'aide pour mon litige DIS-20240615-A1B2";
+            break;
+        }
+        
+        if (titleInput) {
+          titleInput.placeholder = placeholder;
+        }
+      });
+    }
+  });
+</script>

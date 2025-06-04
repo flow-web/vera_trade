@@ -34,6 +34,11 @@ class ListingsController < ApplicationController
           @listing.photos.attach(params[:listing][:photos])
         end
         
+        # Gérer les vidéos après la sauvegarde de l'annonce
+        if params[:listing][:videos].present?
+          @listing.videos.attach(params[:listing][:videos])
+        end
+        
         redirect_to @listing, notice: @vehicle.is_draft ? 'Brouillon enregistré avec succès.' : 'Votre annonce a été créée avec succès.'
       else
         render :new, status: :unprocessable_entity
@@ -57,9 +62,22 @@ class ListingsController < ApplicationController
       end
     end
     
+    # Gérer la suppression des vidéos existantes
+    if params[:delete_videos].present?
+      params[:delete_videos].each do |video_id|
+        video = @listing.videos.find_by(id: video_id)
+        video.purge if video
+      end
+    end
+    
     # Gérer l'ajout de nouvelles photos
     if params[:listing][:photos].present?
       @listing.photos.attach(params[:listing][:photos])
+    end
+    
+    # Gérer l'ajout de nouvelles vidéos
+    if params[:listing][:videos].present?
+      @listing.videos.attach(params[:listing][:videos])
     end
     
     @vehicle = @listing.vehicle
@@ -90,7 +108,7 @@ class ListingsController < ApplicationController
   end
 
   def listing_params
-    params.require(:listing).permit(:title, :description, :status)
+    params.require(:listing).permit(:title, :description, :status, photos: [], videos: [])
   end
 
   def vehicle_params

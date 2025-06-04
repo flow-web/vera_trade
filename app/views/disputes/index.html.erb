@@ -1,0 +1,172 @@
+<div class="container mx-auto px-4 py-8">
+  <div class="flex justify-between items-center mb-8">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900">Mes Litiges</h1>
+      <p class="text-gray-600 mt-2">Gérez vos litiges et suivez leur progression</p>
+    </div>
+    <%= link_to "Nouveau Litige", new_dispute_path, 
+        class: "btn btn-primary", 
+        data: { turbo_frame: "modal" } %>
+  </div>
+
+  <!-- Statistics Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <div class="stat bg-base-100 shadow rounded-lg">
+      <div class="stat-figure text-primary">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-8 h-8 stroke-current">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4"></path>
+        </svg>
+      </div>
+      <div class="stat-title">Litiges Ouverts</div>
+      <div class="stat-value text-primary"><%= @dispute_counts[:open] %></div>
+    </div>
+
+    <div class="stat bg-base-100 shadow rounded-lg">
+      <div class="stat-figure text-secondary">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-8 h-8 stroke-current">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+        </svg>
+      </div>
+      <div class="stat-title">Urgents</div>
+      <div class="stat-value text-secondary"><%= @dispute_counts[:urgent] %></div>
+    </div>
+
+    <div class="stat bg-base-100 shadow rounded-lg">
+      <div class="stat-figure text-success">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-8 h-8 stroke-current">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+        </svg>
+      </div>
+      <div class="stat-title">Résolus</div>
+      <div class="stat-value text-success"><%= @dispute_counts[:closed] %></div>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="card bg-base-100 shadow-xl mb-6">
+    <div class="card-body">
+      <%= form_with url: disputes_path, method: :get, local: true, class: "flex flex-wrap gap-4 items-end" do |form| %>
+        <div class="form-control">
+          <%= form.label :status, "Statut", class: "label" %>
+          <%= form.select :status, 
+              options_for_select([
+                ['Tous', ''],
+                ['Ouvert', 'open'],
+                ['En attente', 'waiting_response'],
+                ['En médiation', 'in_mediation'],
+                ['Escaladé', 'escalated'],
+                ['Résolu', 'resolved'],
+                ['Fermé', 'closed']
+              ], params[:status]), 
+              {}, 
+              { class: "select select-bordered" } %>
+        </div>
+
+        <div class="form-control">
+          <%= form.label :dispute_type, "Type", class: "label" %>
+          <%= form.select :dispute_type, 
+              options_for_select([
+                ['Tous', ''],
+                *Dispute::DISPUTE_TYPES.map { |k, v| [v, k] }
+              ], params[:dispute_type]), 
+              {}, 
+              { class: "select select-bordered" } %>
+        </div>
+
+        <div class="form-control">
+          <%= form.label :priority, "Priorité", class: "label" %>
+          <%= form.select :priority, 
+              options_for_select([
+                ['Toutes', ''],
+                *Dispute::PRIORITIES.map { |k, v| [v, k] }
+              ], params[:priority]), 
+              {}, 
+              { class: "select select-bordered" } %>
+        </div>
+
+        <div class="form-control">
+          <%= form.submit "Filtrer", class: "btn btn-outline" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Disputes List -->
+  <div class="space-y-4">
+    <% if @disputes.any? %>
+      <% @disputes.each do |dispute| %>
+        <div class="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow">
+          <div class="card-body">
+            <div class="flex justify-between items-start">
+              <div class="flex-1">
+                <div class="flex items-center gap-3 mb-2">
+                  <h3 class="card-title text-lg">
+                    <%= link_to dispute.title, dispute, class: "link link-hover" %>
+                  </h3>
+                  <div class="badge badge-outline"><%= dispute.reference_number %></div>
+                </div>
+                
+                <p class="text-gray-600 mb-3"><%= truncate(dispute.description, length: 150) %></p>
+                
+                <div class="flex flex-wrap gap-2 mb-3">
+                  <div class="badge <%= dispute.status == 'open' ? 'badge-primary' : 
+                                      dispute.status == 'resolved' ? 'badge-success' : 
+                                      dispute.status == 'escalated' ? 'badge-error' : 'badge-secondary' %>">
+                    <%= dispute.status_label %>
+                  </div>
+                  <div class="badge badge-outline"><%= dispute.dispute_type_label %></div>
+                  <% if dispute.priority == 'urgent' %>
+                    <div class="badge badge-error">Urgent</div>
+                  <% elsif dispute.priority == 'high' %>
+                    <div class="badge badge-warning">Priorité élevée</div>
+                  <% end %>
+                </div>
+                
+                <div class="text-sm text-gray-500">
+                  Créé le <%= l(dispute.created_at, format: :short) %>
+                  <% if dispute.last_activity_at != dispute.created_at %>
+                    • Dernière activité: <%= time_ago_in_words(dispute.last_activity_at) %>
+                  <% end %>
+                </div>
+              </div>
+              
+              <div class="flex flex-col items-end gap-2">
+                <% if dispute.amount.present? %>
+                  <div class="text-lg font-semibold text-primary">
+                    <%= number_to_currency(dispute.amount, unit: "€", separator: ",", delimiter: " ") %>
+                  </div>
+                <% end %>
+                
+                <div class="flex gap-2">
+                  <%= link_to "Voir", dispute, class: "btn btn-sm btn-outline" %>
+                  <% if dispute.can_be_edited_by?(current_user) %>
+                    <%= link_to "Modifier", edit_dispute_path(dispute), class: "btn btn-sm btn-ghost" %>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    <% else %>
+      <div class="card bg-base-100 shadow-xl">
+        <div class="card-body text-center py-12">
+          <div class="text-6xl mb-4">📋</div>
+          <h3 class="text-xl font-semibold mb-2">Aucun litige trouvé</h3>
+          <p class="text-gray-600 mb-6">
+            <% if params[:status].present? || params[:dispute_type].present? || params[:priority].present? %>
+              Aucun litige ne correspond à vos critères de recherche.
+            <% else %>
+              Vous n'avez pas encore de litiges. Créez-en un si vous rencontrez un problème.
+            <% end %>
+          </p>
+          <%= link_to "Nouveau Litige", new_dispute_path, class: "btn btn-primary" %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<!-- Modal for new dispute -->
+<turbo-frame id="modal" class="modal" data-controller="modal">
+</turbo-frame>

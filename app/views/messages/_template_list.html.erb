@@ -1,0 +1,46 @@
+<div class="space-y-2">
+  <% templates.each do |template| %>
+    <div class="card bg-base-100 shadow-sm" id="template-<%= template.id %>">
+      <div class="card-body p-3">
+        <h4 class="card-title text-sm"><%= template.title %></h4>
+        <p class="text-xs text-base-content opacity-70 line-clamp-2">
+          <%= template.content %>
+        </p>
+        <div class="card-actions justify-between items-center">
+          <div class="badge badge-outline badge-xs">
+            <%= template.category.humanize %>
+          </div>
+          <div class="flex space-x-1">
+            <button class="btn btn-primary btn-xs" 
+                    data-template-id="<%= template.id %>"
+                    data-template-content="<%= template.content %>"
+                    onclick="useTemplate(this)">
+              Utiliser
+            </button>
+            <button class="btn btn-ghost btn-xs" onclick="editTemplate(<%= template.id %>)">
+              ✏️
+            </button>
+            <%= button_to "🗑️", message_template_path(template), 
+                method: :delete, 
+                class: "btn btn-ghost btn-xs",
+                data: { confirm: "Êtes-vous sûr de vouloir supprimer ce modèle ?" } %>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+  
+  <% if templates.empty? %>
+    <div class="text-center py-8">
+      <div class="text-4xl mb-2">📝</div>
+      <p class="text-sm text-base-content opacity-70">Aucun modèle dans cette catégorie</p>
+    </div>
+  <% end %>
+</div>
+
+<script>
+function editTemplate(templateId) {
+  // Implementation for editing templates
+  console.log('Edit template:', templateId);
+}
+</script> 

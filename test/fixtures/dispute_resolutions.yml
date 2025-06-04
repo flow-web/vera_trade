@@ -1,0 +1,19 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  dispute: one
+  proposed_by: 
+  resolution_type: MyString
+  details: MyText
+  amount: 9.99
+  status: MyString
+  accepted_by_users: MyText
+
+two:
+  dispute: two
+  proposed_by: 
+  resolution_type: MyString
+  details: MyText
+  amount: 9.99
+  status: MyString
+  accepted_by_users: MyText

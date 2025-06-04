@@ -1,8 +1,160 @@
-<div id="message_<%= message.id %>" class="mb-4 <%= message.sender_id == current_user_id ? 'text-right' : 'text-left' %>">
-  <div class="inline-block max-w-xs sm:max-w-md px-4 py-2 rounded-lg <%= message.sender_id == current_user_id ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800' %>">
-    <p><%= message.content %></p>
-    <p class="text-xs mt-1 <%= message.sender_id == current_user_id ? 'text-blue-100' : 'text-gray-500' %>">
-      <%= message.created_at.strftime("%H:%M") %>
-    </p>
+<div class="message-item mb-4 <%= 'justify-end' if message.sender == current_user %> flex"
+     data-message-id="<%= message.id %>"
+     data-from-other="<%= message.sender != current_user %>">
+  
+  <div class="max-w-[70%] <%= message.sender == current_user ? 'order-2' : 'order-1' %>">
+    <!-- Message Bubble -->
+    <div class="<%= message.sender == current_user ? 'bg-primary text-primary-content ml-auto' : 'bg-base-200 text-base-content' %> 
+                rounded-2xl px-4 py-3 shadow-sm relative group">
+      
+      <!-- System Message -->
+      <% if message.system? %>
+        <div class="text-center text-sm opacity-70 italic">
+          <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          <%= message.content %>
+        </div>
+      <% else %>
+        <!-- Message Content -->
+        <% if message.content.present? %>
+          <p class="text-sm leading-relaxed"><%= simple_format(message.content) %></p>
+        <% end %>
+        
+        <!-- Attachments -->
+        <% if message.attachments.attached? %>
+          <div class="mt-2 space-y-2">
+            <% message.attachments.each do |attachment| %>
+              <div class="attachment-item">
+                <% if attachment.content_type.start_with?('image/') %>
+                  <!-- Image Attachment -->
+                  <div class="rounded-lg overflow-hidden max-w-xs">
+                    <%= image_tag attachment, class: "w-full h-auto cursor-pointer", 
+                        onclick: "openImageModal('#{url_for(attachment)}')" %>
+                  </div>
+                <% elsif attachment.content_type.start_with?('video/') %>
+                  <!-- Video Attachment -->
+                  <div class="rounded-lg overflow-hidden max-w-xs">
+                    <%= video_tag attachment, controls: true, class: "w-full h-auto" %>
+                  </div>
+                <% elsif attachment.content_type.start_with?('audio/') %>
+                  <!-- Audio Attachment -->
+                  <div class="bg-base-100 rounded-lg p-3 max-w-xs">
+                    <div class="flex items-center space-x-2">
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path>
+                      </svg>
+                      <span class="text-xs">Audio</span>
+                    </div>
+                    <%= audio_tag attachment, controls: true, class: "w-full mt-2" %>
+                  </div>
+                <% else %>
+                  <!-- Document Attachment -->
+                  <div class="bg-base-100 rounded-lg p-3 max-w-xs">
+                    <div class="flex items-center space-x-2">
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                      </svg>
+                      <div class="flex-1 min-w-0">
+                        <p class="text-xs font-medium truncate"><%= attachment.filename %></p>
+                        <p class="text-xs opacity-70"><%= number_to_human_size(attachment.byte_size) %></p>
+                      </div>
+                      <%= link_to attachment, download: attachment.filename, class: "btn btn-ghost btn-xs" do %>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                      <% end %>
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+        
+        <!-- Message Info -->
+        <div class="flex items-center justify-between mt-2 text-xs opacity-70">
+          <span><%= message.created_at.strftime('%H:%M') %></span>
+          
+          <!-- Message Status (for sender) -->
+          <% if message.sender == current_user %>
+            <div class="flex items-center space-x-1" id="message-status-<%= message.id %>">
+              <% case message.status %>
+              <% when 'sent' %>
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+              <% when 'delivered' %>
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                <svg class="w-3 h-3 -ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+              <% when 'read' %>
+                <svg class="w-3 h-3 text-primary" fill="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                <svg class="w-3 h-3 -ml-1 text-primary" fill="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+      
+      <!-- Reaction Button (appears on hover) -->
+      <% unless message.system? %>
+        <div class="absolute top-0 right-0 transform translate-x-2 -translate-y-2 opacity-0 group-hover:opacity-100 transition-opacity">
+          <div class="dropdown dropdown-end">
+            <label tabindex="0" class="btn btn-ghost btn-xs btn-circle">
+              😊
+            </label>
+            <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-auto">
+              <li class="flex flex-row">
+                <% %w[👍 ❤️ 😂 😮 😢 😡].each do |emoji| %>
+                  <button class="btn btn-ghost btn-xs" onclick="addReaction(<%= message.id %>, '<%= emoji %>')">
+                    <%= emoji %>
+                  </button>
+                <% end %>
+              </li>
+            </ul>
+          </div>
+        </div>
+      <% end %>
+    </div>
+    
+    <!-- Reactions -->
+    <% unless message.system? %>
+      <div id="message-reactions-<%= message.id %>" class="mt-1">
+        <%= render 'messages/reactions', message: message, current_user: current_user %>
+      </div>
+    <% end %>
   </div>
-</div> 
+  
+  <!-- Avatar -->
+  <div class="<%= message.sender == current_user ? 'order-1 mr-2' : 'order-2 ml-2' %> flex-shrink-0">
+    <div class="w-8 h-8 rounded-full <%= message.sender == current_user ? 'bg-primary text-primary-content' : 'bg-base-300 text-base-content' %> 
+                flex items-center justify-center text-xs font-semibold">
+      <%= message.sender.email.first.upcase %>
+    </div>
+  </div>
+</div>
+
+<!-- Image Modal -->
+<dialog id="image_modal" class="modal">
+  <div class="modal-box max-w-4xl">
+    <img id="modal_image" src="" alt="Image" class="w-full h-auto">
+    <div class="modal-action">
+      <button type="button" class="btn" onclick="image_modal.close()">Fermer</button>
+    </div>
+  </div>
+</dialog>
+
+<script>
+function openImageModal(imageUrl) {
+  document.getElementById('modal_image').src = imageUrl;
+  document.getElementById('image_modal').showModal();
+}
+</script> 

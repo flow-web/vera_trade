@@ -1,0 +1,212 @@
+<div class="container mx-auto px-4 py-8">
+  <div class="flex justify-between items-center mb-8">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900">Support Client</h1>
+      <p class="text-gray-600 mt-2">Gérez vos demandes de support et obtenez de l'aide</p>
+    </div>
+    <%= link_to "Nouveau Ticket", new_support_ticket_path, 
+        class: "btn btn-primary" %>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+    <%= link_to new_support_ticket_path(category: 'technical_issue'), 
+        class: "card bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:shadow-lg transition-shadow" do %>
+      <div class="card-body text-center">
+        <div class="text-3xl mb-2">🔧</div>
+        <h3 class="font-semibold">Problème Technique</h3>
+        <p class="text-sm opacity-90">Bug, erreur, dysfonctionnement</p>
+      </div>
+    <% end %>
+
+    <%= link_to new_support_ticket_path(category: 'account_problem'), 
+        class: "card bg-gradient-to-r from-green-500 to-green-600 text-white hover:shadow-lg transition-shadow" do %>
+      <div class="card-body text-center">
+        <div class="text-3xl mb-2">👤</div>
+        <h3 class="font-semibold">Compte</h3>
+        <p class="text-sm opacity-90">Connexion, profil, paramètres</p>
+      </div>
+    <% end %>
+
+    <%= link_to new_support_ticket_path(category: 'billing_inquiry'), 
+        class: "card bg-gradient-to-r from-purple-500 to-purple-600 text-white hover:shadow-lg transition-shadow" do %>
+      <div class="card-body text-center">
+        <div class="text-3xl mb-2">💳</div>
+        <h3 class="font-semibold">Facturation</h3>
+        <p class="text-sm opacity-90">Paiement, remboursement</p>
+      </div>
+    <% end %>
+
+    <%= link_to new_support_ticket_path(category: 'general_inquiry'), 
+        class: "card bg-gradient-to-r from-orange-500 to-orange-600 text-white hover:shadow-lg transition-shadow" do %>
+      <div class="card-body text-center">
+        <div class="text-3xl mb-2">❓</div>
+        <h3 class="font-semibold">Question Générale</h3>
+        <p class="text-sm opacity-90">Information, aide</p>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Statistics Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <div class="stat bg-base-100 shadow rounded-lg">
+      <div class="stat-figure text-primary">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-8 h-8 stroke-current">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+        </svg>
+      </div>
+      <div class="stat-title">Tickets Ouverts</div>
+      <div class="stat-value text-primary"><%= @ticket_counts[:open] %></div>
+    </div>
+
+    <div class="stat bg-base-100 shadow rounded-lg">
+      <div class="stat-figure text-secondary">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-8 h-8 stroke-current">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+        </svg>
+      </div>
+      <div class="stat-title">Urgents</div>
+      <div class="stat-value text-secondary"><%= @ticket_counts[:urgent] %></div>
+    </div>
+
+    <div class="stat bg-base-100 shadow rounded-lg">
+      <div class="stat-figure text-success">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-8 h-8 stroke-current">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+        </svg>
+      </div>
+      <div class="stat-title">Résolus</div>
+      <div class="stat-value text-success"><%= @ticket_counts[:closed] %></div>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="card bg-base-100 shadow-xl mb-6">
+    <div class="card-body">
+      <%= form_with url: support_tickets_path, method: :get, local: true, class: "flex flex-wrap gap-4 items-end" do |form| %>
+        <div class="form-control">
+          <%= form.label :status, "Statut", class: "label" %>
+          <%= form.select :status, 
+              options_for_select([
+                ['Tous', ''],
+                ['Ouvert', 'open'],
+                ['En cours', 'in_progress'],
+                ['En attente', 'waiting_user'],
+                ['Résolu', 'resolved'],
+                ['Fermé', 'closed']
+              ], params[:status]), 
+              {}, 
+              { class: "select select-bordered" } %>
+        </div>
+
+        <div class="form-control">
+          <%= form.label :category, "Catégorie", class: "label" %>
+          <%= form.select :category, 
+              options_for_select([
+                ['Toutes', ''],
+                *SupportTicket::CATEGORIES.map { |k, v| [v, k] }
+              ], params[:category]), 
+              {}, 
+              { class: "select select-bordered" } %>
+        </div>
+
+        <div class="form-control">
+          <%= form.label :priority, "Priorité", class: "label" %>
+          <%= form.select :priority, 
+              options_for_select([
+                ['Toutes', ''],
+                *SupportTicket::PRIORITIES.map { |k, v| [v, k] }
+              ], params[:priority]), 
+              {}, 
+              { class: "select select-bordered" } %>
+        </div>
+
+        <div class="form-control">
+          <%= form.submit "Filtrer", class: "btn btn-outline" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Tickets List -->
+  <div class="space-y-4">
+    <% if @support_tickets.any? %>
+      <% @support_tickets.each do |ticket| %>
+        <div class="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow">
+          <div class="card-body">
+            <div class="flex justify-between items-start">
+              <div class="flex-1">
+                <div class="flex items-center gap-3 mb-2">
+                  <h3 class="card-title text-lg">
+                    <%= link_to ticket.title, ticket, class: "link link-hover" %>
+                  </h3>
+                  <div class="badge badge-outline"><%= ticket.ticket_number %></div>
+                </div>
+                
+                <p class="text-gray-600 mb-3"><%= truncate(ticket.description, length: 150) %></p>
+                
+                <div class="flex flex-wrap gap-2 mb-3">
+                  <div class="badge <%= ticket.status == 'open' ? 'badge-primary' : 
+                                      ticket.status == 'resolved' ? 'badge-success' : 
+                                      ticket.status == 'in_progress' ? 'badge-info' : 'badge-secondary' %>">
+                    <%= ticket.status_label %>
+                  </div>
+                  <div class="badge badge-outline"><%= ticket.category_label %></div>
+                  <% if ticket.priority == 'urgent' %>
+                    <div class="badge badge-error">Urgent</div>
+                  <% elsif ticket.priority == 'high' %>
+                    <div class="badge badge-warning">Priorité élevée</div>
+                  <% end %>
+                </div>
+                
+                <div class="text-sm text-gray-500">
+                  Créé le <%= l(ticket.created_at, format: :short) %>
+                  <% if ticket.assigned_to %>
+                    • Assigné à <%= ticket.assigned_to.email %>
+                  <% end %>
+                  <% if ticket.last_activity_at != ticket.created_at %>
+                    • Dernière activité: <%= time_ago_in_words(ticket.last_activity_at) %>
+                  <% end %>
+                </div>
+              </div>
+              
+              <div class="flex flex-col items-end gap-2">
+                <% if ticket.overdue? %>
+                  <div class="badge badge-error">En retard</div>
+                <% end %>
+                
+                <div class="flex gap-2">
+                  <%= link_to "Voir", ticket, class: "btn btn-sm btn-outline" %>
+                  <% if ticket.can_be_edited_by?(current_user) %>
+                    <%= link_to "Modifier", edit_support_ticket_path(ticket), class: "btn btn-sm btn-ghost" %>
+                  <% end %>
+                </div>
+                
+                <% if ticket.status == 'resolved' && !ticket.satisfaction_provided? %>
+                  <div class="text-xs text-center">
+                    <%= link_to "Évaluer", ticket, class: "link link-primary text-xs" %>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    <% else %>
+      <div class="card bg-base-100 shadow-xl">
+        <div class="card-body text-center py-12">
+          <div class="text-6xl mb-4">🎧</div>
+          <h3 class="text-xl font-semibold mb-2">Aucun ticket trouvé</h3>
+          <p class="text-gray-600 mb-6">
+            <% if params[:status].present? || params[:category].present? || params[:priority].present? %>
+              Aucun ticket ne correspond à vos critères de recherche.
+            <% else %>
+              Vous n'avez pas encore de tickets de support. Créez-en un si vous avez besoin d'aide.
+            <% end %>
+          </p>
+          <%= link_to "Nouveau Ticket", new_support_ticket_path, class: "btn btn-primary" %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

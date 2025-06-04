@@ -1,0 +1,29 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user: one
+  disputed_item: one
+  disputed_item_type: Disputed item
+  dispute_type: MyString
+  status: MyString
+  title: MyString
+  description: MyText
+  amount: 9.99
+  priority: MyString
+  resolution: MyText
+  resolved_at: 2025-06-04 22:32:59
+  mediator_id: 
+
+two:
+  user: two
+  disputed_item: two
+  disputed_item_type: Disputed item
+  dispute_type: MyString
+  status: MyString
+  title: MyString
+  description: MyText
+  amount: 9.99
+  priority: MyString
+  resolution: MyText
+  resolved_at: 2025-06-04 22:32:59
+  mediator_id: 

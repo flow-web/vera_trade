@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  support_ticket: one
+  user: one
+  message: MyText
+  message_type: MyString
+  internal: false
+
+two:
+  support_ticket: two
+  user: two
+  message: MyText
+  message_type: MyString
+  internal: false

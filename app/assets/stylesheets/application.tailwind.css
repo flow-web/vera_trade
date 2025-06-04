@@ -1,2 +1,179 @@
 @import "tailwindcss";
 @plugin "daisyui";
+
+/* Mapbox CSS */
+@import 'mapbox-gl/dist/mapbox-gl.css';
+@import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
+
+/* Custom map styles */
+.mapboxgl-map {
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.mapboxgl-popup-content {
+  padding: 0 !important;
+  border-radius: 0.75rem !important;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+  border: none !important;
+}
+
+.mapboxgl-popup-tip {
+  border-top-color: white !important;
+}
+
+.listing-popup img {
+  border-radius: 0.75rem 0.75rem 0 0;
+}
+
+.user-location-marker {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Geocoder customization */
+.mapboxgl-ctrl-geocoder {
+  min-width: 300px !important;
+  border-radius: 0.5rem !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+}
+
+.mapboxgl-ctrl-geocoder input {
+  border-radius: 0.5rem !important;
+  padding: 0.75rem !important;
+  font-size: 0.875rem !important;
+}
+
+/* Custom control styling */
+.mapboxgl-ctrl-group {
+  border-radius: 0.5rem !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+  border: none !important;
+}
+
+.mapboxgl-ctrl button {
+  border-radius: 0.5rem !important;
+}
+
+/* Map container */
+.map-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 500px;
+}
+
+/* Search filters overlay */
+.map-filters {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 1;
+  background: white;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  max-width: 300px;
+}
+
+.map-info-panel {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  z-index: 1;
+  background: white;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  max-width: 350px;
+}
+
+/* Loading spinner for map */
+.map-loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+}
+
+/* Responsive map */
+@media (max-width: 768px) {
+  .map-filters {
+    position: relative;
+    top: auto;
+    left: auto;
+    margin-bottom: 1rem;
+    max-width: none;
+  }
+  
+  .map-info-panel {
+    position: relative;
+    bottom: auto;
+    left: auto;
+    margin-top: 1rem;
+    max-width: none;
+  }
+  
+  .mapboxgl-ctrl-geocoder {
+    min-width: 200px !important;
+  }
+}
+
+/* Custom markers */
+.cluster-marker {
+  background: #3b82f6;
+  border-radius: 50%;
+  color: white;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  border: 2px solid white;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.vehicle-marker {
+  background: #3b82f6;
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.part-marker {
+  background: #10b981;
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.service-marker {
+  background: #f59e0b;
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+/* Drawing tools */
+.drawing-controls {
+  position: absolute;
+  top: 80px;
+  left: 20px;
+  z-index: 1;
+}
+
+/* Heatmap legend */
+.heatmap-legend {
+  position: absolute;
+  bottom: 80px;
+  right: 20px;
+  z-index: 1;
+  background: white;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}

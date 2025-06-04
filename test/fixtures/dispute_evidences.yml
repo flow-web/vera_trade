@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  dispute: one
+  user: one
+  evidence_type: MyString
+  title: MyString
+  description: MyText
+
+two:
+  dispute: two
+  user: two
+  evidence_type: MyString
+  title: MyString
+  description: MyText

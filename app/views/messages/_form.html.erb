@@ -1,0 +1,226 @@
+<div id="message-form">
+  <%= form_with model: [conversation, message], local: false, html: { multipart: true, class: "space-y-4" } do |form| %>
+    <!-- Attachment Preview -->
+    <div id="attachment-preview" class="hidden">
+      <div class="flex flex-wrap gap-2 p-3 bg-base-200 rounded-lg">
+        <!-- Previews will be added here dynamically -->
+      </div>
+    </div>
+
+    <!-- Message Input -->
+    <div class="flex items-end space-x-3">
+      <!-- Attachment Button -->
+      <div class="dropdown dropdown-top">
+        <label tabindex="0" class="btn btn-ghost btn-circle">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path>
+          </svg>
+        </label>
+        <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 mb-2">
+          <li>
+            <label class="cursor-pointer">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+              </svg>
+              Photos
+              <%= form.file_field :attachments, multiple: true, accept: "image/*", class: "hidden", onchange: "handleFileSelect(this)" %>
+            </label>
+          </li>
+          <li>
+            <label class="cursor-pointer">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+              </svg>
+              Vidéos
+              <%= form.file_field :attachments, multiple: true, accept: "video/*", class: "hidden", onchange: "handleFileSelect(this)" %>
+            </label>
+          </li>
+          <li>
+            <label class="cursor-pointer">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path>
+              </svg>
+              Audio
+              <%= form.file_field :attachments, multiple: true, accept: "audio/*", class: "hidden", onchange: "handleFileSelect(this)" %>
+            </label>
+          </li>
+          <li>
+            <label class="cursor-pointer">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+              </svg>
+              Documents
+              <%= form.file_field :attachments, multiple: true, accept: ".pdf,.doc,.docx,.txt", class: "hidden", onchange: "handleFileSelect(this)" %>
+            </label>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Message Text Area -->
+      <div class="flex-1 relative">
+        <%= form.text_area :content, 
+            rows: 1, 
+            class: "textarea textarea-bordered w-full resize-none", 
+            placeholder: "Tapez votre message...",
+            onkeydown: "handleKeyDown(event)",
+            oninput: "autoResize(this)" %>
+        
+        <!-- Emoji Button -->
+        <div class="absolute right-2 bottom-2">
+          <div class="dropdown dropdown-top dropdown-end">
+            <label tabindex="0" class="btn btn-ghost btn-xs btn-circle">
+              😊
+            </label>
+            <div tabindex="0" class="dropdown-content p-2 shadow bg-base-100 rounded-box w-64 mb-2">
+              <div class="grid grid-cols-8 gap-1">
+                <% %w[😀 😃 😄 😁 😆 😅 😂 🤣 😊 😇 🙂 🙃 😉 😌 😍 🥰 😘 😗 😙 😚 😋 😛 😝 😜 🤪 🤨 🧐 🤓 😎 🤩 🥳 😏 😒 😞 😔 😟 😕 🙁 ☹️ 😣 😖 😫 😩 🥺 😢 😭 😤 😠 😡 🤬 🤯 😳 🥵 🥶 😱 😨 😰 😥 😓 🤗 🤔 🤭 🤫 🤥 😶 😐 😑 😬 🙄 😯 😦 😧 😮 😲 🥱 😴 🤤 😪 😵 🤐 🥴 🤢 🤮 🤧 😷 🤒 🤕].each do |emoji| %>
+                  <button type="button" class="btn btn-ghost btn-xs" onclick="insertEmoji('<%= emoji %>')">
+                    <%= emoji %>
+                  </button>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Send Button -->
+      <%= form.submit "Envoyer", class: "btn btn-primary", id: "send-button" %>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="flex items-center justify-between text-xs text-base-content opacity-70">
+      <div class="flex items-center space-x-4">
+        <span>Appuyez sur Entrée pour envoyer</span>
+        <span>Maj + Entrée pour une nouvelle ligne</span>
+      </div>
+      
+      <div class="flex items-center space-x-2">
+        <!-- Typing Indicator -->
+        <div id="typing-indicator" class="hidden flex items-center space-x-1">
+          <div class="flex space-x-1">
+            <div class="w-1 h-1 bg-primary rounded-full animate-bounce"></div>
+            <div class="w-1 h-1 bg-primary rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
+            <div class="w-1 h-1 bg-primary rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+          </div>
+          <span class="text-xs">En train d'écrire...</span>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<script>
+let typingTimer;
+let isTyping = false;
+
+// Auto-resize textarea
+function autoResize(textarea) {
+  textarea.style.height = 'auto';
+  textarea.style.height = textarea.scrollHeight + 'px';
+  
+  // Handle typing indicator
+  if (!isTyping) {
+    isTyping = true;
+    // Send typing start event
+  }
+  
+  clearTimeout(typingTimer);
+  typingTimer = setTimeout(() => {
+    isTyping = false;
+    // Send typing stop event
+  }, 1000);
+}
+
+// Handle keyboard shortcuts
+function handleKeyDown(event) {
+  if (event.key === 'Enter' && !event.shiftKey) {
+    event.preventDefault();
+    document.getElementById('send-button').click();
+  }
+}
+
+// Handle file selection
+function handleFileSelect(input) {
+  const files = Array.from(input.files);
+  const preview = document.getElementById('attachment-preview');
+  const previewContainer = preview.querySelector('div');
+  
+  if (files.length > 0) {
+    preview.classList.remove('hidden');
+    previewContainer.innerHTML = '';
+    
+    files.forEach((file, index) => {
+      const filePreview = document.createElement('div');
+      filePreview.className = 'relative bg-base-100 rounded-lg p-2 flex items-center space-x-2';
+      
+      if (file.type.startsWith('image/')) {
+        const img = document.createElement('img');
+        img.src = URL.createObjectURL(file);
+        img.className = 'w-12 h-12 object-cover rounded';
+        filePreview.appendChild(img);
+      } else {
+        const icon = document.createElement('div');
+        icon.className = 'w-12 h-12 bg-base-300 rounded flex items-center justify-center';
+        icon.innerHTML = '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>';
+        filePreview.appendChild(icon);
+      }
+      
+      const info = document.createElement('div');
+      info.className = 'flex-1 min-w-0';
+      info.innerHTML = `
+        <p class="text-sm font-medium truncate">${file.name}</p>
+        <p class="text-xs text-base-content opacity-70">${(file.size / 1024).toFixed(1)} KB</p>
+      `;
+      filePreview.appendChild(info);
+      
+      const removeBtn = document.createElement('button');
+      removeBtn.type = 'button';
+      removeBtn.className = 'btn btn-ghost btn-xs btn-circle';
+      removeBtn.innerHTML = '×';
+      removeBtn.onclick = () => {
+        filePreview.remove();
+        if (previewContainer.children.length === 0) {
+          preview.classList.add('hidden');
+        }
+      };
+      filePreview.appendChild(removeBtn);
+      
+      previewContainer.appendChild(filePreview);
+    });
+  }
+}
+
+// Insert emoji at cursor position
+function insertEmoji(emoji) {
+  const textarea = document.querySelector('#message_content');
+  const start = textarea.selectionStart;
+  const end = textarea.selectionEnd;
+  const text = textarea.value;
+  
+  textarea.value = text.substring(0, start) + emoji + text.substring(end);
+  textarea.selectionStart = textarea.selectionEnd = start + emoji.length;
+  textarea.focus();
+  autoResize(textarea);
+}
+
+// Form submission handling
+document.addEventListener('turbo:load', function() {
+  const form = document.querySelector('#message-form form');
+  if (form) {
+    form.addEventListener('turbo:submit-end', function(event) {
+      if (event.detail.success) {
+        // Clear form
+        form.reset();
+        document.getElementById('attachment-preview').classList.add('hidden');
+        
+        // Reset textarea height
+        const textarea = form.querySelector('textarea');
+        if (textarea) {
+          textarea.style.height = 'auto';
+        }
+      }
+    });
+  }
+});
+</script> 

@@ -8,103 +8,260 @@
 </div>
 
 <!-- Main Content -->
-<div class="container mx-auto px-4 pb-16">
-  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-    <!-- Conversations List -->
-    <div class="lg:col-span-1">
-      <div class="bg-base-100 rounded-lg shadow-xl p-6">
-        <div class="flex items-center justify-between mb-6">
-          <h2 class="text-xl font-bold">Conversations</h2>
-          <button class="btn btn-primary btn-sm">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-            </svg>
-            Nouveau message
-          </button>
+<div class="max-w-7xl mx-auto p-6">
+  <div class="bg-base-100 shadow-xl rounded-xl overflow-hidden">
+    <!-- Header -->
+    <div class="bg-gradient-to-r from-primary to-primary-focus text-primary-content p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-3xl font-bold">Messagerie</h1>
+          <p class="opacity-90">Gérez vos conversations avec les acheteurs et vendeurs</p>
         </div>
-        
-        <!-- Search Bar -->
-        <div class="relative mb-6">
-          <input type="text" placeholder="Rechercher une conversation..." class="input input-bordered w-full pl-10">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 absolute left-3 top-3 text-base-content opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
-        </div>
-
-        <!-- Conversations -->
-        <div class="space-y-4">
-          <% @conversations.each do |conversation| %>
-            <div class="flex items-center space-x-4 p-4 rounded-lg hover:bg-base-200 cursor-pointer transition-colors duration-200">
-              <div class="avatar">
-                <div class="w-12 h-12 rounded-full">
-                  <img src="<%= conversation.other_user.avatar_url || (conversation.other_user.name ? 'https://ui-avatars.com/api/?name=' + conversation.other_user.name : 'https://ui-avatars.com/api/') %>" alt="<%= conversation.other_user.name %>">
-                </div>
-              </div>
-              <div class="flex-1 min-w-0">
-                <p class="text-sm font-medium truncate"><%= conversation.other_user.name %></p>
-                <p class="text-sm text-base-content opacity-70 truncate"><%= conversation.last_message&.content %></p>
-              </div>
-              <div class="text-right">
-                <p class="text-xs text-base-content opacity-50"><%= conversation.last_message&.created_at %></p>
-                <% if conversation.unread_count > 0 %>
-                  <span class="badge badge-primary badge-sm"><%= conversation.unread_count %></span>
-                <% end %>
-              </div>
+        <div class="flex items-center space-x-4">
+          <div class="badge badge-primary-content text-primary">
+            <%= pluralize(@conversations.count, 'conversation') %> active<%= 's' if @conversations.count > 1 %>
+          </div>
+          <% if current_user.unread_messages_count > 0 %>
+            <div class="badge badge-error" id="notification-badge">
+              <%= current_user.unread_messages_count %> non lu<%= 's' if current_user.unread_messages_count > 1 %>
             </div>
           <% end %>
         </div>
       </div>
     </div>
 
-    <!-- Messages -->
-    <div class="lg:col-span-2">
-      <div class="bg-base-100 rounded-lg shadow-xl p-6">
-        <% if @current_conversation %>
-          <!-- Conversation Header -->
-          <div class="flex items-center space-x-4 mb-6 pb-4 border-b border-base-300">
-            <div class="avatar">
-              <div class="w-12 h-12 rounded-full">
-                <img src="<%= @current_conversation.other_user.avatar_url || 'https://ui-avatars.com/api/?name=' + @current_conversation.other_user.name %>" alt="<%= @current_conversation.other_user.name %>">
-              </div>
-            </div>
-            <div>
-              <h3 class="text-lg font-bold"><%= @current_conversation.other_user.name %></h3>
-              <p class="text-sm text-base-content opacity-70">En ligne</p>
-            </div>
-          </div>
+    <div class="flex h-[600px]">
+      <!-- Conversations Sidebar -->
+      <div class="w-1/3 border-r border-base-300 bg-base-50">
+        <!-- Tabs for Active/Archived -->
+        <div class="tabs tabs-boxed p-4">
+          <a class="tab tab-active" data-tab="active">Actives</a>
+          <a class="tab" data-tab="archived">Archivées</a>
+        </div>
 
-          <!-- Messages List -->
-          <div class="space-y-4 mb-6 max-h-[500px] overflow-y-auto">
-            <% @current_conversation.messages.each do |message| %>
-              <div class="flex <%= message.sender == current_user ? 'justify-end' : 'justify-start' %>">
-                <div class="<%= message.sender == current_user ? 'bg-primary text-primary-content' : 'bg-base-200' %> rounded-lg px-4 py-2 max-w-[70%]">
-                  <p class="text-sm"><%= message.content %></p>
-                  <p class="text-xs opacity-70 mt-1"><%= message.created_at.strftime('%H:%M') %></p>
+        <!-- Active Conversations -->
+        <div id="active-conversations" class="tab-content">
+          <% if @conversations.any? %>
+            <% @conversations.each do |conversation| %>
+              <div class="conversation-item p-4 border-b border-base-200 hover:bg-base-100 cursor-pointer" 
+                   id="conversation-<%= conversation.id %>"
+                   data-conversation-id="<%= conversation.id %>">
+                <%= link_to conversation_path(conversation), class: "block" do %>
+                  <div class="flex items-center space-x-3">
+                    <div class="avatar">
+                      <div class="w-12 h-12 rounded-full bg-primary text-primary-content flex items-center justify-center">
+                        <%= conversation.other_participant(current_user).email.first.upcase %>
+                      </div>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-center justify-between">
+                        <h3 class="font-semibold truncate">
+                          <%= conversation.other_participant(current_user).email %>
+                        </h3>
+                        <% if conversation.last_message %>
+                          <span class="text-xs text-base-content opacity-60">
+                            il y a <%= time_ago_in_words(conversation.last_message.created_at) %>
+                          </span>
+                        <% end %>
+                      </div>
+                      <% if conversation.listing %>
+                        <p class="text-sm text-primary">
+                          🚗 <%= conversation.listing.title %>
+                        </p>
+                      <% end %>
+                      <% if conversation.last_message %>
+                        <p class="text-sm text-base-content opacity-70 truncate">
+                          <%= conversation.last_message.content %>
+                        </p>
+                      <% end %>
+                      <% if conversation.unread_count_for(current_user) > 0 %>
+                        <div class="badge badge-primary badge-sm mt-1">
+                          <%= conversation.unread_count_for(current_user) %>
+                        </div>
+                      <% end %>
+                    </div>
+                  </div>
+                <% end %>
+                
+                <!-- Archive button -->
+                <div class="mt-2 flex justify-end">
+                  <%= button_to "Archiver", archive_conversation_messages_path, 
+                      params: { conversation_id: conversation.id },
+                      method: :post,
+                      class: "btn btn-ghost btn-xs",
+                      data: { turbo_method: :post } %>
                 </div>
               </div>
             <% end %>
-          </div>
+          <% else %>
+            <div class="p-8 text-center">
+              <div class="text-6xl mb-4">💬</div>
+              <h3 class="text-lg font-semibold mb-2">Aucune conversation</h3>
+              <p class="text-base-content opacity-70">Vos conversations apparaîtront ici</p>
+            </div>
+          <% end %>
+        </div>
 
-          <!-- Message Input -->
-          <div class="flex space-x-4">
-            <input type="text" placeholder="Écrivez votre message..." class="input input-bordered flex-1">
-            <button class="btn btn-primary">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-              </svg>
-            </button>
-          </div>
-        <% else %>
-          <!-- Empty State -->
-          <div class="text-center py-12">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-base-content opacity-20 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+        <!-- Archived Conversations -->
+        <div id="archived-conversations" class="tab-content hidden">
+          <% if @archived_conversations.any? %>
+            <% @archived_conversations.each do |conversation| %>
+              <div class="conversation-item p-4 border-b border-base-200 hover:bg-base-100 cursor-pointer opacity-60" 
+                   id="archived-conversation-<%= conversation.id %>">
+                <%= link_to conversation_path(conversation), class: "block" do %>
+                  <div class="flex items-center space-x-3">
+                    <div class="avatar">
+                      <div class="w-12 h-12 rounded-full bg-base-300 text-base-content flex items-center justify-center">
+                        <%= conversation.other_participant(current_user).email.first.upcase %>
+                      </div>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <h3 class="font-semibold truncate">
+                        <%= conversation.other_participant(current_user).email %>
+                      </h3>
+                      <% if conversation.listing %>
+                        <p class="text-sm text-base-content opacity-50">
+                          🚗 <%= conversation.listing.title %>
+                        </p>
+                      <% end %>
+                    </div>
+                  </div>
+                <% end %>
+                
+                <!-- Unarchive button -->
+                <div class="mt-2 flex justify-end">
+                  <%= button_to "Restaurer", unarchive_conversation_messages_path, 
+                      params: { conversation_id: conversation.id },
+                      method: :post,
+                      class: "btn btn-ghost btn-xs",
+                      data: { turbo_method: :post } %>
+                </div>
+              </div>
+            <% end %>
+          <% else %>
+            <div class="p-8 text-center">
+              <div class="text-6xl mb-4">📦</div>
+              <h3 class="text-lg font-semibold mb-2">Aucune conversation archivée</h3>
+              <p class="text-base-content opacity-70">Les conversations archivées apparaîtront ici</p>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Message Templates Sidebar -->
+      <div class="w-1/3 bg-base-50 p-4">
+        <h3 class="text-lg font-semibold mb-4">Modèles de messages</h3>
+        
+        <!-- Template Categories -->
+        <div class="tabs tabs-boxed tabs-xs mb-4">
+          <% MessageTemplate.categories.keys.each do |category| %>
+            <a class="tab <%= 'tab-active' if category == 'greeting' %>" 
+               data-category="<%= category %>">
+              <%= MessageTemplate.category_in_french(category) %>
+            </a>
+          <% end %>
+        </div>
+
+        <!-- Template List -->
+        <div id="template-list" class="space-y-2">
+          <% @message_templates.each do |template| %>
+            <div class="card bg-base-100 shadow-sm">
+              <div class="card-body p-3">
+                <h4 class="card-title text-sm"><%= template.title %></h4>
+                <p class="text-xs text-base-content opacity-70 line-clamp-2">
+                  <%= template.content %>
+                </p>
+                <div class="card-actions justify-end">
+                  <button class="btn btn-primary btn-xs" 
+                          data-template-id="<%= template.id %>"
+                          data-template-content="<%= template.content %>">
+                    Utiliser
+                  </button>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+
+        <!-- Add New Template -->
+        <div class="mt-4">
+          <button class="btn btn-outline btn-sm w-full" onclick="new_template_modal.showModal()">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
             </svg>
-            <h3 class="text-xl font-bold mb-2">Aucune conversation sélectionnée</h3>
-            <p class="text-base-content opacity-70">Sélectionnez une conversation ou créez-en une nouvelle</p>
-          </div>
-        <% end %>
+            Nouveau modèle
+          </button>
+        </div>
       </div>
     </div>
   </div>
 </div>
+
+<!-- New Template Modal -->
+<dialog id="new_template_modal" class="modal">
+  <div class="modal-box">
+    <h3 class="font-bold text-lg">Nouveau modèle de message</h3>
+    <%= form_with model: MessageTemplate.new, url: message_templates_path, local: true, class: "space-y-4 mt-4" do |form| %>
+      <div class="form-control">
+        <%= form.label :title, "Titre", class: "label" %>
+        <%= form.text_field :title, class: "input input-bordered w-full", placeholder: "Titre du modèle" %>
+      </div>
+      
+      <div class="form-control">
+        <%= form.label :category, "Catégorie", class: "label" %>
+        <%= form.select :category, MessageTemplate.categories.keys.map { |k| [MessageTemplate.category_in_french(k), k] }, 
+            { include_blank: "Sélectionnez une catégorie" }, 
+            { class: "select select-bordered w-full" } %>
+      </div>
+      
+      <div class="form-control">
+        <%= form.label :content, "Contenu", class: "label" %>
+        <%= form.text_area :content, rows: 4, class: "textarea textarea-bordered w-full", placeholder: "Contenu du message..." %>
+      </div>
+      
+      <div class="modal-action">
+        <button type="button" class="btn" onclick="new_template_modal.close()">Annuler</button>
+        <%= form.submit "Créer", class: "btn btn-primary" %>
+      </div>
+    <% end %>
+  </div>
+</dialog>
+
+<script>
+document.addEventListener('turbo:load', function() {
+  // Tab switching
+  document.querySelectorAll('[data-tab]').forEach(tab => {
+    tab.addEventListener('click', function() {
+      const tabName = this.dataset.tab;
+      
+      // Update tab appearance
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('tab-active'));
+      this.classList.add('tab-active');
+      
+      // Show/hide content
+      document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.add('hidden');
+      });
+      document.getElementById(`${tabName}-conversations`).classList.remove('hidden');
+    });
+  });
+  
+  // Template category switching
+  document.querySelectorAll('[data-category]').forEach(tab => {
+    tab.addEventListener('click', function() {
+      const category = this.dataset.category;
+      
+      // Update tab appearance
+      document.querySelectorAll('[data-category]').forEach(t => t.classList.remove('tab-active'));
+      this.classList.add('tab-active');
+      
+      // Load templates for this category
+      fetch(`/messages/templates?category=${category}`, {
+        headers: {
+          'Accept': 'application/vnd.turbo-stream.html'
+        }
+      });
+    });
+  });
+});
+</script>

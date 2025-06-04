@@ -1,0 +1,180 @@
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, or any plugin's
+ * vendor/assets/stylesheets directory can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the bottom of the
+ * compiled file so the styles you add here take precedence over styles defined in any other CSS/SCSS
+ * files in this directory. Styles in this file should be added after the last require_* statement.
+ * It is generally better to create a new file per style scope.
+ *
+ *= require_tree .
+ *= require_self
+ */
+
+/* Enhanced Listing Form Styles */
+.step-indicator {
+  @apply flex flex-col items-center relative flex-1;
+  justify-content: center;
+  margin: 0 2rem;
+}
+
+.step-circle {
+  @apply w-12 h-12 rounded-full border-2 border-base-300 bg-base-100 flex items-center justify-center font-bold text-lg transition-all duration-300 shadow-sm;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.step-indicator.active .step-circle {
+  @apply border-primary bg-primary text-primary-content shadow-lg transform scale-110;
+}
+
+.step-indicator.completed .step-circle {
+  @apply border-success bg-success text-success-content shadow-lg;
+}
+
+.step-label {
+  @apply text-sm mt-2 text-base-content opacity-70 transition-all duration-300;
+}
+
+.step-indicator.active .step-label {
+  @apply text-primary opacity-100 font-semibold transform scale-105;
+}
+
+.step-indicator.completed .step-label {
+  @apply text-success opacity-90 font-medium;
+}
+
+.step-connector {
+  @apply flex-1 h-0.5 bg-base-300 mx-4 transition-all duration-500;
+  margin: 0 auto;
+}
+
+.step-indicator.completed ~ .step-indicator .step-connector {
+  @apply bg-success;
+}
+
+.step-indicator.active ~ .step-indicator .step-connector {
+  @apply bg-primary;
+}
+
+.form-step {
+  @apply transition-all duration-500 transform;
+}
+
+.form-step.hidden {
+  @apply opacity-0 scale-95 pointer-events-none translate-y-4;
+}
+
+.form-step.active {
+  @apply opacity-100 scale-100 translate-y-0;
+}
+
+.step-header {
+  @apply relative overflow-hidden;
+}
+
+.step-header::before {
+  @apply absolute inset-0 bg-gradient-to-r from-transparent via-white via-transparent to-transparent opacity-10;
+  content: '';
+  animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(200%); }
+}
+
+.border-3 {
+  border-width: 3px;
+}
+
+/* Enhanced hover effects for buttons */
+.hover\:btn-outline:hover {
+  @apply bg-transparent border-current text-current transform -translate-y-1 shadow-lg;
+}
+
+/* File upload enhancements */
+.file-upload-zone {
+  @apply transition-all duration-300;
+}
+
+.file-upload-zone:hover {
+  @apply border-primary bg-primary bg-opacity-5 transform scale-102;
+}
+
+.file-preview-item {
+  @apply transition-all duration-300 hover:transform hover:scale-105 hover:shadow-lg;
+}
+
+/* Enhanced form inputs */
+.input-lg {
+  @apply py-4 text-lg;
+}
+
+.select-lg {
+  @apply py-4 text-lg;
+}
+
+/* Step indicator hover effects */
+.step-indicator {
+  @apply cursor-pointer transition-all duration-300;
+}
+
+.step-indicator:hover:not(.active):not(.completed) .step-circle {
+  @apply border-primary bg-primary bg-opacity-20 transform scale-105;
+}
+
+.step-indicator:hover:not(.active):not(.completed) .step-label {
+  @apply text-primary opacity-80;
+}
+
+/* Enhanced card hover effects */
+.card-hover {
+  @apply transition-all duration-300 hover:shadow-xl hover:-translate-y-1;
+}
+
+/* Folder organization styles */
+.folder-item {
+  @apply transition-all duration-300 hover:transform hover:scale-102 hover:shadow-md;
+}
+
+.folder-item.selected {
+  @apply bg-primary bg-opacity-20 border-primary shadow-lg;
+}
+
+/* Media preview enhancements */
+.media-preview-grid {
+  @apply grid gap-4 transition-all duration-500;
+}
+
+.media-preview-item {
+  @apply relative group bg-base-100 rounded-lg overflow-hidden shadow-sm border border-base-300 transition-all duration-300 hover:shadow-lg hover:scale-105;
+}
+
+.media-preview-overlay {
+  @apply absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-200 flex items-center justify-center opacity-0 group-hover:opacity-100;
+}
+
+/* Responsive grid adjustments */
+@media (max-width: 768px) {
+  .step-indicator {
+    @apply flex-col;
+  }
+  
+  .step-connector {
+    @apply h-8 w-0.5 mx-0 my-2;
+  }
+  
+  .step-circle {
+    @apply w-10 h-10 text-base;
+  }
+  
+  .step-label {
+    @apply text-xs;
+  }
+} 

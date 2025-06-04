@@ -4,17 +4,26 @@
 
 import { application } from "./application"
 
+import CarBrandsController from "./car_brands_controller"
+application.register("car-brands", CarBrandsController)
+
 import ChatScrollController from "./chat_scroll_controller"
 application.register("chat-scroll", ChatScrollController)
-
-import HelloController from "./hello_controller"
-application.register("hello", HelloController)
-
-import ResetFormController from "./reset_form_controller"
-application.register("reset-form", ResetFormController)
 
 import DirectUploadController from "./direct_upload_controller"
 application.register("direct-upload", DirectUploadController)
 
+import HelloController from "./hello_controller"
+application.register("hello", HelloController)
+
+import MapController from "./map_controller"
+application.register("map", MapController)
+
+import ResetFormController from "./reset_form_controller"
+application.register("reset-form", ResetFormController)
+
 import SearchController from "./search_controller"
 application.register("search", SearchController)
+
+import VehicleInfoController from "./vehicle_info_controller"
+application.register("vehicle-info", VehicleInfoController)

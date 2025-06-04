@@ -1,513 +1,775 @@
-<div class="max-w-4xl mx-auto p-6">
-  <div class="bg-base-100 shadow-lg rounded-lg overflow-hidden">
-    <div class="bg-primary text-primary-content p-6">
-      <h1 class="text-2xl font-bold">Publier une annonce de véhicule</h1>
-      <p class="text-sm opacity-90 mt-1">Renseignez les informations de votre véhicule pour créer votre annonce</p>
-    </div>
-
-    <%= form_with(model: @listing, local: true, html: { multipart: true, class: "p-6" }) do |form| %>
-      <% if @listing.errors.any? || @vehicle.errors.any? %>
-        <div class="alert alert-error mb-6">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-          <div>
-            <% if @listing.errors.any? %>
-              <h4 class="font-bold"><%= pluralize(@listing.errors.count, "erreur") %> concernant l'annonce:</h4>
-              <ul class="mt-1 list-disc list-inside">
-                <% @listing.errors.full_messages.each do |message| %>
-                  <li><%= message %></li>
-                <% end %>
-              </ul>
-            <% end %>
-            
-            <% if @vehicle.errors.any? %>
-              <h4 class="font-bold mt-2"><%= pluralize(@vehicle.errors.count, "erreur") %> concernant le véhicule:</h4>
-              <ul class="mt-1 list-disc list-inside">
-                <% @vehicle.errors.full_messages.each do |message| %>
-                  <li><%= message %></li>
-                <% end %>
-              </ul>
-            <% end %>
+<div class="max-w-6xl mx-auto p-6">
+  <!-- Progress Steps Header -->
+  <div class="mb-8">
+    <div class="bg-base-100 shadow-xl rounded-xl p-6 border border-base-200">
+      <h1 class="text-3xl font-bold text-center mb-2">Créer votre annonce</h1>
+      <p class="text-center text-base-content opacity-70 mb-6">Suivez ces étapes pour publier votre véhicule</p>
+      
+      <!-- Progress Indicator -->
+      <div class="flex items-center justify-center mb-6">
+        <div class="flex items-center w-full max-w-4xl">
+          <div class="step-indicator active" data-step="1">
+            <div class="step-circle">1</div>
+            <span class="step-label">Informations</span>
+          </div>
+          <div class="step-connector"></div>
+          <div class="step-indicator" data-step="2">
+            <div class="step-circle">2</div>
+            <span class="step-label">Véhicule</span>
+          </div>
+          <div class="step-connector"></div>
+          <div class="step-indicator" data-step="3">
+            <div class="step-circle">3</div>
+            <span class="step-label">Détails</span>
+          </div>
+          <div class="step-connector"></div>
+          <div class="step-indicator" data-step="4">
+            <div class="step-circle">4</div>
+            <span class="step-label">Équipements</span>
+          </div>
+          <div class="step-connector"></div>
+          <div class="step-indicator" data-step="5">
+            <div class="step-circle">5</div>
+            <span class="step-label">État</span>
+          </div>
+          <div class="step-connector"></div>
+          <div class="step-indicator" data-step="6">
+            <div class="step-circle">6</div>
+            <span class="step-label">Médias</span>
           </div>
         </div>
-      <% end %>
-
-      <!-- Onglets pour les différentes sections du formulaire -->
-      <div class="tabs tabs-boxed mb-6">
-        <a class="tab tab-active" data-target="infos-section">Informations</a>
-        <a class="tab" data-target="vehicle-section">Véhicule</a>
-        <a class="tab" data-target="vehicle-details-section">Détails</a>
-        <a class="tab" data-target="vehicle-features-section">Équipements</a>
-        <a class="tab" data-target="vehicle-condition-section">État</a>
-        <a class="tab" data-target="photos-section">Photos</a>
       </div>
+    </div>
+  </div>
 
-      <!-- Section Informations de l'annonce -->
-      <div id="infos-section" class="section-content">
-        <h2 class="text-xl font-semibold mb-4">Informations de l'annonce</h2>
-        
-        <div class="form-control w-full mb-4">
-          <%= form.label :title, "Titre de l'annonce", class: "label" %>
-          <%= form.text_field :title, class: "input input-bordered w-full", placeholder: "Ex: BMW Serie 3 en excellent état" %>
+  <%= form_with(model: @listing, local: true, html: { multipart: true, class: "space-y-6" }) do |form| %>
+    <% if @listing.errors.any? || @vehicle.errors.any? %>
+      <div class="alert alert-error mb-6">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+        <div>
+          <% if @listing.errors.any? %>
+            <h4 class="font-bold"><%= pluralize(@listing.errors.count, "erreur") %> concernant l'annonce:</h4>
+            <ul class="mt-1 list-disc list-inside">
+              <% @listing.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+              <% end %>
+            </ul>
+          <% end %>
+          
+          <% if @vehicle.errors.any? %>
+            <h4 class="font-bold mt-2"><%= pluralize(@vehicle.errors.count, "erreur") %> concernant le véhicule:</h4>
+            <ul class="mt-1 list-disc list-inside">
+              <% @vehicle.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+              <% end %>
+            </ul>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- Step 1: Informations de l'annonce -->
+    <div class="form-step active bg-base-100 shadow-xl rounded-xl overflow-hidden border border-base-200" data-step="1">
+      <div class="step-header bg-gradient-to-r from-primary to-primary-focus text-primary-content p-6">
+        <div class="flex items-center">
+          <div class="w-12 h-12 bg-primary-content text-primary rounded-full flex items-center justify-center font-bold text-xl mr-4 shadow-lg">1</div>
+          <div>
+            <h2 class="text-2xl font-bold">Informations de l'annonce</h2>
+            <p class="opacity-90">Donnez un titre et une description attrayants à votre annonce</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="p-8 space-y-6">
+        <div class="form-control w-full">
+          <%= form.label :title, class: "label" do %>
+            <span class="label-text font-semibold text-lg flex items-center">
+              <svg class="w-5 h-5 mr-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+              </svg>
+              Titre de l'annonce
+            </span>
+          <% end %>
+          <%= form.text_field :title, class: "input input-bordered w-full input-lg", placeholder: "Ex: BMW Serie 3 en excellent état - Toutes options" %>
           <label class="label">
             <span class="label-text-alt text-neutral-content">Un titre concis et descriptif attirera plus d'acheteurs</span>
           </label>
         </div>
         
-        <div class="form-control w-full mb-4">
-          <%= form.label :description, "Description de l'annonce", class: "label" %>
-          <%= form.text_area :description, rows: 5, class: "textarea textarea-bordered w-full", placeholder: "Décrivez votre véhicule, son état, ses options, etc." %>
+        <div class="form-control w-full">
+          <%= form.label :description, class: "label" do %>
+            <span class="label-text font-semibold text-lg flex items-center">
+              <svg class="w-5 h-5 mr-2 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+              </svg>
+              Description de l'annonce
+            </span>
+          <% end %>
+          <%= form.text_area :description, rows: 8, class: "textarea textarea-bordered w-full text-base", placeholder: "Décrivez votre véhicule en détail : état général, options, historique d'entretien, etc.\n\nExemple :\n• Véhicule non-fumeur\n• Entretien régulier en concession\n• Toutes révisions à jour\n• Carnet d'entretien disponible\n• Contrôle technique valide" %>
           <label class="label">
-            <span class="label-text-alt text-neutral-content">Soyez détaillé et honnête sur l'état du véhicule</span>
+            <span class="label-text-alt text-neutral-content">Plus votre description est détaillée et honnête, plus vous attirerez d'acheteurs sérieux</span>
           </label>
         </div>
       </div>
+    </div>
 
-      <!-- Section Détails du véhicule -->
-      <div id="vehicle-section" class="section-content hidden">
-        <h2 class="text-xl font-semibold mb-4">Détails du véhicule</h2>
-        
+    <!-- Step 2: Détails du véhicule -->
+    <div class="form-step bg-base-100 shadow-xl rounded-xl overflow-hidden border border-base-200 hidden" data-step="2">
+      <div class="step-header bg-gradient-to-r from-secondary to-secondary-focus text-secondary-content p-6">
+        <div class="flex items-center">
+          <div class="w-12 h-12 bg-secondary-content text-secondary rounded-full flex items-center justify-center font-bold text-xl mr-4 shadow-lg">2</div>
+          <div>
+            <h2 class="text-2xl font-bold">Informations du véhicule</h2>
+            <p class="opacity-90">Renseignez les caractéristiques principales de votre véhicule</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="p-8">
         <%= fields_for :vehicle do |v| %>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div class="form-control w-full">
-              <%= v.label :make, "Marque", class: "label" %>
-              <%= v.text_field :make, class: "input input-bordered w-full", placeholder: "Ex: BMW" %>
+              <%= v.label :make, class: "label" do %>
+                <span class="label-text font-semibold text-lg flex items-center">
+                  <svg class="w-5 h-5 mr-2 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                  </svg>
+                  Marque
+                </span>
+              <% end %>
+              <%= v.text_field :make, class: "input input-bordered w-full input-lg", placeholder: "Ex: BMW, Mercedes, Audi..." %>
             </div>
             
             <div class="form-control w-full">
-              <%= v.label :model, "Modèle", class: "label" %>
-              <%= v.text_field :model, class: "input input-bordered w-full", placeholder: "Ex: Serie 3" %>
+              <%= v.label :model, class: "label" do %>
+                <span class="label-text font-semibold text-lg">Modèle</span>
+              <% end %>
+              <%= v.text_field :model, class: "input input-bordered w-full input-lg", placeholder: "Ex: Serie 3, Classe C, A4..." %>
             </div>
           </div>
           
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
             <div class="form-control w-full">
-              <%= v.label :year, "Année", class: "label" %>
-              <%= v.number_field :year, class: "input input-bordered w-full", min: 1900, max: Time.current.year, placeholder: "Ex: 2020" %>
+              <%= v.label :year, class: "label" do %>
+                <span class="label-text font-semibold text-lg flex items-center">
+                  <svg class="w-5 h-5 mr-2 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                  </svg>
+                  Année
+                </span>
+              <% end %>
+              <%= v.number_field :year, class: "input input-bordered w-full input-lg", min: 1900, max: Time.current.year, placeholder: "2020" %>
             </div>
             
             <div class="form-control w-full">
-              <%= v.label :price, "Prix (€)", class: "label" %>
-              <%= v.number_field :price, class: "input input-bordered w-full", min: 0, step: 100, placeholder: "Ex: 15000" %>
+              <%= v.label :price, class: "label" do %>
+                <span class="label-text font-semibold text-lg flex items-center">
+                  <svg class="w-5 h-5 mr-2 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg>
+                  Prix (€)
+                </span>
+              <% end %>
+              <%= v.number_field :price, class: "input input-bordered w-full input-lg", min: 0, step: 100, placeholder: "15000" %>
+            </div>
+            
+            <div class="form-control w-full">
+              <%= v.label :kilometers, class: "label" do %>
+                <span class="label-text font-semibold text-lg flex items-center">
+                  <svg class="w-5 h-5 mr-2 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                  </svg>
+                  Kilométrage
+                </span>
+              <% end %>
+              <%= v.number_field :kilometers, class: "input input-bordered w-full input-lg", min: 0, placeholder: "80000" %>
             </div>
           </div>
           
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div class="form-control w-full">
-              <%= v.label :kilometers, "Kilométrage", class: "label" %>
-              <%= v.number_field :kilometers, class: "input input-bordered w-full", min: 0, placeholder: "Ex: 50000" %>
-            </div>
-            
-            <div class="form-control w-full">
-              <%= v.label :fuel_type, "Type de carburant", class: "label" %>
+              <%= v.label :fuel_type, class: "label" do %>
+                <span class="label-text font-semibold text-lg">Type de carburant</span>
+              <% end %>
               <%= v.select :fuel_type, 
                 ['Essence', 'Diesel', 'Hybride', 'Électrique', 'GPL', 'Autre'],
-                { include_blank: "Sélectionnez un type de carburant" },
-                { class: "select select-bordered w-full" } 
+                { include_blank: "Sélectionnez le carburant" },
+                { class: "select select-bordered w-full select-lg" } 
               %>
             </div>
-          </div>
-          
-          <div class="form-control w-full mb-4">
-            <%= v.label :transmission, "Transmission", class: "label" %>
-            <%= v.select :transmission, 
-              ['Manuelle', 'Automatique', 'Semi-automatique'],
-              { include_blank: "Sélectionnez un type de transmission" },
-              { class: "select select-bordered w-full" } 
-            %>
-          </div>
-          
-          <div class="form-control w-full mb-4">
-            <%= v.label :description, "Détails supplémentaires du véhicule", class: "label" %>
-            <%= v.text_area :description, rows: 3, class: "textarea textarea-bordered w-full", placeholder: "Options, équipements, etc." %>
+            
+            <div class="form-control w-full">
+              <%= v.label :transmission, class: "label" do %>
+                <span class="label-text font-semibold text-lg">Transmission</span>
+              <% end %>
+              <%= v.select :transmission, 
+                ['Manuelle', 'Automatique', 'Semi-automatique'],
+                { include_blank: "Sélectionnez la transmission" },
+                { class: "select select-bordered w-full select-lg" } 
+              %>
+            </div>
           </div>
         <% end %>
       </div>
+    </div>
 
-      <!-- Section Détails du véhicule supplémentaires -->
-      <div id="vehicle-details-section" class="section-content hidden">
-        <h2 class="text-xl font-semibold mb-4">Détails supplémentaires du véhicule</h2>
-        
+    <!-- Step 3: Détails supplémentaires -->
+    <div class="form-step bg-base-100 shadow-xl rounded-xl overflow-hidden border border-base-200 hidden" data-step="3">
+      <div class="step-header bg-gradient-to-r from-info to-info-focus text-info-content p-6">
+        <div class="flex items-center">
+          <div class="w-12 h-12 bg-info-content text-info rounded-full flex items-center justify-center font-bold text-xl mr-4 shadow-lg">3</div>
+          <div>
+            <h2 class="text-2xl font-bold">Détails supplémentaires</h2>
+            <p class="opacity-90">Informations complémentaires sur votre véhicule</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="p-8">
         <%= fields_for :vehicle do |v| %>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div class="form-control w-full">
-              <%= v.label :finition, "Finition/Version", class: "label" %>
-              <%= v.text_field :finition, class: "input input-bordered w-full", placeholder: "Ex: Pack Luxe, S LINE, INNOVA..." %>
+              <%= v.label :finition, class: "label" do %>
+                <span class="label-text font-semibold text-lg">Finition/Version</span>
+              <% end %>
+              <%= v.text_field :finition, class: "input input-bordered w-full input-lg", placeholder: "Ex: Pack Luxe, S LINE, INNOVA..." %>
             </div>
             
             <div class="form-control w-full">
-              <%= v.label :doors, "Nombre de portes", class: "label" %>
+              <%= v.label :doors, class: "label" do %>
+                <span class="label-text font-semibold text-lg">Nombre de portes</span>
+              <% end %>
               <%= v.select :doors, 
                 [3, 5],
-                { include_blank: "Sélectionnez un nombre de portes" },
-                { class: "select select-bordered w-full" } 
+                { include_blank: "Sélectionnez le nombre de portes" },
+                { class: "select select-bordered w-full select-lg" } 
               %>
             </div>
           </div>
           
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div class="form-control w-full">
-              <%= v.label :exterior_color, "Couleur extérieure", class: "label" %>
-              <%= v.text_field :exterior_color, class: "input input-bordered w-full", placeholder: "Ex: Noir, Blanc, Rouge..." %>
+              <%= v.label :exterior_color, class: "label" do %>
+                <span class="label-text font-semibold text-lg">Couleur extérieure</span>
+              <% end %>
+              <%= v.text_field :exterior_color, class: "input input-bordered w-full input-lg", placeholder: "Ex: Noir, Blanc, Rouge..." %>
             </div>
             
             <div class="form-control w-full">
-              <%= v.label :interior_material, "Matière intérieure", class: "label" %>
+              <%= v.label :interior_material, class: "label" do %>
+                <span class="label-text font-semibold text-lg">Matière intérieure</span>
+              <% end %>
               <%= v.select :interior_material, 
                 ['Tissu', 'Cuir', 'Alcantara', 'Simili cuir', 'Mixte', 'Autre'],
                 { include_blank: "Sélectionnez la matière intérieure" },
-                { class: "select select-bordered w-full" } 
+                { class: "select select-bordered w-full select-lg" } 
               %>
             </div>
           </div>
           
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div class="form-control w-full">
-              <%= v.label :interior_color, "Couleur intérieure", class: "label" %>
-              <%= v.text_field :interior_color, class: "input input-bordered w-full", placeholder: "Ex: Noir, Beige..." %>
+              <%= v.label :location, class: "label" do %>
+                <span class="label-text font-semibold text-lg">Lieu de visualisation</span>
+              <% end %>
+              <%= v.text_field :location, class: "input input-bordered w-full input-lg", placeholder: "Ex: Paris, Lyon..." %>
             </div>
             
             <div class="form-control w-full">
-              <%= v.label :previous_owners, "Propriétaires précédents", class: "label" %>
-              <%= v.number_field :previous_owners, class: "input input-bordered w-full", min: 0, placeholder: "Ex: 1" %>
-            </div>
-          </div>
-          
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-            <div class="form-control w-full">
-              <%= v.label :location, "Lieu de visualisation", class: "label" %>
-              <%= v.text_field :location, class: "input input-bordered w-full", placeholder: "Ex: Paris, Lyon..." %>
-            </div>
-            
-            <div class="form-control w-full">
-              <%= v.label :non_smoker, "Véhicule non-fumeur", class: "label" %>
-              <div class="flex items-center space-x-4 pt-2 pl-2">
-                <label class="cursor-pointer flex items-center">
-                  <%= v.radio_button :non_smoker, true, class: "radio radio-primary" %>
-                  <span class="ml-2">Oui</span>
-                </label>
-                <label class="cursor-pointer flex items-center">
-                  <%= v.radio_button :non_smoker, false, class: "radio radio-primary" %>
-                  <span class="ml-2">Non</span>
-                </label>
-              </div>
-            </div>
-          </div>
-          
-          <div class="divider my-4">Historique et entretien</div>
-          
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-            <div class="form-control w-full">
-              <%= v.label :last_service_date, "Date de la dernière révision", class: "label" %>
-              <%= v.date_field :last_service_date, class: "input input-bordered w-full" %>
-            </div>
-            
-            <div class="form-control w-full">
-              <%= v.label :has_service_history, "Carnet d'entretien disponible", class: "label" %>
-              <div class="flex items-center space-x-4 pt-2 pl-2">
-                <label class="cursor-pointer flex items-center">
-                  <%= v.radio_button :has_service_history, true, class: "radio radio-primary" %>
-                  <span class="ml-2">Oui</span>
-                </label>
-                <label class="cursor-pointer flex items-center">
-                  <%= v.radio_button :has_service_history, false, class: "radio radio-primary" %>
-                  <span class="ml-2">Non</span>
-                </label>
-              </div>
-            </div>
-          </div>
-          
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-            <div class="form-control w-full">
-              <%= v.label :next_ct_date, "Date du prochain contrôle technique", class: "label" %>
-              <%= v.date_field :next_ct_date, class: "input input-bordered w-full" %>
-            </div>
-            
-            <div class="form-control w-full">
-              <%= v.label :ct_expiry_date, "Date d'expiration du contrôle technique", class: "label" %>
-              <%= v.date_field :ct_expiry_date, class: "input input-bordered w-full" %>
+              <%= v.label :previous_owners, class: "label" do %>
+                <span class="label-text font-semibold text-lg">Propriétaires précédents</span>
+              <% end %>
+              <%= v.number_field :previous_owners, class: "input input-bordered w-full input-lg", min: 0, placeholder: "1" %>
             </div>
           </div>
         <% end %>
       </div>
+    </div>
 
-      <!-- Section Équipements du véhicule -->
-      <div id="vehicle-features-section" class="section-content hidden">
-        <h2 class="text-xl font-semibold mb-4">Équipements et options du véhicule</h2>
-        
+    <!-- Step 4: Équipements -->
+    <div class="form-step bg-base-100 shadow-xl rounded-xl overflow-hidden border border-base-200 hidden" data-step="4">
+      <div class="step-header bg-gradient-to-r from-warning to-warning-focus text-warning-content p-6">
+        <div class="flex items-center">
+          <div class="w-12 h-12 bg-warning-content text-warning rounded-full flex items-center justify-center font-bold text-xl mr-4 shadow-lg">4</div>
+          <div>
+            <h2 class="text-2xl font-bold">Équipements et options</h2>
+            <p class="opacity-90">Sélectionnez les équipements de votre véhicule</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="p-8">
         <%= fields_for :vehicle do |v| %>
-          <div class="form-control w-full mb-4">
-            <%= v.label :safety_features, "Équipements de sécurité", class: "label" %>
-            <div class="card bg-base-200 p-3 mb-2">
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-                <% ["ABS", "ESP (Contrôle de stabilité)", "Airbags frontaux", "Airbags latéraux", "Airbags rideaux", "Alarme", "Verrouillage centralisé", "Fixations ISOFIX", "Détecteur de fatigue", "Système d'appel d'urgence"].each do |feature| %>
-                  <div class="form-control">
-                    <label class="label cursor-pointer justify-start">
-                      <input type="checkbox" class="checkbox checkbox-primary checkbox-sm mr-2" data-feature="safety" value="<%= feature %>">
-                      <span class="label-text"><%= feature %></span>
-                    </label>
-                  </div>
-                <% end %>
-              </div>
-            </div>
-            <%= v.text_area :safety_features, rows: 3, class: "textarea textarea-bordered w-full", placeholder: "Autres équipements de sécurité..." %>
-          </div>
-          
-          <div class="form-control w-full mb-4">
-            <%= v.label :comfort_features, "Équipements de confort", class: "label" %>
-            <div class="card bg-base-200 p-3 mb-2">
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-                <% ["Climatisation manuelle", "Climatisation automatique", "Climatisation bi-zone", "Sellerie cuir", "Sellerie tissu", "Sièges chauffants", "Sièges électriques", "Sièges à mémoire", "Régulateur de vitesse", "Limiteur de vitesse", "Direction assistée", "Vitres électriques avant", "Vitres électriques arrière", "Rétroviseurs électriques", "Rétroviseurs rabattables électriquement", "Toit ouvrant", "Toit panoramique", "Détecteur de pluie", "Allumage automatique des phares", "Aide au stationnement avant", "Aide au stationnement arrière", "Caméra de recul"].each do |feature| %>
-                  <div class="form-control">
-                    <label class="label cursor-pointer justify-start">
-                      <input type="checkbox" class="checkbox checkbox-primary checkbox-sm mr-2" data-feature="comfort" value="<%= feature %>">
-                      <span class="label-text"><%= feature %></span>
-                    </label>
-                  </div>
-                <% end %>
-              </div>
-            </div>
-            <%= v.text_area :comfort_features, rows: 3, class: "textarea textarea-bordered w-full", placeholder: "Autres équipements de confort..." %>
-          </div>
-          
-          <div class="form-control w-full mb-4">
-            <%= v.label :multimedia_features, "Équipements multimédia", class: "label" %>
-            <div class="card bg-base-200 p-3 mb-2">
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-                <% ["Système audio", "Navigation GPS", "Lecteur CD/DVD", "Prise auxiliaire", "Prise USB", "Bluetooth", "Écran tactile", "Apple CarPlay", "Android Auto", "Commandes au volant", "Système audio premium"].each do |feature| %>
-                  <div class="form-control">
-                    <label class="label cursor-pointer justify-start">
-                      <input type="checkbox" class="checkbox checkbox-primary checkbox-sm mr-2" data-feature="multimedia" value="<%= feature %>">
-                      <span class="label-text"><%= feature %></span>
-                    </label>
-                  </div>
-                <% end %>
-              </div>
-            </div>
-            <%= v.text_area :multimedia_features, rows: 3, class: "textarea textarea-bordered w-full", placeholder: "Autres équipements multimédia..." %>
-          </div>
-          
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-            <div class="form-control w-full">
-              <%= v.label :exterior_features, "Équipements extérieurs", class: "label" %>
-              <div class="card bg-base-200 p-3 mb-2">
-                <div class="grid grid-cols-1 gap-2">
-                  <% ["Jantes alliage", "Phares xénon", "Phares LED", "Feux antibrouillard", "Attelage de remorque", "Barres de toit", "Toit ouvrant", "Vitres teintées"].each do |feature| %>
-                    <div class="form-control">
-                      <label class="label cursor-pointer justify-start">
-                        <input type="checkbox" class="checkbox checkbox-primary checkbox-sm mr-2" data-feature="exterior" value="<%= feature %>">
-                        <span class="label-text"><%= feature %></span>
-                      </label>
-                    </div>
-                  <% end %>
-                </div>
-              </div>
-              <%= v.text_area :exterior_features, rows: 3, class: "textarea textarea-bordered w-full", placeholder: "Autres équipements extérieurs..." %>
-            </div>
-            
-            <div class="form-control w-full">
-              <%= v.label :other_features, "Autres équipements", class: "label" %>
-              <div class="card bg-base-200 p-3 mb-2">
-                <div class="grid grid-cols-1 gap-2">
-                  <% ["Volant multifonctions", "Ordinateur de bord", "Tapis de sol d'origine", "Cache-bagages", "Prise 12V", "Système Stop & Start", "Suspension sport", "Mode de conduite"].each do |feature| %>
-                    <div class="form-control">
-                      <label class="label cursor-pointer justify-start">
-                        <input type="checkbox" class="checkbox checkbox-primary checkbox-sm mr-2" data-feature="other" value="<%= feature %>">
-                        <span class="label-text"><%= feature %></span>
-                      </label>
-                    </div>
-                  <% end %>
-                </div>
-              </div>
-              <%= v.text_area :other_features, rows: 3, class: "textarea textarea-bordered w-full", placeholder: "Autres équipements..." %>
-            </div>
-          </div>
-        <% end %>
-      </div>
-
-      <!-- Section État du véhicule -->
-      <div id="vehicle-condition-section" class="section-content hidden">
-        <h2 class="text-xl font-semibold mb-4">État du véhicule et entretien</h2>
-        
-        <%= fields_for :vehicle do |v| %>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-            <div class="form-control w-full">
-              <%= v.label :body_condition, "État de la carrosserie", class: "label" %>
-              <%= v.text_area :body_condition, rows: 3, class: "textarea textarea-bordered w-full", placeholder: "Décrivez l'état de la carrosserie, rayures, bosses, etc." %>
-            </div>
-            
-            <div class="form-control w-full">
-              <%= v.label :interior_condition, "État de l'intérieur", class: "label" %>
-              <%= v.text_area :interior_condition, rows: 3, class: "textarea textarea-bordered w-full", placeholder: "Décrivez l'état de l'intérieur, usure des sièges, du volant, etc." %>
-            </div>
-          </div>
-          
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-            <div class="form-control w-full">
-              <%= v.label :tire_condition, "État des pneus", class: "label" %>
-              <%= v.text_area :tire_condition, rows: 3, class: "textarea textarea-bordered w-full", placeholder: "Décrivez l'état des pneus, usure, marque, etc." %>
-            </div>
-            
-            <div class="form-control w-full">
-              <%= v.label :recent_works, "Travaux récents effectués", class: "label" %>
-              <%= v.text_area :recent_works, rows: 3, class: "textarea textarea-bordered w-full", placeholder: "Décrivez les travaux récents effectués: distribution, vidange, freins, etc." %>
-            </div>
-          </div>
-          
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-            <div class="form-control w-full">
-              <%= v.label :issues, "Points à signaler", class: "label" %>
-              <%= v.text_area :issues, rows: 3, class: "textarea textarea-bordered w-full", placeholder: "Décrivez les éventuels problèmes mécaniques, électroniques, etc." %>
-            </div>
-            
-            <div class="form-control w-full">
-              <%= v.label :expected_costs, "Frais à prévoir", class: "label" %>
-              <%= v.text_area :expected_costs, rows: 3, class: "textarea textarea-bordered w-full", placeholder: "Décrivez les frais à prévoir prochainement" %>
-            </div>
-          </div>
-        <% end %>
-      </div>
-
-      <!-- Section Photos du véhicule -->
-      <div id="photos-section" class="section-content hidden">
-        <h2 class="text-xl font-semibold mb-4">Photos du véhicule</h2>
-        
-        <div class="mb-6">
-          <div class="flex items-center justify-center w-full" data-controller="direct-upload">
-            <label class="flex flex-col w-full h-32 border-2 border-dashed rounded-md border-neutral-content hover:bg-base-200 hover:border-primary cursor-pointer">
-              <div class="flex flex-col items-center justify-center pt-7">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-neutral-content group-hover:text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          <div class="space-y-8">
+            <!-- Équipements de sécurité -->
+            <div class="card bg-base-200 p-6">
+              <h3 class="text-xl font-bold mb-4 flex items-center">
+                <svg class="w-6 h-6 mr-2 text-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
                 </svg>
-                <p class="pt-1 text-sm tracking-wider text-neutral-content group-hover:text-primary">
-                  Sélectionnez des photos
-                </p>
+                Équipements de sécurité
+              </h3>
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <% ["ABS", "ESP", "Airbags frontaux", "Airbags latéraux", "Alarme", "Verrouillage centralisé", "Assistance au freinage", "Détection de fatigue", "Aide au stationnement", "Caméra de recul", "Régulateur de vitesse adaptatif", "Système de navigation", "Bluetooth", "Système audio premium", "Toit panoramique", "Sièges massants", "Volant chauffant", "Affichage tête haute", "Suspension pneumatique", "Jantes alliage", "Vitres teintées", "Rétroviseurs rabattables électriquement", "Feux de route automatiques", "Essuie-glaces automatiques", "Climatisation automatique", "Sièges électriques", "Sièges ventilés", "Chargeur sans fil", "Prise USB", "Apple CarPlay", "Android Auto"].each do |feature| %>
+                  <label class="label cursor-pointer justify-start bg-base-100 p-3 rounded-lg hover:bg-primary hover:bg-opacity-10 transition-colors">
+                    <input type="checkbox" class="checkbox checkbox-primary mr-3" data-feature="safety" value="<%= feature %>">
+                    <span class="label-text font-medium"><%= feature %></span>
+                  </label>
+                <% end %>
               </div>
-              <%= form.file_field :photos, multiple: true, class: "opacity-0", accept: "image/png, image/jpeg, image/jpg", direct_upload: true, data: { direct_upload_target: "input" } %>
-            </label>
-            <progress class="progress progress-primary w-full hidden mt-2" value="0" max="100" data-direct-upload-target="progress"></progress>
+              <%= v.text_area :safety_features, rows: 2, class: "textarea textarea-bordered w-full mt-4", placeholder: "Autres équipements de sécurité..." %>
+            </div>
+
+            <!-- Équipements de confort -->
+            <div class="card bg-base-200 p-6">
+              <h3 class="text-xl font-bold mb-4 flex items-center">
+                <svg class="w-6 h-6 mr-2 text-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                </svg>
+                Équipements de confort
+              </h3>
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <% ["Climatisation", "Sièges chauffants", "Régulateur de vitesse", "Vitres électriques", "Toit ouvrant", "Direction assistée"].each do |feature| %>
+                  <label class="label cursor-pointer justify-start bg-base-100 p-3 rounded-lg hover:bg-primary hover:bg-opacity-10 transition-colors">
+                    <input type="checkbox" class="checkbox checkbox-primary mr-3" data-feature="comfort" value="<%= feature %>">
+                    <span class="label-text font-medium"><%= feature %></span>
+                  </label>
+                <% end %>
+              </div>
+              <%= v.text_area :comfort_features, rows: 2, class: "textarea textarea-bordered w-full mt-4", placeholder: "Autres équipements de confort..." %>
+            </div>
           </div>
-          <p class="mt-2 text-xs text-neutral-content">Formats acceptés: JPG, JPEG, PNG</p>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Step 5: État du véhicule -->
+    <div class="form-step bg-base-100 shadow-xl rounded-xl overflow-hidden border border-base-200 hidden" data-step="5">
+      <div class="step-header bg-gradient-to-r from-error to-error-focus text-error-content p-6">
+        <div class="flex items-center">
+          <div class="w-12 h-12 bg-error-content text-error rounded-full flex items-center justify-center font-bold text-xl mr-4 shadow-lg">5</div>
+          <div>
+            <h2 class="text-2xl font-bold">État du véhicule</h2>
+            <p class="opacity-90">Décrivez l'état général et les points d'attention</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="p-8">
+        <%= fields_for :vehicle do |v| %>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div class="form-control w-full">
+              <%= v.label :body_condition, class: "label" do %>
+                <span class="label-text font-semibold text-lg">État de la carrosserie</span>
+              <% end %>
+              <%= v.text_area :body_condition, rows: 4, class: "textarea textarea-bordered w-full", placeholder: "Décrivez l'état de la carrosserie, rayures, bosses, etc." %>
+            </div>
+            
+            <div class="form-control w-full">
+              <%= v.label :interior_condition, class: "label" do %>
+                <span class="label-text font-semibold text-lg">État de l'intérieur</span>
+              <% end %>
+              <%= v.text_area :interior_condition, rows: 4, class: "textarea textarea-bordered w-full", placeholder: "Décrivez l'état de l'intérieur, usure des sièges, du volant, etc." %>
+            </div>
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div class="form-control w-full">
+              <%= v.label :recent_works, class: "label" do %>
+                <span class="label-text font-semibold text-lg">Travaux récents effectués</span>
+              <% end %>
+              <%= v.text_area :recent_works, rows: 4, class: "textarea textarea-bordered w-full", placeholder: "Décrivez les travaux récents : distribution, vidange, freins, etc." %>
+            </div>
+            
+            <div class="form-control w-full">
+              <%= v.label :issues, class: "label" do %>
+                <span class="label-text font-semibold text-lg">Points à signaler</span>
+              <% end %>
+              <%= v.text_area :issues, rows: 4, class: "textarea textarea-bordered w-full", placeholder: "Décrivez les éventuels problèmes mécaniques, électroniques, etc." %>
+            </div>
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div class="form-control w-full">
+              <%= v.label :has_service_history, class: "label" do %>
+                <span class="label-text font-semibold text-lg">Carnet d'entretien disponible</span>
+              <% end %>
+              <div class="flex items-center space-x-6 pt-2">
+                <label class="cursor-pointer flex items-center bg-base-200 p-3 rounded-lg hover:bg-primary hover:bg-opacity-10 transition-colors">
+                  <%= v.radio_button :has_service_history, true, class: "radio radio-primary" %>
+                  <span class="ml-3 font-medium">Oui</span>
+                </label>
+                <label class="cursor-pointer flex items-center bg-base-200 p-3 rounded-lg hover:bg-primary hover:bg-opacity-10 transition-colors">
+                  <%= v.radio_button :has_service_history, false, class: "radio radio-primary" %>
+                  <span class="ml-3 font-medium">Non</span>
+                </label>
+              </div>
+            </div>
+            
+            <div class="form-control w-full">
+              <%= v.label :non_smoker, class: "label" do %>
+                <span class="label-text font-semibold text-lg">Véhicule non-fumeur</span>
+              <% end %>
+              <div class="flex items-center space-x-6 pt-2">
+                <label class="cursor-pointer flex items-center bg-base-200 p-3 rounded-lg hover:bg-primary hover:bg-opacity-10 transition-colors">
+                  <%= v.radio_button :non_smoker, true, class: "radio radio-primary" %>
+                  <span class="ml-3 font-medium">Oui</span>
+                </label>
+                <label class="cursor-pointer flex items-center bg-base-200 p-3 rounded-lg hover:bg-primary hover:bg-opacity-10 transition-colors">
+                  <%= v.radio_button :non_smoker, false, class: "radio radio-primary" %>
+                  <span class="ml-3 font-medium">Non</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Step 6: Photos et Vidéos ENHANCED -->
+    <div class="form-step bg-base-100 shadow-xl rounded-xl overflow-hidden border border-base-200 hidden" data-step="6">
+      <div class="step-header bg-gradient-to-r from-accent to-accent-focus text-accent-content p-6">
+        <div class="flex items-center">
+          <div class="w-12 h-12 bg-accent-content text-accent rounded-full flex items-center justify-center font-bold text-xl mr-4 shadow-lg">6</div>
+          <div>
+            <h2 class="text-2xl font-bold">Photos et Vidéos</h2>
+            <p class="opacity-90">Ajoutez des médias pour mettre en valeur votre véhicule</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="p-8" 
+           data-controller="direct-upload" 
+           data-direct-upload-max-files-value="20" 
+           data-direct-upload-max-size-value="10">
+        
+        <!-- Enhanced Drag and Drop Zone -->
+        <div class="mb-8">
+          <div class="border-3 border-dashed border-base-300 rounded-2xl p-12 text-center hover:border-primary hover:bg-primary hover:bg-opacity-5 transition-all duration-300 cursor-pointer group"
+               data-direct-upload-target="dropzone">
+            <div class="flex flex-col items-center">
+              <div class="w-20 h-20 bg-base-200 rounded-full flex items-center justify-center mb-6 group-hover:bg-primary group-hover:bg-opacity-10 transition-all duration-300">
+                <svg class="w-10 h-10 text-base-content opacity-40 group-hover:text-primary group-hover:opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                </svg>
+              </div>
+              <h3 class="text-2xl font-bold mb-3 group-hover:text-primary transition-colors duration-300">Glissez-déposez vos fichiers ici</h3>
+              <p class="text-base-content opacity-70 mb-6 text-lg">ou cliquez pour sélectionner</p>
+              <div class="flex flex-wrap gap-3 justify-center">
+                <span class="badge badge-outline badge-lg">📸 Photos: JPG, PNG</span>
+                <span class="badge badge-outline badge-lg">🎥 Vidéos: MP4, MOV</span>
+                <span class="badge badge-outline badge-lg">📏 Max 10MB par fichier</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- File Input Buttons with Enhanced Design -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+          <div class="card bg-gradient-to-br from-primary to-primary-focus text-primary-content shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+            <div class="card-body text-center p-8">
+              <div class="w-16 h-16 bg-primary-content text-primary rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                </svg>
+              </div>
+              <h3 class="text-2xl font-bold mb-2">Ajouter des photos</h3>
+              <p class="opacity-90 mb-6">Formats: JPG, JPEG, PNG • Max 10MB</p>
+              <label class="btn btn-primary-content text-primary btn-lg w-full hover:btn-outline">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                </svg>
+                Choisir des photos
+                <%= form.file_field :photos, multiple: true, class: "hidden", accept: "image/png,image/jpeg,image/jpg", direct_upload: true, data: { direct_upload_target: "input" } %>
+              </label>
+            </div>
+          </div>
+
+          <div class="card bg-gradient-to-br from-secondary to-secondary-focus text-secondary-content shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+            <div class="card-body text-center p-8">
+              <div class="w-16 h-16 bg-secondary-content text-secondary rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                </svg>
+              </div>
+              <h3 class="text-2xl font-bold mb-2">Ajouter des vidéos</h3>
+              <p class="opacity-90 mb-6">Formats: MP4, MOV, WebM • Max 50MB</p>
+              <label class="btn btn-secondary-content text-secondary btn-lg w-full hover:btn-outline">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                </svg>
+                Choisir des vidéos
+                <%= form.file_field :videos, multiple: true, class: "hidden", accept: "video/mp4,video/quicktime,video/webm", direct_upload: true, data: { direct_upload_target: "videoInput" } %>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Folder Organization -->
+        <div class="mb-8">
+          <div class="flex items-center justify-between mb-6">
+            <h3 class="text-xl font-bold flex items-center">
+              <svg class="w-6 h-6 mr-2 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"></path>
+              </svg>
+              Organisation par dossiers
+            </h3>
+            <button type="button" class="btn btn-outline btn-primary" data-action="click->direct-upload#createFolder">
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+              </svg>
+              Nouveau dossier
+            </button>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4" data-direct-upload-target="foldersList">
+            <!-- Folders will be dynamically added here -->
+          </div>
+        </div>
+
+        <!-- Progress Bar -->
+        <progress class="progress progress-primary w-full hidden mb-6" value="0" max="100" data-direct-upload-target="progress"></progress>
+
+        <!-- Media Preview with Enhanced Layout -->
+        <div id="media-preview" class="space-y-6">
+          <h4 class="text-lg font-bold">Aperçu des médias</h4>
+          <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4" data-direct-upload-target="preview">
+            <!-- File previews will be displayed here -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation Buttons -->
+    <div class="bg-base-100 shadow-xl rounded-xl p-6 border border-base-200">
+      <div class="flex justify-between items-center">
+        <button type="button" id="prev-btn" class="btn btn-outline btn-primary btn-lg hidden">
+          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+          </svg>
+          Précédent
+        </button>
+        
+        <div class="flex gap-3">
+          <%= link_to "Annuler", listings_path, class: "btn btn-ghost btn-lg" %>
+          <button type="button" id="save-draft-btn" class="btn btn-outline btn-lg hidden">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3-3m0 0l-3 3m3-3v12"></path>
+            </svg>
+            Sauvegarder brouillon
+          </button>
         </div>
         
-        <div id="photos-preview" class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4" data-direct-upload-target="preview">
-          <!-- Les aperçus des photos seront affichés ici -->
-        </div>
+        <button type="button" id="next-btn" class="btn btn-primary btn-lg">
+          Suivant
+          <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        </button>
+        
+        <%= form.submit "Publier l'annonce", id: "submit-btn", class: "btn btn-primary btn-lg hidden" %>
       </div>
-
-      <div class="divider my-6"></div>
-
-      <div class="flex justify-end gap-2">
-        <%= link_to "Annuler", listings_path, class: "btn btn-ghost" %>
-        <button type="button" id="prev-btn" class="btn btn-outline btn-primary hidden">Précédent</button>
-        <button type="button" id="next-btn" class="btn btn-primary">Suivant</button>
-        <%= form.submit "Publier l'annonce", id: "submit-btn", class: "btn btn-primary hidden" %>
-      </div>
-    <% end %>
-  </div>
+    </div>
+  <% end %>
 </div>
 
+<style>
+  .step-indicator {
+    @apply flex flex-col items-center relative flex-1;
+  }
+  
+  .step-circle {
+    @apply w-12 h-12 rounded-full border-2 border-base-300 bg-base-100 flex items-center justify-center font-bold text-lg transition-all duration-300;
+  }
+  
+  .step-indicator.active .step-circle {
+    @apply border-primary bg-primary text-primary-content;
+  }
+  
+  .step-indicator.completed .step-circle {
+    @apply border-success bg-success text-success-content;
+  }
+  
+  .step-label {
+    @apply text-sm mt-2 text-base-content opacity-70;
+  }
+  
+  .step-indicator.active .step-label {
+    @apply text-primary opacity-100 font-semibold;
+  }
+  
+  .step-connector {
+    @apply flex-1 h-0.5 bg-base-300 mx-4;
+  }
+  
+  .step-indicator.completed ~ .step-indicator .step-connector {
+    @apply bg-success;
+  }
+  
+  .form-step {
+    @apply transition-all duration-500;
+  }
+  
+  .form-step.hidden {
+    @apply opacity-0 scale-95 pointer-events-none;
+  }
+  
+  .step-header {
+    @apply relative overflow-hidden;
+  }
+  
+  .step-header::before {
+    @apply absolute inset-0 bg-gradient-to-r from-transparent via-white via-transparent to-transparent opacity-10;
+    content: '';
+    animation: shimmer 2s infinite;
+  }
+  
+  @keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+  
+  .border-3 {
+    border-width: 3px;
+  }
+  
+  /* Enhanced hover effects */
+  .hover\:btn-outline:hover {
+    @apply bg-transparent border-current text-current;
+  }
+</style>
+
 <script>
-  document.addEventListener('turbo:load', function() {
-    initializeForm();
-  });
+document.addEventListener('turbo:load', function() {
+  initializeEnhancedForm();
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+  initializeEnhancedForm();
+});
+
+function initializeEnhancedForm() {
+  const steps = document.querySelectorAll('.form-step');
+  const stepIndicators = document.querySelectorAll('.step-indicator');
+  const nextBtn = document.getElementById('next-btn');
+  const prevBtn = document.getElementById('prev-btn');
+  const submitBtn = document.getElementById('submit-btn');
+  const saveDraftBtn = document.getElementById('save-draft-btn');
+  let currentStep = 1;
   
-  document.addEventListener('DOMContentLoaded', function() {
-    initializeForm();
-  });
+  if (!steps.length) return;
   
-  function initializeForm() {
-    // Gestion des onglets
-    const tabs = document.querySelectorAll('.tab');
-    const sections = document.querySelectorAll('.section-content');
-    const nextBtn = document.getElementById('next-btn');
-    const prevBtn = document.getElementById('prev-btn');
-    const submitBtn = document.getElementById('submit-btn');
-    let currentSectionIndex = 0;
-    
-    if (!tabs.length || !sections.length) return;
-    
-    // Fonction pour afficher une section
-    function showSection(index) {
-      sections.forEach(section => section.classList.add('hidden'));
-      sections[index].classList.remove('hidden');
+  function updateStepDisplay() {
+    // Update step indicators
+    stepIndicators.forEach((indicator, index) => {
+      const stepNum = index + 1;
+      indicator.classList.remove('active', 'completed');
       
-      tabs.forEach(tab => tab.classList.remove('tab-active'));
-      tabs[index].classList.add('tab-active');
-      
-      currentSectionIndex = index;
-      
-      // Afficher/masquer les boutons selon la section
-      if (prevBtn) prevBtn.classList.toggle('hidden', index === 0);
-      if (nextBtn) nextBtn.classList.toggle('hidden', index === sections.length - 1);
-      if (submitBtn) submitBtn.classList.toggle('hidden', index !== sections.length - 1);
-    }
-    
-    // Cliquer sur un onglet
-    tabs.forEach((tab, index) => {
-      tab.addEventListener('click', () => showSection(index));
+      if (stepNum < currentStep) {
+        indicator.classList.add('completed');
+        indicator.querySelector('.step-circle').innerHTML = '✓';
+      } else if (stepNum === currentStep) {
+        indicator.classList.add('active');
+        indicator.querySelector('.step-circle').innerHTML = stepNum;
+      } else {
+        indicator.querySelector('.step-circle').innerHTML = stepNum;
+      }
     });
     
-    // Bouton suivant
-    if (nextBtn) {
-      nextBtn.addEventListener('click', () => {
-        if (currentSectionIndex < sections.length - 1) {
-          showSection(currentSectionIndex + 1);
-        }
+    // Update form steps
+    steps.forEach((step, index) => {
+      if (index + 1 === currentStep) {
+        step.classList.remove('hidden');
+        step.classList.add('active');
+      } else {
+        step.classList.add('hidden');
+        step.classList.remove('active');
+      }
+    });
+    
+    // Update navigation buttons
+    if (prevBtn) prevBtn.classList.toggle('hidden', currentStep === 1);
+    if (nextBtn) nextBtn.classList.toggle('hidden', currentStep === steps.length);
+    if (submitBtn) submitBtn.classList.toggle('hidden', currentStep !== steps.length);
+    if (saveDraftBtn) saveDraftBtn.classList.toggle('hidden', currentStep === steps.length);
+  }
+  
+  function goToStep(step) {
+    if (step >= 1 && step <= steps.length) {
+      currentStep = step;
+      updateStepDisplay();
+      
+      // Scroll to top of form
+      document.querySelector('.max-w-6xl').scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'start' 
       });
     }
+  }
+  
+  // Navigation event listeners
+  if (nextBtn) {
+    nextBtn.addEventListener('click', () => {
+      if (currentStep < steps.length) {
+        goToStep(currentStep + 1);
+      }
+    });
+  }
+  
+  if (prevBtn) {
+    prevBtn.addEventListener('click', () => {
+      if (currentStep > 1) {
+        goToStep(currentStep - 1);
+      }
+    });
+  }
+  
+  // Step indicator click handlers
+  stepIndicators.forEach((indicator, index) => {
+    indicator.style.cursor = 'pointer';
+    indicator.addEventListener('click', () => {
+      goToStep(index + 1);
+    });
+  });
+  
+  // Initialize display
+  updateStepDisplay();
+  
+  // Form validation hints
+  function validateCurrentStep() {
+    const currentStepElement = document.querySelector(`.form-step[data-step="${currentStep}"]`);
+    if (!currentStepElement) return true;
     
-    // Bouton précédent
-    if (prevBtn) {
-      prevBtn.addEventListener('click', () => {
-        if (currentSectionIndex > 0) {
-          showSection(currentSectionIndex - 1);
-        }
-      });
-    }
+    const requiredInputs = currentStepElement.querySelectorAll('input[required], textarea[required], select[required]');
+    let isValid = true;
     
-    // Aperçu des photos
-    const input = document.querySelector('input[type="file"]');
-    const preview = document.getElementById('photos-preview');
+    requiredInputs.forEach(input => {
+      if (!input.value.trim()) {
+        input.classList.add('input-error');
+        isValid = false;
+      } else {
+        input.classList.remove('input-error');
+      }
+    });
     
-    if (input && preview) {
-      input.addEventListener('change', function() {
-        preview.innerHTML = '';
-        
-        if (this.files && this.files.length > 0) {
-          [...this.files].forEach(file => {
-            if (!file.type.match('image.*')) return;
-            
-            const reader = new FileReader();
-            reader.onload = function(e) {
-              const div = document.createElement('div');
-              div.className = 'relative group';
-              
-              const img = document.createElement('img');
-              img.src = e.target.result;
-              img.className = 'w-full h-32 object-cover rounded-lg';
-              img.alt = 'Aperçu photo';
-              
-              const overlay = document.createElement('div');
-              overlay.className = 'absolute inset-0 bg-black bg-opacity-40 opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-lg flex items-center justify-center text-white';
-              overlay.innerHTML = `
-                <div class="text-center">
-                  <div class="badge badge-accent">${file.name.split('.').pop()}</div>
-                  <p class="text-xs mt-1">${(file.size / 1024).toFixed(0)} KB</p>
-                </div>
-              `;
-              
-              div.appendChild(img);
-              div.appendChild(overlay);
-              preview.appendChild(div);
-            };
-            
-            reader.readAsDataURL(file);
-          });
-        }
-      });
-    }
-
-    // Gestion des cases à cocher pour les équipements
+    return isValid;
+  }
+  
+  // Enhanced next button with validation
+  if (nextBtn) {
+    const originalNextHandler = nextBtn.onclick;
+    nextBtn.addEventListener('click', (e) => {
+      if (currentStep < steps.length) {
+        // Optional validation can be added here
+        // if (!validateCurrentStep()) {
+        //   e.preventDefault();
+        //   return;
+        // }
+      }
+    });
+  }
+  
+  // Handle equipment checkboxes
+  function initializeEquipmentCheckboxes() {
     document.querySelectorAll('input[type="checkbox"][data-feature]').forEach(checkbox => {
       checkbox.addEventListener('change', function() {
         const featureType = this.getAttribute('data-feature');
@@ -549,4 +811,126 @@
       });
     });
   }
+  
+  // Initialize equipment checkboxes
+  initializeEquipmentCheckboxes();
+  
+  // Add visual feedback for file uploads
+  function enhanceFileInputs() {
+    const fileInputs = document.querySelectorAll('input[type="file"]');
+    
+    fileInputs.forEach(input => {
+      input.addEventListener('change', function() {
+        const label = this.closest('label');
+        if (label && this.files.length > 0) {
+          label.classList.add('btn-success');
+          label.innerHTML = `
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+            ${this.files.length} fichier(s) sélectionné(s)
+          `;
+          
+          setTimeout(() => {
+            label.classList.remove('btn-success');
+            label.innerHTML = label.getAttribute('data-original-text') || 'Fichiers sélectionnés';
+          }, 2000);
+        }
+      });
+      
+      // Store original text
+      const label = input.closest('label');
+      if (label) {
+        label.setAttribute('data-original-text', label.textContent.trim());
+      }
+    });
+  }
+  
+  // Initialize file input enhancements
+  enhanceFileInputs();
+  
+  // Add smooth transitions between steps
+  function addStepTransitions() {
+    const style = document.createElement('style');
+    style.textContent = `
+      .form-step {
+        transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      
+      .form-step.entering {
+        animation: slideInRight 0.5s ease-out;
+      }
+      
+      .form-step.leaving {
+        animation: slideOutLeft 0.5s ease-in;
+      }
+      
+      @keyframes slideInRight {
+        from {
+          transform: translateX(100%) scale(0.95);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0) scale(1);
+          opacity: 1;
+        }
+      }
+      
+      @keyframes slideOutLeft {
+        from {
+          transform: translateX(0) scale(1);
+          opacity: 1;
+        }
+        to {
+          transform: translateX(-100%) scale(0.95);
+          opacity: 0;
+        }
+      }
+      
+      .step-circle {
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+      
+      .step-indicator:hover .step-circle {
+        transform: scale(1.1);
+      }
+      
+      .progress-bar {
+        height: 4px;
+        background: linear-gradient(90deg, var(--primary) 0%, var(--primary) var(--progress, 0%), var(--base-300) var(--progress, 0%), var(--base-300) 100%);
+        transition: all 0.5s ease;
+      }
+    `;
+    document.head.appendChild(style);
+  }
+  
+  // Initialize step transitions
+  addStepTransitions();
+  
+  // Add progress bar
+  function addProgressBar() {
+    const progressContainer = document.querySelector('.step-indicator').parentElement;
+    const progressBar = document.createElement('div');
+    progressBar.className = 'progress-bar w-full mt-4 rounded-full';
+    progressContainer.appendChild(progressBar);
+    
+    function updateProgressBar() {
+      const progress = ((currentStep - 1) / (steps.length - 1)) * 100;
+      progressBar.style.setProperty('--progress', `${progress}%`);
+    }
+    
+    // Update progress whenever step changes
+    const originalGoToStep = goToStep;
+    goToStep = function(step) {
+      originalGoToStep(step);
+      updateProgressBar();
+    };
+    
+    // Initial progress update
+    updateProgressBar();
+  }
+  
+  // Initialize progress bar
+  addProgressBar();
+}
 </script>
