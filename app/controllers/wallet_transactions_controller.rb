@@ -6,8 +6,7 @@ class WalletTransactionsController < ApplicationController
     @transactions = current_user.wallet_transactions
       .includes(:wallet)
       .order(created_at: :desc)
-      .page(params[:page])
-      .per(20)
+      .limit(50)
   end
 
   def show

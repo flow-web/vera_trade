@@ -1,14 +1,4 @@
 Rails.application.routes.draw do
-  get "search_presets/index"
-  get "search_presets/create"
-  get "search_presets/update"
-  get "search_presets/destroy"
-  get "search_presets/toggle_notification"
-  get "wallet_transactions/index"
-  get "wallet_transactions/show"
-  get "messages/index"
-  get "messages/show"
-  get "messages/create"
   devise_for :users
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
