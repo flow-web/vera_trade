@@ -3,29 +3,36 @@ class VehicleInfoService
   require 'json'
   
   def initialize
-    @api_key = Rails.application.credentials.dig(:vehicle_api, :key)
-    @api_base_url = Rails.application.credentials.dig(:vehicle_api, :base_url)
+    @api_key = Rails.application.credentials.dig(:vehicle_api, :key) || ENV["VEHICLE_API_KEY"]
+    @api_base_url = Rails.application.credentials.dig(:vehicle_api, :base_url) || ENV["VEHICLE_API_BASE_URL"]
+    @configured = @api_key.present? && @api_base_url.present?
   end
-  
+
+  def configured?
+    @configured
+  end
+
   def fetch_by_license_plate(license_plate)
+    return nil unless @configured
     return nil if license_plate.blank?
-    
+
     uri = URI("#{@api_base_url}/vehicle/plate/#{license_plate}")
     response = make_request(uri)
-    
+
     return nil unless response.is_a?(Net::HTTPSuccess)
-    
+
     parse_response(response.body)
   end
-  
+
   def fetch_by_vin(vin)
+    return nil unless @configured
     return nil if vin.blank?
-    
+
     uri = URI("#{@api_base_url}/vehicle/vin/#{vin}")
     response = make_request(uri)
-    
+
     return nil unless response.is_a?(Net::HTTPSuccess)
-    
+
     parse_response(response.body)
   end
   
