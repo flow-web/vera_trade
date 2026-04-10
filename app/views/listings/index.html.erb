@@ -1,458 +1,134 @@
-<!-- Hero Section -->
-<div class="relative bg-gradient-to-r from-primary to-primary-focus text-primary-content py-16 mb-12">
-  <div class="absolute inset-0 bg-[url('/images/car-pattern.svg')] opacity-10"></div>
-  <div class="container mx-auto px-4 relative">
-    <h1 class="text-4xl md:text-5xl font-bold mb-4">Découvrez nos véhicules</h1>
-    <p class="text-lg opacity-90">Trouvez la voiture de vos rêves parmi notre sélection</p>
-  </div>
-</div>
-
-<!-- Main Content -->
-<div class="container mx-auto px-4 pb-16">
-  <!-- Search and Filter Section -->
-  <div class="bg-base-100 rounded-lg shadow-lg p-6 mb-8">
-    <div class="flex flex-col gap-4">
-      <!-- Filtres principaux -->
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <!-- Marque -->
-        <div class="form-control">
-          <label class="label">
-            <span class="label-text">Marque</span>
-          </label>
-          <select class="select select-bordered w-full" data-filter="make">
-            <option value="">Toutes les marques</option>
-            <option value="BMW">BMW</option>
-            <option value="Mercedes">Mercedes</option>
-            <option value="Audi">Audi</option>
-            <option value="Renault">Renault</option>
-            <option value="Peugeot">Peugeot</option>
-            <!-- Ajoutez d'autres marques ici -->
-          </select>
-        </div>
-
-        <!-- Type de carburant -->
-        <div class="form-control">
-          <label class="label">
-            <span class="label-text">Carburant</span>
-          </label>
-          <select class="select select-bordered w-full" data-filter="fuel_type">
-            <option value="">Tous les types</option>
-            <option value="Essence">Essence</option>
-            <option value="Diesel">Diesel</option>
-            <option value="Hybride">Hybride</option>
-            <option value="Électrique">Électrique</option>
-            <option value="GPL">GPL</option>
-          </select>
-        </div>
-
-        <!-- Transmission -->
-        <div class="form-control">
-          <label class="label">
-            <span class="label-text">Transmission</span>
-          </label>
-          <select class="select select-bordered w-full" data-filter="transmission">
-            <option value="">Tous les types</option>
-            <option value="Manuelle">Manuelle</option>
-            <option value="Automatique">Automatique</option>
-            <option value="Semi-automatique">Semi-automatique</option>
-          </select>
-        </div>
-
-        <!-- Trier par -->
-        <div class="form-control">
-          <label class="label">
-            <span class="label-text">Trier par</span>
-          </label>
-          <select class="select select-bordered w-full" data-sort>
-            <option value="created_at_desc">Plus récent</option>
-            <option value="price_asc">Prix croissant</option>
-            <option value="price_desc">Prix décroissant</option>
-            <option value="kilometers_asc">Kilométrage croissant</option>
-            <option value="kilometers_desc">Kilométrage décroissant</option>
-            <option value="year_desc">Année décroissante</option>
-            <option value="year_asc">Année croissante</option>
-          </select>
-        </div>
+<!-- Header -->
+<section class="border-b border-white/5 py-10">
+  <div class="container mx-auto px-4">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div>
+        <h1 class="text-3xl font-bold">Annonces</h1>
+        <p class="text-base-content/50 mt-1"><%= pluralize(@listings.count, "véhicule") %> disponible<%= @listings.count > 1 ? "s" : "" %></p>
       </div>
-
-      <!-- Filtres avancés -->
-      <div class="collapse bg-base-200">
-        <input type="checkbox" class="peer" /> 
-        <div class="collapse-title text-primary-content font-medium flex items-center">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+      <% if user_signed_in? %>
+        <%= link_to new_listing_path, class: "btn btn-primary" do %>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
           </svg>
-          Filtres avancés
-        </div>
-        <div class="collapse-content">
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4">
-            <!-- Prix -->
-            <div class="form-control">
-              <label class="label">
-                <span class="label-text">Prix</span>
-              </label>
-              <div class="flex gap-2">
-                <input type="number" placeholder="Min" class="input input-bordered w-full" data-filter="price_min" />
-                <input type="number" placeholder="Max" class="input input-bordered w-full" data-filter="price_max" />
-              </div>
-            </div>
+          Publier une annonce
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+</section>
 
-            <!-- Kilométrage -->
-            <div class="form-control">
-              <label class="label">
-                <span class="label-text">Kilométrage</span>
-              </label>
-              <div class="flex gap-2">
-                <input type="number" placeholder="Min" class="input input-bordered w-full" data-filter="kilometers_min" />
-                <input type="number" placeholder="Max" class="input input-bordered w-full" data-filter="kilometers_max" />
-              </div>
-            </div>
+<!-- Filters -->
+<section class="border-b border-white/5 py-6">
+  <div class="container mx-auto px-4">
+    <div class="flex flex-wrap gap-3">
+      <select class="select select-sm bg-base-100 border-white/10" data-filter="make">
+        <option value="">Toutes marques</option>
+        <% Vehicle.distinct.pluck(:make).compact.sort.each do |make| %>
+          <option value="<%= make %>"><%= make %></option>
+        <% end %>
+      </select>
 
-            <!-- Année -->
-            <div class="form-control">
-              <label class="label">
-                <span class="label-text">Année</span>
-              </label>
-              <div class="flex gap-2">
-                <input type="number" placeholder="Min" class="input input-bordered w-full" data-filter="year_min" />
-                <input type="number" placeholder="Max" class="input input-bordered w-full" data-filter="year_max" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <select class="select select-sm bg-base-100 border-white/10" data-filter="fuel_type">
+        <option value="">Carburant</option>
+        <% Vehicle.distinct.pluck(:fuel_type).compact.sort.each do |ft| %>
+          <option value="<%= ft %>"><%= ft %></option>
+        <% end %>
+      </select>
 
-      <!-- Boutons d'action -->
-      <div class="flex justify-between items-center gap-2">
-        <div class="flex gap-2">
-          <% if user_signed_in? %>
-            <!-- Presets de recherche -->
-            <div class="dropdown dropdown-hover">
-              <label tabindex="0" class="btn btn-outline">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
-                </svg>
-                Recherches sauvegardées
-              </label>
-              <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
-                <li>
-                  <button onclick="saveSearchPreset()" class="flex items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                    </svg>
-                    Sauvegarder cette recherche
-                  </button>
-                </li>
-                <li class="menu-title">Mes recherches</li>
-                <div id="search-presets-list">
-                  <!-- Les presets seront chargés ici dynamiquement -->
+      <select class="select select-sm bg-base-100 border-white/10" data-filter="transmission">
+        <option value="">Transmission</option>
+        <% Vehicle.distinct.pluck(:transmission).compact.sort.each do |t| %>
+          <option value="<%= t %>"><%= t %></option>
+        <% end %>
+      </select>
+
+      <select class="select select-sm bg-base-100 border-white/10" data-sort>
+        <option value="created_at_desc">Plus récent</option>
+        <option value="price_asc">Prix croissant</option>
+        <option value="price_desc">Prix décroissant</option>
+        <option value="year_desc">Année récente</option>
+      </select>
+    </div>
+  </div>
+</section>
+
+<!-- Listings Grid -->
+<section class="section-padding">
+  <div class="container mx-auto px-4">
+    <% if @listings.any? %>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <% @listings.each do |listing| %>
+          <% v = listing.vehicle %>
+          <%= link_to listing, class: "card card-glass card-hover cursor-pointer group" do %>
+            <!-- Image -->
+            <figure class="h-52 overflow-hidden relative">
+              <% if listing.photos.attached? %>
+                <%= image_tag listing.photos.first, class: "w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" %>
+              <% else %>
+                <div class="w-full h-full bg-base-300 flex items-center justify-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-base-content/20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
                 </div>
-              </ul>
+              <% end %>
+              <!-- Price badge -->
+              <div class="absolute top-3 right-3 badge-gold px-3 py-1 rounded-full text-sm font-bold">
+                <%= number_to_currency(v&.price, unit: "€", format: "%n %u", delimiter: " ", precision: 0) %>
+              </div>
+              <% if listing.status == 'sold' %>
+                <div class="absolute inset-0 bg-black/60 flex items-center justify-center">
+                  <span class="badge badge-lg badge-error font-bold">VENDU</span>
+                </div>
+              <% end %>
+            </figure>
+
+            <!-- Content -->
+            <div class="p-5">
+              <h3 class="font-bold text-base line-clamp-1 mb-2"><%= listing.title %></h3>
+
+              <!-- Specs -->
+              <div class="flex flex-wrap gap-2 mb-3">
+                <% if v&.year %>
+                  <span class="badge badge-sm badge-outline border-white/15 text-base-content/60"><%= v.year %></span>
+                <% end %>
+                <% if v&.kilometers %>
+                  <span class="badge badge-sm badge-outline border-white/15 text-base-content/60"><%= number_with_delimiter(v.kilometers) %> km</span>
+                <% end %>
+                <% if v&.fuel_type.present? %>
+                  <span class="badge badge-sm badge-outline border-white/15 text-base-content/60"><%= v.fuel_type %></span>
+                <% end %>
+                <% if v&.transmission.present? %>
+                  <span class="badge badge-sm badge-outline border-white/15 text-base-content/60"><%= v.transmission %></span>
+                <% end %>
+              </div>
+
+              <!-- Location -->
+              <% if v&.location.present? %>
+                <p class="text-xs text-base-content/40 flex items-center gap-1">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                  <%= v.location %>
+                </p>
+              <% end %>
             </div>
           <% end %>
-          <button class="btn btn-ghost" onclick="resetFilters()">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-            </svg>
-            Réinitialiser
-          </button>
-        </div>
-        <button class="btn btn-primary" onclick="applyFilters()">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
-          Appliquer les filtres
-        </button>
+        <% end %>
       </div>
-    </div>
-  </div>
-
-  <!-- Results Count and New Listing Button -->
-  <div class="flex flex-col md:flex-row justify-between items-center mb-8">
-    <p class="text-lg font-medium mb-4 md:mb-0">
-      <%= pluralize(@listings.count, "véhicule") %> disponible<%= @listings.count > 1 ? "s" : "" %>
-    </p>
-    <% if user_signed_in? %>
-      <%= link_to new_listing_path, class: "btn btn-primary" do %>
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+    <% else %>
+      <!-- Empty state -->
+      <div class="text-center py-20">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-base-content/20 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
         </svg>
-        Publier une annonce
-      <% end %>
+        <h3 class="text-xl font-bold mb-2">Aucune annonce</h3>
+        <p class="text-base-content/50 mb-6">Aucun véhicule ne correspond à vos critères.</p>
+        <% if user_signed_in? %>
+          <%= link_to "Publier la première annonce", new_listing_path, class: "btn btn-primary" %>
+        <% end %>
+      </div>
     <% end %>
   </div>
-
-  <!-- Listings Grid -->
-  <% if @listings.any? %>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <% @listings.each do |listing| %>
-        <div class="group relative bg-base-100 rounded-xl shadow-lg overflow-hidden transform transition-all duration-300 hover:-translate-y-2 hover:shadow-xl">
-          <!-- Image Container -->
-          <div class="relative h-48 overflow-hidden">
-            <% if listing.photos.attached? %>
-              <%= image_tag listing.photos.first, class: "w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-110" %>
-            <% else %>
-              <div class="w-full h-full bg-base-200 flex items-center justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-base-content opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-              </div>
-            <% end %>
-            <!-- Price Tag -->
-            <div class="absolute top-4 right-4 bg-primary text-primary-content px-3 py-1 rounded-full font-bold">
-              <%= number_to_currency(listing.vehicle.price, unit: "€", precision: 0) %>
-            </div>
-          </div>
-
-          <!-- Content -->
-          <div class="p-6">
-            <h3 class="text-xl font-bold mb-2 line-clamp-1"><%= listing.title %></h3>
-            <p class="text-base-content opacity-75 mb-4">
-              <%= listing.vehicle.make %> <%= listing.vehicle.model %> (<%= listing.vehicle.year %>)
-            </p>
-
-            <!-- Features -->
-            <div class="grid grid-cols-3 gap-4 mb-6">
-              <% if listing.vehicle.kilometers.present? %>
-                <div class="flex flex-col items-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                  </svg>
-                  <span class="text-sm"><%= number_with_delimiter(listing.vehicle.kilometers) %> km</span>
-                </div>
-              <% end %>
-              <% if listing.vehicle.fuel_type.present? %>
-                <div class="flex flex-col items-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                  </svg>
-                  <span class="text-sm"><%= listing.vehicle.fuel_type %></span>
-                </div>
-              <% end %>
-              <% if listing.vehicle.transmission.present? %>
-                <div class="flex flex-col items-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
-                  <span class="text-sm"><%= listing.vehicle.transmission %></span>
-                </div>
-              <% end %>
-            </div>
-
-            <!-- Action Button -->
-            <%= link_to listing_path(listing), class: "btn btn-primary w-full" do %>
-              Voir les détails
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-              </svg>
-            <% end %>
-          </div>
-
-          <!-- Footer -->
-          <div class="px-6 py-3 bg-base-200 text-sm text-base-content opacity-75">
-            Publié le <%= listing.created_at.strftime("%d/%m/%Y") %>
-          </div>
-        </div>
-      <% end %>
-    </div>
-  <% else %>
-    <div class="text-center py-12">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-base-content opacity-50 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
-      <h3 class="text-xl font-bold mb-2">Aucune annonce disponible</h3>
-      <p class="text-base-content opacity-75 mb-6">Aucun véhicule ne correspond à vos critères pour le moment.</p>
-      <% if user_signed_in? %>
-        <%= link_to "Publier une annonce", new_listing_path, class: "btn btn-primary" %>
-      <% end %>
-    </div>
-  <% end %>
-</div>
-
-<!-- Mobile Swipe Instructions -->
-<div class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-base-100 rounded-full shadow-lg px-4 py-2 text-sm md:hidden">
-  <div class="flex items-center">
-    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18" />
-    </svg>
-    Glissez pour voir plus
-  </div>
-</div>
-
-<% content_for :head do %>
-  <style>
-    /* Custom animations */
-    @keyframes float {
-      0% { transform: translateY(0px); }
-      50% { transform: translateY(-10px); }
-      100% { transform: translateY(0px); }
-    }
-
-    .group:hover .group-hover\:float {
-      animation: float 3s ease-in-out infinite;
-    }
-
-    /* Custom scrollbar for mobile swipe */
-    @media (max-width: 768px) {
-      .grid {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        scroll-snap-type: x mandatory;
-        scrollbar-width: none;
-        -ms-overflow-style: none;
-      }
-      
-      .grid::-webkit-scrollbar {
-        display: none;
-      }
-      
-      .grid > * {
-        scroll-snap-align: start;
-        min-width: 85vw;
-      }
-    }
-  </style>
-
-  <script>
-    // Fonction pour récupérer les filtres actuels
-    function getCurrentFilters() {
-      const filters = {};
-      
-      // Récupérer les valeurs des filtres
-      document.querySelectorAll('[data-filter]').forEach(element => {
-        if (element.value) {
-          filters[element.dataset.filter] = element.value;
-        }
-      });
-
-      // Récupérer le tri
-      const sortSelect = document.querySelector('[data-sort]');
-      if (sortSelect.value) {
-        filters.sort = sortSelect.value;
-      }
-
-      return filters;
-    }
-
-    // Fonction pour appliquer les filtres
-    function applyFilters() {
-      const filters = getCurrentFilters();
-      const params = new URLSearchParams(filters);
-      window.location.href = `${window.location.pathname}?${params.toString()}`;
-    }
-
-    // Fonction pour réinitialiser les filtres
-    function resetFilters() {
-      document.querySelectorAll('[data-filter]').forEach(element => {
-        element.value = '';
-      });
-      document.querySelector('[data-sort]').value = 'created_at_desc';
-      window.location.href = window.location.pathname;
-    }
-
-    // Fonction pour sauvegarder un preset de recherche
-    function saveSearchPreset() {
-      const name = prompt('Nom de la recherche :');
-      if (!name) return;
-
-      const filters = getCurrentFilters();
-      
-      fetch('/search_presets', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
-        },
-        body: JSON.stringify({
-          search_preset: {
-            name: name,
-            filters: filters
-          }
-        })
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          loadSearchPresets();
-          alert('Recherche sauvegardée avec succès !');
-        } else {
-          alert('Erreur : ' + data.errors.join(', '));
-        }
-      })
-      .catch(error => {
-        console.error('Error:', error);
-        alert('Une erreur est survenue lors de la sauvegarde.');
-      });
-    }
-
-    // Fonction pour charger les presets de recherche
-    function loadSearchPresets() {
-      fetch('/search_presets')
-        .then(response => response.json())
-        .then(presets => {
-          const container = document.getElementById('search-presets-list');
-          container.innerHTML = presets.map(preset => `
-            <li>
-              <div class="flex justify-between items-center w-full">
-                <button onclick="applyPreset(${preset.id})" class="flex-1 text-left">
-                  ${preset.name}
-                </button>
-                <button onclick="deletePreset(${preset.id})" class="btn btn-ghost btn-xs">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                  </svg>
-                </button>
-              </div>
-            </li>
-          `).join('');
-        });
-    }
-
-    // Fonction pour appliquer un preset
-    function applyPreset(presetId) {
-      fetch(`/search_presets/${presetId}`)
-        .then(response => response.json())
-        .then(preset => {
-          // Appliquer les filtres
-          Object.entries(preset.filters).forEach(([key, value]) => {
-            const element = document.querySelector(`[data-filter="${key}"]`);
-            if (element) element.value = value;
-          });
-
-          // Appliquer le tri
-          if (preset.filters.sort) {
-            document.querySelector('[data-sort]').value = preset.filters.sort;
-          }
-
-          // Appliquer les filtres
-          applyFilters();
-        });
-    }
-
-    // Fonction pour supprimer un preset
-    function deletePreset(presetId) {
-      if (!confirm('Voulez-vous vraiment supprimer cette recherche sauvegardée ?')) return;
-
-      fetch(`/search_presets/${presetId}`, {
-        method: 'DELETE',
-        headers: {
-          'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
-        }
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          loadSearchPresets();
-        }
-      });
-    }
-
-    // Charger les presets au chargement de la page
-    document.addEventListener('DOMContentLoaded', () => {
-      if (document.getElementById('search-presets-list')) {
-        loadSearchPresets();
-      }
-    });
-  </script>
-<% end %>
+</section>

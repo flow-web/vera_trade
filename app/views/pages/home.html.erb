@@ -1,297 +1,166 @@
-<!-- Hero Section -->
-<div class="hero min-h-[70vh]" style="background-image: url(https://images.unsplash.com/photo-1583121274602-3e2820c69888?q=80&w=2070);">
-  <div class="hero-overlay bg-opacity-70"></div>
-  <div class="hero-content text-center text-neutral-content">
-    <div class="max-w-md">
-      <h1 class="mb-5 text-4xl font-bold">VeraTrade</h1>
-      <p class="mb-5 text-lg">La plateforme premium de transaction automobile</p>
-      <button class="btn btn-primary">Découvrir nos véhicules</button>
+<!-- Hero -->
+<section class="relative min-h-[80vh] flex items-center justify-center overflow-hidden">
+  <div class="absolute inset-0">
+    <img src="https://images.unsplash.com/photo-1583121274602-3e2820c69888?q=80&w=2070" alt="" class="w-full h-full object-cover opacity-30">
+    <div class="absolute inset-0 bg-gradient-to-t from-base-200 via-base-200/80 to-base-200/40"></div>
+  </div>
+  <div class="relative z-10 text-center max-w-3xl mx-auto px-4">
+    <h1 class="text-5xl md:text-7xl font-bold mb-6 tracking-tight">
+      <span class="text-gold-gradient">Vera</span>Trade
+    </h1>
+    <p class="text-xl md:text-2xl text-base-content/70 mb-10 leading-relaxed">
+      La marketplace auto qui fait les choses autrement.<br class="hidden md:block">
+      Messagerie directe. Dossier complet. Zéro friction.
+    </p>
+
+    <!-- Search bar hero -->
+    <%= form_with url: listings_path, method: :get, class: "max-w-xl mx-auto" do |f| %>
+      <div class="join w-full">
+        <%= f.text_field :query,
+            class: "input input-lg join-item flex-1 bg-base-100/60 border-white/10 placeholder:text-base-content/40 focus:border-primary focus:bg-base-100",
+            placeholder: "Marque, modèle, budget..." %>
+        <button type="submit" class="btn btn-primary btn-lg join-item">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+          Rechercher
+        </button>
+      </div>
+    <% end %>
+
+    <!-- Quick filters -->
+    <div class="flex flex-wrap justify-center gap-2 mt-6">
+      <% ["Porsche", "BMW M", "Mercedes AMG", "Alpine", "Tesla"].each do |q| %>
+        <%= link_to q, listings_path(query: q), class: "badge badge-lg badge-outline border-white/20 text-base-content/60 hover:border-primary hover:text-primary cursor-pointer transition-colors duration-200" %>
+      <% end %>
     </div>
   </div>
-</div>
+</section>
 
-<!-- Types de transactions -->
-<section class="py-16 bg-gray-900 text-white">
-  <div class="container mx-auto px-4">
-    <h2 class="text-3xl font-bold text-center mb-12">Nos Solutions</h2>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-      <!-- Achat -->
-      <div class="relative group">
-        <div class="aspect-w-16 aspect-h-9 rounded-lg overflow-hidden">
-          <img src="https://images.unsplash.com/photo-1583121274602-3e2820c69888?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Achat" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300">
-        </div>
-        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-6">
-          <h3 class="text-2xl font-bold text-white mb-2">Achat</h3>
-          <p class="text-gray-200 mb-4">Trouvez le véhicule de vos rêves parmi notre sélection de véhicules premium</p>
-          <%= link_to "Voir les offres", listings_path, class: "btn btn-primary" %>
-        </div>
+<!-- Stats bar -->
+<section class="border-y border-white/5 bg-base-100/40">
+  <div class="container mx-auto px-4 py-8">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+      <div>
+        <p class="text-3xl font-bold text-gold-gradient"><%= Listing.where(status: 'active').count %></p>
+        <p class="text-sm text-base-content/50 mt-1">Annonces en ligne</p>
       </div>
-
-      <!-- Location -->
-      <div class="relative group">
-        <div class="aspect-w-16 aspect-h-9 rounded-lg overflow-hidden">
-          <img src="https://images.unsplash.com/photo-1552519507-da3b142c6e3d?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Location" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300">
-        </div>
-        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-6">
-          <h3 class="text-2xl font-bold text-white mb-2">Location</h3>
-          <p class="text-gray-200 mb-4">Profitez de véhicules de luxe en location courte ou longue durée</p>
-          <%= link_to "Voir les offres", listings_path, class: "btn btn-primary" %>
-        </div>
+      <div>
+        <p class="text-3xl font-bold text-gold-gradient"><%= User.count %></p>
+        <p class="text-sm text-base-content/50 mt-1">Membres</p>
       </div>
-
-      <!-- Échange -->
-      <div class="relative group">
-        <div class="aspect-w-16 aspect-h-9 rounded-lg overflow-hidden">
-          <img src="https://images.unsplash.com/photo-1553440569-bcc63803a83d?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Échange" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300">
-        </div>
-        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-6">
-          <h3 class="text-2xl font-bold text-white mb-2">Échange</h3>
-          <p class="text-gray-200 mb-4">Échangez votre véhicule contre un autre modèle de votre choix</p>
-          <%= link_to "Voir les offres", listings_path, class: "btn btn-primary" %>
-        </div>
+      <div>
+        <p class="text-3xl font-bold text-gold-gradient"><%= Vehicle.distinct.pluck(:make).compact.size %></p>
+        <p class="text-sm text-base-content/50 mt-1">Marques</p>
+      </div>
+      <div>
+        <p class="text-3xl font-bold text-gold-gradient">100%</p>
+        <p class="text-sm text-base-content/50 mt-1">Annonces vérifiées</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- Pourquoi VeraTrade ? -->
-<section class="py-16 bg-gray-900 text-white">
+<!-- Annonces récentes -->
+<section class="section-padding">
   <div class="container mx-auto px-4">
-    <h2 class="text-3xl font-bold text-center mb-12">Pourquoi VeraTrade ?</h2>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-      <!-- Paiement en cryptomonnaies -->
-      <div class="bg-gray-800 p-8 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 border border-gray-700">
-        <div class="text-primary mb-6">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-        </div>
-        <h3 class="text-xl font-bold mb-4">Paiement en cryptomonnaies</h3>
-        <p class="text-gray-300 leading-relaxed">Transactions sécurisées via Coinbase et système de wallet intégré pour une gestion simplifiée de vos actifs numériques.</p>
-      </div>
-
-      <!-- Écosystème complet -->
-      <div class="bg-gray-800 p-8 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 border border-gray-700">
-        <div class="text-primary mb-6">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-          </svg>
-        </div>
-        <h3 class="text-xl font-bold mb-4">Écosystème complet</h3>
-        <p class="text-gray-300 leading-relaxed">Dashboard personnalisé, messagerie intégrée, gestion des dossiers et historique détaillé de vos transactions.</p>
-      </div>
-
-      <!-- Types de transaction -->
-      <div class="bg-gray-800 p-8 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 border border-gray-700">
-        <div class="text-primary mb-6">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
-          </svg>
-        </div>
-        <h3 class="text-xl font-bold mb-4">Transactions multiples</h3>
-        <p class="text-gray-300 leading-relaxed">Vente, location ou enchères : choisissez le mode de transaction qui vous convient le mieux.</p>
-      </div>
-
-      <!-- Interface guidée -->
-      <div class="bg-gray-800 p-8 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 border border-gray-700">
-        <div class="text-primary mb-6">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-          </svg>
-        </div>
-        <h3 class="text-xl font-bold mb-4">Interface guidée</h3>
-        <p class="text-gray-300 leading-relaxed">Dépôt d'annonce simplifié et sécurisation des documents pour une expérience utilisateur optimale.</p>
-      </div>
-
-      <!-- Système d'évaluation -->
-      <div class="bg-gray-800 p-8 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 border border-gray-700">
-        <div class="text-primary mb-6">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-          </svg>
-        </div>
-        <h3 class="text-xl font-bold mb-4">Évaluation intelligente</h3>
-        <p class="text-gray-300 leading-relaxed">Système de modération et d'évaluation avancé pour garantir la qualité des transactions.</p>
-      </div>
-
-      <!-- Support 24/7 -->
-      <div class="bg-gray-800 p-8 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 border border-gray-700">
-        <div class="text-primary mb-6">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
-          </svg>
-        </div>
-        <h3 class="text-xl font-bold mb-4">Support 24/7</h3>
-        <p class="text-gray-300 leading-relaxed">Une équipe d'experts disponible à tout moment pour vous accompagner dans vos transactions.</p>
-      </div>
+    <div class="flex items-center justify-between mb-10">
+      <h2 class="text-3xl font-bold">Annonces récentes</h2>
+      <%= link_to "Tout voir", listings_path, class: "btn btn-ghost btn-sm text-primary" %>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <% Listing.where(status: 'active').includes(:vehicle).order(created_at: :desc).limit(6).each do |listing| %>
+        <%= link_to listing, class: "card card-glass card-hover cursor-pointer group" do %>
+          <figure class="h-48 overflow-hidden">
+            <% if listing.photos.attached? %>
+              <%= image_tag listing.photos.first, class: "w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" %>
+            <% else %>
+              <div class="w-full h-full bg-base-300 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-base-content/20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+              </div>
+            <% end %>
+          </figure>
+          <div class="card-body p-4">
+            <h3 class="card-title text-base"><%= listing.title %></h3>
+            <div class="flex items-center gap-2 text-sm text-base-content/50">
+              <% v = listing.vehicle %>
+              <span><%= v&.year %></span>
+              <% if v&.kilometers %>
+                <span>&middot;</span>
+                <span><%= number_with_delimiter(v.kilometers) %> km</span>
+              <% end %>
+              <% if v&.fuel_type.present? %>
+                <span>&middot;</span>
+                <span><%= v.fuel_type %></span>
+              <% end %>
+            </div>
+            <div class="card-actions justify-between items-center mt-3">
+              <span class="text-lg font-bold text-primary"><%= number_to_currency(v&.price, unit: "€", format: "%n %u", delimiter: " ") %></span>
+              <span class="text-xs text-base-content/40"><%= v&.location %></span>
+            </div>
+          </div>
+        <% end %>
+      <% end %>
     </div>
   </div>
 </section>
 
-<!-- Footer avec carrousel de partenaires et avis -->
-<footer class="bg-gray-900 text-white py-12">
+<!-- Différenciateurs -->
+<section class="section-padding bg-base-100/40 border-y border-white/5">
   <div class="container mx-auto px-4">
-    <!-- Carrousel de partenaires -->
-    <div class="mb-12">
-      <h3 class="text-2xl font-bold text-center mb-8">Nos Partenaires</h3>
-      <div class="relative overflow-hidden">
-        <div class="flex space-x-8 animate-carousel">
-          <!-- Logos des partenaires -->
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Google_2015_logo.svg/1200px-Google_2015_logo.svg.png" alt="Google" class="h-12 object-contain brightness-0 invert">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Microsoft_logo_%282012%29.svg/1200px-Microsoft_logo_%282012%29.svg.png" alt="Microsoft" class="h-12 object-contain brightness-0 invert">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/IBM_logo.svg/1200px-IBM_logo.svg.png" alt="IBM" class="h-12 object-contain brightness-0 invert">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/IBM_logo.svg/1200px-IBM_logo.svg.png" alt="Amazon" class="h-12 object-contain brightness-0 invert">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Apple_logo_black.svg/1200px-Apple_logo_black.svg.png" alt="Apple" class="h-12 object-contain brightness-0 invert">
-        </div>
-      </div>
-    </div>
-
-    <!-- Avis clients -->
+    <h2 class="text-3xl font-bold text-center mb-4">Pourquoi Vera Trade</h2>
+    <p class="text-center text-base-content/50 mb-12 max-w-2xl mx-auto">Les plateformes auto classiques brident vos échanges. Nous faisons l'inverse.</p>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-      <!-- Trustpilot -->
-      <div class="bg-gray-800 p-6 rounded-lg">
-        <div class="flex items-center mb-4">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Trustpilot_Logo_%282022%2C_white%29.svg/1200px-Trustpilot_Logo_%282022%2C_white%29.svg.png" alt="Trustpilot" class="h-8 mr-4 object-contain">
-          <h4 class="text-xl font-semibold">Trustpilot</h4>
+
+      <div class="stat-card card-hover cursor-default">
+        <div class="text-primary mb-4">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+          </svg>
         </div>
-        <p class="text-gray-300 mb-4">"Une plateforme exceptionnelle pour l'achat et la vente de véhicules. Le système de paiement en crypto est révolutionnaire !"</p>
-        <div class="flex text-yellow-400">
-          <span>★★★★★</span>
-        </div>
+        <h3 class="text-lg font-bold mb-2">Messagerie libre</h3>
+        <p class="text-sm text-base-content/60 leading-relaxed">Pas de messages bridés, pas de numéros cachés. Communiquez directement, sans filtre.</p>
       </div>
 
-      <!-- Avis Vérifiés -->
-      <div class="bg-gray-800 p-6 rounded-lg">
-        <div class="flex items-center mb-4">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Google_2015_logo.svg/1200px-Google_2015_logo.svg.png" alt="Avis Vérifiés" class="h-8 mr-4 object-contain brightness-0 invert">
-          <h4 class="text-xl font-semibold">Avis Vérifiés</h4>
+      <div class="stat-card card-hover cursor-default">
+        <div class="text-primary mb-4">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
         </div>
-        <p class="text-gray-300 mb-4">"L'interface est intuitive et le service client réactif. Je recommande vivement pour tous les passionnés d'automobiles."</p>
-        <div class="flex text-yellow-400">
-          <span>★★★★★</span>
-        </div>
+        <h3 class="text-lg font-bold mb-2">Dossier complet</h3>
+        <p class="text-sm text-base-content/60 leading-relaxed">Photos, vidéos, CT, factures : tout le dossier véhicule accessible avant de vous déplacer.</p>
       </div>
 
-      <!-- Google Reviews -->
-      <div class="bg-gray-800 p-6 rounded-lg">
-        <div class="flex items-center mb-4">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Google_2015_logo.svg/1200px-Google_2015_logo.svg.png" alt="Google Reviews" class="h-8 mr-4 object-contain brightness-0 invert">
-          <h4 class="text-xl font-semibold">Google Reviews</h4>
+      <div class="stat-card card-hover cursor-default">
+        <div class="text-primary mb-4">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+          </svg>
         </div>
-        <p class="text-gray-300 mb-4">"Une expérience d'achat sécurisée et transparente. La modération des annonces est efficace et rassurante."</p>
-        <div class="flex text-yellow-400">
-          <span>★★★★★</span>
-        </div>
+        <h3 class="text-lg font-bold mb-2">Annonces modérées</h3>
+        <p class="text-sm text-base-content/60 leading-relaxed">Chaque annonce est vérifiée. Pas de doublons, pas d'arnaques, pas de prix fantaisistes.</p>
       </div>
+
     </div>
   </div>
-</footer>
+</section>
 
-<style>
-  @keyframes carousel {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
-  }
-  .animate-carousel {
-    animation: carousel 20s linear infinite;
-  }
-</style>
-
-<!-- Testimonials Section -->
-<div class="py-12 bg-base-100">
-  <div class="container mx-auto px-4">
-    <h2 class="text-4xl font-bold text-center mb-10">What Our Customers Say</h2>
-    <div class="carousel w-full">
-      <div id="testimonial1" class="carousel-item relative w-full">
-        <div class="card w-full bg-base-100 shadow-sm">
-          <div class="card-body items-center text-center">
-            <div class="rating rating-lg rating-half mb-4">
-              <input type="radio" name="rating-10" class="rating-hidden" />
-              <input type="radio" name="rating-10" class="bg-primary mask mask-star-2 mask-half-1" />
-              <input type="radio" name="rating-10" class="bg-primary mask mask-star-2 mask-half-2" />
-              <input type="radio" name="rating-10" class="bg-primary mask mask-star-2 mask-half-1" />
-              <input type="radio" name="rating-10" class="bg-primary mask mask-star-2 mask-half-2" />
-              <input type="radio" name="rating-10" class="bg-primary mask mask-star-2 mask-half-1" />
-              <input type="radio" name="rating-10" class="bg-primary mask mask-star-2 mask-half-2" />
-              <input type="radio" name="rating-10" class="bg-primary mask mask-star-2 mask-half-1" />
-              <input type="radio" name="rating-10" class="bg-primary mask mask-star-2 mask-half-2" />
-              <input type="radio" name="rating-10" class="bg-primary mask mask-star-2 mask-half-1" checked />
-              <input type="radio" name="rating-10" class="bg-primary mask mask-star-2 mask-half-2" />
-            </div>
-            <p class="text-lg italic">"The best car buying experience I've ever had. Professional staff and amazing selection of vehicles."</p>
-            <div class="divider"></div>
-            <h3 class="font-semibold">Sarah Johnson</h3>
-          </div>
-        </div>
-        <div class="absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2">
-          <a href="#testimonial3" class="btn btn-circle">❮</a> 
-          <a href="#testimonial2" class="btn btn-circle">❯</a>
-        </div>
-      </div>
-      <div id="testimonial2" class="carousel-item relative w-full">
-        <div class="card w-full bg-base-100 shadow-sm">
-          <div class="card-body items-center text-center">
-            <div class="rating rating-lg rating-half mb-4">
-              <input type="radio" name="rating-11" class="rating-hidden" />
-              <input type="radio" name="rating-11" class="bg-primary mask mask-star-2 mask-half-1" />
-              <input type="radio" name="rating-11" class="bg-primary mask mask-star-2 mask-half-2" />
-              <input type="radio" name="rating-11" class="bg-primary mask mask-star-2 mask-half-1" />
-              <input type="radio" name="rating-11" class="bg-primary mask mask-star-2 mask-half-2" />
-              <input type="radio" name="rating-11" class="bg-primary mask mask-star-2 mask-half-1" />
-              <input type="radio" name="rating-11" class="bg-primary mask mask-star-2 mask-half-2" />
-              <input type="radio" name="rating-11" class="bg-primary mask mask-star-2 mask-half-1" />
-              <input type="radio" name="rating-11" class="bg-primary mask mask-star-2 mask-half-2" />
-              <input type="radio" name="rating-11" class="bg-primary mask mask-star-2 mask-half-1" checked />
-              <input type="radio" name="rating-11" class="bg-primary mask mask-star-2 mask-half-2" />
-            </div>
-            <p class="text-lg italic">"Financing was a breeze and they found me a car that fit my budget perfectly. Couldn't be happier!"</p>
-            <div class="divider"></div>
-            <h3 class="font-semibold">Mark Thompson</h3>
-          </div>
-        </div>
-        <div class="absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2">
-          <a href="#testimonial1" class="btn btn-circle">❮</a> 
-          <a href="#testimonial3" class="btn btn-circle">❯</a>
-        </div>
-      </div>
-      <div id="testimonial3" class="carousel-item relative w-full">
-        <div class="card w-full bg-base-100 shadow-sm">
-          <div class="card-body items-center text-center">
-            <div class="rating rating-lg rating-half mb-4">
-              <input type="radio" name="rating-12" class="rating-hidden" />
-              <input type="radio" name="rating-12" class="bg-primary mask mask-star-2 mask-half-1" />
-              <input type="radio" name="rating-12" class="bg-primary mask mask-star-2 mask-half-2" />
-              <input type="radio" name="rating-12" class="bg-primary mask mask-star-2 mask-half-1" />
-              <input type="radio" name="rating-12" class="bg-primary mask mask-star-2 mask-half-2" />
-              <input type="radio" name="rating-12" class="bg-primary mask mask-star-2 mask-half-1" />
-              <input type="radio" name="rating-12" class="bg-primary mask mask-star-2 mask-half-2" />
-              <input type="radio" name="rating-12" class="bg-primary mask mask-star-2 mask-half-1" />
-              <input type="radio" name="rating-12" class="bg-primary mask mask-star-2 mask-half-2" />
-              <input type="radio" name="rating-12" class="bg-primary mask mask-star-2 mask-half-1" checked />
-              <input type="radio" name="rating-12" class="bg-primary mask mask-star-2 mask-half-2" />
-            </div>
-            <p class="text-lg italic">"The after-sales service is exceptional. I know my car is in good hands when I bring it in for maintenance."</p>
-            <div class="divider"></div>
-            <h3 class="font-semibold">Emily Rodriguez</h3>
-          </div>
-        </div>
-        <div class="absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2">
-          <a href="#testimonial2" class="btn btn-circle">❮</a> 
-          <a href="#testimonial1" class="btn btn-circle">❯</a>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Call to Action -->
-<div class="py-16 bg-primary text-primary-content">
+<!-- CTA -->
+<section class="section-padding">
   <div class="container mx-auto px-4 text-center">
-    <h2 class="text-4xl font-bold mb-4">Ready to Find Your Dream Car?</h2>
-    <p class="mb-6 max-w-md mx-auto">Visit our showroom today or browse our online inventory to find the perfect vehicle for your needs.</p>
+    <h2 class="text-3xl font-bold mb-4">Vendez votre véhicule</h2>
+    <p class="text-base-content/60 mb-8 max-w-lg mx-auto">Annonce gratuite. Photos illimitées. Visibilité maximale.</p>
     <div class="flex flex-col sm:flex-row gap-4 justify-center">
-      <button class="btn btn-secondary">Browse Inventory</button>
-      <button class="btn bg-white text-primary hover:bg-gray-200">Contact Us</button>
+      <%= link_to new_listing_path, class: "btn btn-primary btn-lg" do %>
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+        </svg>
+        Déposer une annonce
+      <% end %>
+      <%= link_to "Parcourir les annonces", listings_path, class: "btn btn-outline btn-lg border-white/20 hover:border-primary" %>
     </div>
   </div>
-</div>
+</section>
