@@ -1,0 +1,42 @@
+<div class="bg-base-200 py-10 border-b border-base-300">
+  <div class="container mx-auto px-4">
+    <h1 class="text-3xl font-bold">Mes favoris</h1>
+    <p class="opacity-60 mt-1"><%= pluralize(@listings.count, "annonce") %> sauvegardée<%= @listings.count > 1 ? "s" : "" %></p>
+  </div>
+</div>
+<div class="container mx-auto px-4 py-10">
+  <% if @listings.any? %>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <% @listings.each do |listing| %>
+        <% v = listing.vehicle %>
+        <%= link_to listing, class: "card bg-base-100 shadow-xl card-lift cursor-pointer group overflow-hidden" do %>
+          <figure class="relative h-48 overflow-hidden">
+            <% if listing.photos.attached? %>
+              <%= image_tag listing.photos.first, class: "w-full h-full object-cover group-hover:scale-105 transition-transform duration-300", alt: listing.title %>
+            <% else %>
+              <div class="w-full h-full bg-base-300 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 opacity-20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+              </div>
+            <% end %>
+            <div class="absolute top-3 right-3 badge badge-primary font-bold"><%= number_to_currency(v&.price, unit: "€", format: "%n%u", delimiter: " ", precision: 0) %></div>
+          </figure>
+          <div class="card-body p-5">
+            <h3 class="card-title text-sm line-clamp-1"><%= listing.title %></h3>
+            <div class="flex flex-wrap gap-1.5 my-1">
+              <% if v&.year %><span class="badge badge-sm badge-ghost"><%= v.year %></span><% end %>
+              <% if v&.kilometers %><span class="badge badge-sm badge-ghost"><%= number_with_delimiter(v.kilometers) %> km</span><% end %>
+              <% if v&.fuel_type.present? %><span class="badge badge-sm badge-ghost"><%= v.fuel_type %></span><% end %>
+            </div>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="text-center py-20">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto opacity-20 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
+      <h3 class="text-xl font-bold mb-2">Aucun favori</h3>
+      <p class="opacity-50 mb-6">Sauvegardez des annonces pour les retrouver facilement.</p>
+      <%= link_to "Parcourir les annonces", listings_path, class: "btn btn-primary" %>
+    </div>
+  <% end %>
+</div>

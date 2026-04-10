@@ -25,10 +25,13 @@ Rails.application.configure do
   config.active_storage.service = :cloudinary
 
   # Assume all access to the app is happening through a SSL-terminating reverse proxy.
-  config.assume_ssl = true
+  # Gated on env var so we can run HTTP-only during initial deploy (before certbot).
+  # Set ASSUME_SSL=true once the reverse proxy terminates TLS.
+  config.assume_ssl = ENV.fetch("ASSUME_SSL", "false") == "true"
 
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
-  config.force_ssl = true
+  # Default OFF until HTTPS is wired up. Set FORCE_SSL=true after certbot issues the cert.
+  config.force_ssl = ENV.fetch("FORCE_SSL", "false") == "true"
 
   # Skip http-to-https redirect for the default health check endpoint.
   # config.ssl_options = { redirect: { exclude: ->(request) { request.path == "/up" } } }

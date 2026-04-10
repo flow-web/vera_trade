@@ -1,369 +1,263 @@
-# This file should ensure the existence of records required to run the application in every environment (production,
-# development, test). The code here should be idempotent so that it can be executed at any point in every environment.
-# The data can then be loaded with the bin/rails db:seed command (or created alongside the database with db:setup).
-#
-# Example:
-#
-#   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
-#     MovieGenre.find_or_create_by!(name: genre_name)
-#   end
+# frozen_string_literal: true
+# Vera Trade — Production-ready seed data
+# Idempotent: safe to run multiple times
 
-# Création des catégories principales
-categories = {
-  'Voitures' => {
-    icon: 'car',
-    subcategories: [
-      'Berline', 'SUV', 'Coupé', 'Break', 'Monospace', 'Citadine', 'Cabriolet', 'Roadster',
-      'Pick-up', 'Limousine', 'Compacte', 'SUV Compact', 'SUV Coupé', 'Voiture de sport',
-      'Muscle Car', 'Hypercar', 'Grand Tourisme (GT)', 'Voiture électrique (EV)',
-      'Voiture hybride (HEV)', 'SUV Hybride/Électrique', 'Microcar/Kei Car', 'Crossover',
-      'Fourgonnette', 'Familiale', 'Sous-compacte', 'Voiture autonome',
-      'Voiture à hydrogène (FCV)', 'Hot Hatch', 'Utilitaire Sport de Luxe',
-      'Voiture de collection', 'Voiture GPL / GNV', 'Kit car / Réplique',
-      'Véhicule 6 places et plus / Ludospace', 'Voiture blindée',
-      'Voiture présidentielle / officielle', 'Voiture PMR (adapté handicap)',
-      'Voiture école (double commande)', 'Voiture funéraire / Corbillard'
-    ]
-  },
-  'Motos' => {
-    icon: 'motorcycle',
-    subcategories: [
-      'Moto de route', 'Sportive', 'Routière', 'Custom', 'Trail', 'Enduro', 'Cross',
-      'Scooter', 'Maxi-Scooter', 'Moto électrique', 'Trail routier', 'Sport-Touring',
-      'Café Racer', 'Bobber', 'Chopper', 'Supermotard', 'Trike', 'Side-car',
-      'Mobylette/Cyclomoteur', 'Dirt Bike', 'Moto vintage / néo-rétro', 'Moto trial',
-      'Moto militaire', 'Moto PMR', 'Pocket bike / Mini moto', 'Moto automatique / semi-auto'
-    ]
-  },
-  'Bateaux' => {
-    icon: 'ship',
-    subcategories: [
-      'Voilier monocoque', 'Catamaran', 'Trimaran', 'Yacht à voile', 'Yacht à moteur',
-      'Péniche', 'Bateau de pêche', 'Bateau de plaisance à moteur', 'Canot à moteur',
-      'Bateau pneumatique', 'Kayak', 'Canoë', 'Jet ski/Motomarine', 'Houseboat',
-      'Ferry', 'Remorqueur', 'Barge', 'Hydroptère', 'Hovercraft', 'Voilier habitable',
-      'Bateau semi-rigide', 'Bateau taxi / navette', 'Pédalo', 'Paddle rigide',
-      'Paddle gonflable', 'Bateau utilitaire fluvial', 'Bateau école',
-      'Bateau de sauvetage', 'Remorqueur portuaire', 'Navire militaire',
-      'Sous-marin de plaisance'
-    ]
-  },
-  'Engins de chantier' => {
-    icon: 'truck',
-    subcategories: [
-      'Excavatrice', 'Chargeuse sur pneus', 'Bulldozer', 'Niveleuse', 'Compacteur',
-      'Grue mobile', 'Grue à tour', 'Chariot élévateur', 'Tractopelle', 'Foreuse',
-      'Finisseur', 'Pompe à béton', 'Bétonnière automotrice', 'Dumper', 'Décapeuse',
-      'Raboteuse', 'Fraiseuse', 'Trancheuse', 'Pilonneuse', 'Foreuse directionnelle',
-      'Plateforme élévatrice mobile', 'Nacelle élévatrice', 'Camion-citerne',
-      'Camion-balayeuse', 'Camion d\'arrosage', 'Camion de pompiers', 'Ambulances',
-      'Camion de dépannage', 'Véhicule de chantier modulaire', 'Souffleuse à neige',
-      'Télescopique (Manitou)', 'Chargeuse compacte', 'Élévateur tout-terrain',
-      'Pelle araignée', 'Robot de démolition', 'Tarière mécanique',
-      'Brise-roche hydraulique', 'Camion nacelle', 'Camion grumier',
-      'Camion plateau-grue', 'Camion atelier / laboratoire', 'Camion de secours / 4x4 lourd'
-    ]
-  },
-  'Aéronefs' => {
-    icon: 'plane',
-    subcategories: [
-      'Avion de ligne', 'Avion de transport de fret', 'Avion de tourisme',
-      'Avion d\'affaires', 'Avion de chasse', 'Bombardier', 'Avion de reconnaissance',
-      'Avion de transport militaire', 'Avion d\'entraînement', 'Hydravion',
-      'Amphibie', 'Avion à hélices', 'Avion à réaction', 'Avion à turbopropulseur',
-      'ULM', 'Planeur', 'Motoplaneur', 'Avion de voltige', 'Avion expérimental',
-      'Drone/UAV', 'Hydravion biplan', 'Paramoteur', 'Parapente motorisé',
-      'Autogire / Gyrocoptère', 'Avion cargo civil', 'Drone de loisir',
-      'Drone agricole', 'Drone industriel'
-    ]
-  },
-  'Véhicules agricoles' => {
-    icon: 'tractor',
-    subcategories: [
-      'Tracteur agricole', 'Moissonneuse-batteuse', 'Semoir', 'Pulvérisateur',
-      'Charrue', 'Herse', 'Rouleau', 'Faucheuse', 'Andaineur', 'Presse à balles',
-      'Enrubanneuse', 'Distributeur d\'aliments', 'Tracteur viticole',
-      'Tracteur forestier', 'Tracteur tondeuse autoportée', 'Robot tondeuse / agricole',
-      'Véhicule agricole à chenilles', 'Engin forestier', 'Engin minier',
-      'Véhicule forestier téléguidé', 'Motoculteur motorisé', 'Débroussailleuse tractée',
-      'Tondeuse autoportée pro', 'Tondeuse frontale 4x4'
-    ]
-  },
-  'Véhicules spéciaux' => {
-    icon: 'truck',
-    subcategories: [
-      'Véhicule de transport de détenus', 'Véhicule d\'intervention rapide',
-      'Véhicule de presse / radio', 'Véhicule de tournée commerciale',
-      'Véhicule podium / promotion', 'Véhicule sonorisé / sono mobile',
-      'Véhicule événementiel / food truck', 'Véhicule frigorifique autonome',
-      'Véhicule musée / collection mobile', 'Véhicule showroom / vitrine mobile',
-      'Véhicule de détection', 'Véhicule de désamiantage',
-      'Véhicule de nettoyage industriel', 'Véhicule anti-émeute',
-      'Véhicule blindé léger', 'Véhicule d\'expédition',
-      'Véhicule pour défilé / cortège', 'Véhicule de rallye-raid d\'assistance',
-      'Véhicule de chantier léger 4x4', 'Véhicule de secours minier',
-      'Véhicule à chenilles', 'Véhicule à air comprimé',
-      'Véhicule à hydrogène utilitaire', 'Véhicule solaire',
-      'Micro-voiture urbaine autonome', 'Voiture sans permis utilitaire'
-    ]
-  },
-  'Remorques et caravanes' => {
-    icon: 'trailer',
-    subcategories: [
-      'Remorque utilitaire', 'Remorque porte-voiture', 'Remorque porte-moto',
-      'Remorque frigorifique', 'Remorque agricole', 'Camping-car',
-      'Van aménagé', 'Caravane', 'Remorque magasin / boutique',
-      'Remorque snack / food truck', 'Remorque sanitaire / toilettes mobiles',
-      'Remorque scène mobile', 'Remorque tribune / loge mobile',
-      'Remorque événementielle'
-    ]
+puts "🌱 Seeding Vera Trade..."
+
+# ── CATEGORIES ──────────────────────────────────────────────
+# Only seed if empty (already created on first run)
+if Category.count.zero?
+  categories = {
+    'Voitures' => { icon: 'car', subs: %w[Berline SUV Coupé Break Citadine Cabriolet Pick-up Compacte] },
+    'Motos' => { icon: 'motorcycle', subs: ['Sportive', 'Routière', 'Custom', 'Trail', 'Scooter', 'Café Racer'] },
+    'Utilitaires' => { icon: 'truck', subs: ['Fourgon', 'Camionnette', 'Plateau', 'Benne', 'Frigorifique'] },
+    'Camping-cars' => { icon: 'caravan', subs: ['Profilé', 'Capucine', 'Intégral', 'Van aménagé', 'Fourgon aménagé'] }
   }
-}
+  categories.each do |name, data|
+    parent = Category.create!(name: name, icon: data[:icon], description: "#{name} d'occasion")
+    data[:subs].each { |s| Category.create!(name: s, parent_id: parent.id, description: s) }
+  end
+  puts "  ✓ #{Category.count} catégories créées"
+else
+  puts "  ⏭ Catégories existantes (#{Category.count})"
+end
 
-# Création des catégories et sous-catégories
-categories.each do |name, data|
-  category = Category.create!(
-    name: name,
-    icon: data[:icon],
-    description: "Trouvez votre #{name.downcase} idéal parmi notre sélection"
+# ── USERS ───────────────────────────────────────────────────
+users_data = [
+  { email: 'admin@veratrade.fr', first_name: 'Florian', last_name: 'Parisi', phone: '0601020304', role: 2 },
+  { email: 'sophie.martin@gmail.com', first_name: 'Sophie', last_name: 'Martin', phone: '0611223344', role: 0 },
+  { email: 'karim.benali@outlook.fr', first_name: 'Karim', last_name: 'Benali', phone: '0622334455', role: 0 },
+  { email: 'pierre.durand@yahoo.fr', first_name: 'Pierre', last_name: 'Durand', phone: '0633445566', role: 0 },
+  { email: 'marie.leclerc@gmail.com', first_name: 'Marie', last_name: 'Leclerc', phone: '0644556677', role: 0 },
+  { email: 'lucas.petit@hotmail.com', first_name: 'Lucas', last_name: 'Petit', phone: '0655667788', role: 0 },
+  { email: 'julie.moreau@gmail.com', first_name: 'Julie', last_name: 'Moreau', phone: '0666778899', role: 0 },
+  { email: 'thomas.garcia@pro.fr', first_name: 'Thomas', last_name: 'Garcia', phone: '0677889900', role: 0 },
+]
+
+users = users_data.map do |data|
+  User.find_or_create_by!(email: data[:email]) do |u|
+    u.password = 'VeraTrade2026!'
+    u.first_name = data[:first_name]
+    u.last_name = data[:last_name]
+    u.phone = data[:phone]
+    u.role = data[:role]
+  end
+end
+puts "  ✓ #{users.size} utilisateurs (#{User.count} total)"
+
+admin, sophie, karim, pierre, marie, lucas, julie, thomas = users
+
+# ── VEHICLES & LISTINGS ────────────────────────────────────
+cat_voitures = Category.find_by(name: 'Voitures') || Category.first
+cat_motos = Category.find_by(name: 'Motos') || Category.first
+
+vehicles_data = [
+  # ── Voitures ──
+  {
+    vehicle: {
+      make: 'Porsche', model: '911 Carrera S', year: 2021, price: 139_900, kilometers: 18_500,
+      fuel_type: 'Essence', transmission: 'PDK', finition: 'Carrera S', doors: 2,
+      exterior_color: 'Gris Craie', interior_material: 'Cuir', interior_color: 'Noir/Bordeaux',
+      previous_owners: 1, has_service_history: true, non_smoker: true, location: 'Monaco',
+      license_plate: 'GH-911-PS', vin: 'WP0AB2A91MS200001',
+      fiscal_power: 30, co2_emissions: 228, average_consumption: 10.1,
+      category: cat_voitures,
+      safety_features: 'PASM, PTV Plus, Freins céramique PCCB',
+      comfort_features: 'Sièges Sport adaptatifs 18 réglages, Chrono Package, Bose Surround',
+      body_condition: 'État concours, zéro défaut carrosserie'
+    },
+    listing: { title: 'Porsche 911 (992) Carrera S PDK — 1ère main Monaco', user: sophie, status: 'active' }
+  },
+  {
+    vehicle: {
+      make: 'Mercedes-Benz', model: 'Classe G 63 AMG', year: 2022, price: 198_000, kilometers: 12_000,
+      fuel_type: 'Essence', transmission: 'Automatique', finition: 'AMG', doors: 5,
+      exterior_color: 'Noir Obsidienne', interior_material: 'Cuir Nappa', interior_color: 'Rouge Bengal',
+      previous_owners: 1, has_service_history: true, non_smoker: true, location: 'Paris 16e',
+      license_plate: 'AA-063-MG', vin: 'WDB4632721X300001',
+      fiscal_power: 36, co2_emissions: 299, average_consumption: 13.1,
+      category: cat_voitures,
+      safety_features: 'Active Brake Assist, Blind Spot, 360° Camera',
+      comfort_features: 'Burmester 3D, Massage seats, Night Package'
+    },
+    listing: { title: 'Mercedes G63 AMG — Intérieur Rouge Bengal, Full Options', user: karim, status: 'active' }
+  },
+  {
+    vehicle: {
+      make: 'BMW', model: 'M3 Competition', year: 2023, price: 89_900, kilometers: 8_200,
+      fuel_type: 'Essence', transmission: 'Automatique', finition: 'Competition xDrive', doors: 4,
+      exterior_color: 'Vert Isle of Man', interior_material: 'Cuir Merino', interior_color: 'Noir',
+      previous_owners: 1, has_service_history: true, non_smoker: true, location: 'Lyon',
+      license_plate: 'BM-340-CP', vin: 'WBS43AZ09P8B00001',
+      fiscal_power: 24, co2_emissions: 234, average_consumption: 10.2,
+      category: cat_voitures,
+      safety_features: 'M Carbon Ceramic Brakes, M Drive Professional',
+      comfort_features: 'Harman Kardon, Head-up Display, M Carbon bucket seats'
+    },
+    listing: { title: 'BMW M3 Competition xDrive — Vert Isle of Man, 8200km', user: pierre, status: 'active' }
+  },
+  {
+    vehicle: {
+      make: 'Audi', model: 'RS6 Avant', year: 2022, price: 142_500, kilometers: 22_000,
+      fuel_type: 'Essence', transmission: 'Tiptronic', finition: 'RS6 Performance', doors: 5,
+      exterior_color: 'Gris Nardo', interior_material: 'Cuir/Alcantara', interior_color: 'Noir',
+      previous_owners: 1, has_service_history: true, non_smoker: true, location: 'Strasbourg',
+      license_plate: 'RS-600-AD', vin: 'WUAZZZ4K4NN100001',
+      fiscal_power: 32, co2_emissions: 268, average_consumption: 11.8,
+      category: cat_voitures,
+      safety_features: 'Freins céramique, Différentiel sport, Matrix LED',
+      comfort_features: 'Bang & Olufsen Advanced, Suspension pneumatique, Toit panoramique'
+    },
+    listing: { title: 'Audi RS6 Avant Performance — Gris Nardo, B&O Advanced', user: thomas, status: 'active' }
+  },
+  {
+    vehicle: {
+      make: 'Alpine', model: 'A110 S', year: 2023, price: 72_900, kilometers: 5_400,
+      fuel_type: 'Essence', transmission: 'EDC', finition: 'S', doors: 2,
+      exterior_color: 'Bleu Alpine', interior_material: 'Cuir/Microfibre', interior_color: 'Noir/Bleu',
+      previous_owners: 1, has_service_history: true, non_smoker: true, location: 'Dieppe',
+      license_plate: 'AL-110-FR', vin: 'VFA6AGHS0K1200001',
+      fiscal_power: 15, co2_emissions: 164, average_consumption: 7.2,
+      category: cat_voitures,
+      safety_features: 'ESP Sport, Brembo 4 pistons',
+      comfort_features: 'Focal audio, Sièges Sabelt, Telemetrics'
+    },
+    listing: { title: 'Alpine A110 S — Bleu Alpine, Sabelt, 5400km comme neuve', user: marie, status: 'active' }
+  },
+  {
+    vehicle: {
+      make: 'Peugeot', model: '208 GT', year: 2023, price: 24_500, kilometers: 15_000,
+      fuel_type: 'Essence', transmission: 'Automatique', finition: 'GT', doors: 5,
+      exterior_color: 'Jaune Faro', interior_material: 'Alcantara', interior_color: 'Noir',
+      previous_owners: 1, has_service_history: true, non_smoker: true, location: 'Bordeaux',
+      license_plate: 'PE-208-GT', vin: 'VR3UHZKXZPT100001',
+      fiscal_power: 6, co2_emissions: 118, average_consumption: 5.2,
+      category: cat_voitures,
+      safety_features: "Freinage automatique d'urgence, Alerte franchissement de ligne",
+      comfort_features: 'i-Cockpit 3D, Caméra 180°, Chargeur induction'
+    },
+    listing: { title: 'Peugeot 208 GT — Jaune Faro, i-Cockpit 3D, garantie', user: lucas, status: 'active' }
+  },
+  {
+    vehicle: {
+      make: 'Tesla', model: 'Model 3 Performance', year: 2023, price: 42_900, kilometers: 20_000,
+      fuel_type: 'Électrique', transmission: 'Automatique', finition: 'Performance', doors: 4,
+      exterior_color: 'Blanc Nacré', interior_material: 'Vegan Leather', interior_color: 'Noir',
+      previous_owners: 1, has_service_history: true, non_smoker: true, location: 'Toulouse',
+      license_plate: 'TS-003-EV', vin: '5YJ3E1EC5PF500001',
+      fiscal_power: 1, co2_emissions: 1, average_consumption: 0.2,
+      category: cat_voitures,
+      safety_features: 'Autopilot, Freinage régénératif, 8 caméras',
+      comfort_features: 'Écran 15.4", Premium Connectivity, Toit vitré'
+    },
+    listing: { title: 'Tesla Model 3 Performance — Autopilot, 0-100 en 3.3s', user: julie, status: 'active' }
+  },
+  # Vendu
+  {
+    vehicle: {
+      make: 'Volkswagen', model: 'Golf 8 R', year: 2022, price: 48_500, kilometers: 28_000,
+      fuel_type: 'Essence', transmission: 'DSG', finition: 'R', doors: 5,
+      exterior_color: 'Bleu Lapiz', interior_material: 'Cuir/Alcantara', interior_color: 'Noir/Bleu',
+      previous_owners: 2, has_service_history: true, non_smoker: true, location: 'Nantes',
+      license_plate: 'VW-800-RR', vin: 'WVWZZZ1KZPW100001',
+      fiscal_power: 14, co2_emissions: 168, average_consumption: 7.4,
+      category: cat_voitures,
+      safety_features: 'R-Performance Torque Vectoring, DCC adaptatif',
+      comfort_features: 'Harman Kardon, Digital Cockpit Pro'
+    },
+    listing: { title: 'VW Golf 8 R DSG — Vendue en 48h !', user: sophie, status: 'sold', buyer: lucas }
+  },
+  # ── Motos ──
+  {
+    vehicle: {
+      make: 'Ducati', model: 'Panigale V4 S', year: 2023, price: 32_900, kilometers: 3_200,
+      fuel_type: 'Essence', transmission: 'Manuelle',
+      exterior_color: 'Rouge Ducati', previous_owners: 1, has_service_history: true,
+      location: 'Nice', license_plate: 'DC-400-VS',
+      category: cat_motos,
+      safety_features: 'Cornering ABS EVO, Wheelie Control, Slide Control',
+      comfort_features: 'Öhlins Smart EC 2.0, Écran TFT 6.9"'
+    },
+    listing: { title: 'Ducati Panigale V4 S — 3200km, full Öhlins', user: karim, status: 'active' }
+  },
+  {
+    vehicle: {
+      make: 'Triumph', model: 'Speed Triple 1200 RS', year: 2022, price: 16_900, kilometers: 8_500,
+      fuel_type: 'Essence', transmission: 'Manuelle',
+      exterior_color: 'Storm Grey', previous_owners: 1, has_service_history: true,
+      location: 'Montpellier', license_plate: 'TR-120-RS', vin: 'SMTD40HL0NT700001',
+      category: cat_motos,
+      safety_features: 'IMU 6 axes, Cornering ABS, Traction Control multi-mode',
+      comfort_features: 'Quickshifter bidirectionnel, TFT 5"'
+    },
+    listing: { title: 'Triumph Speed Triple 1200 RS — Échappement Arrow', user: pierre, status: 'active' }
+  }
+]
+
+created_count = 0
+vehicles_data.each do |data|
+  vd = data[:vehicle].except(:category)
+  cat = data[:vehicle][:category]
+
+  # Skip if license_plate already exists
+  next if vd[:license_plate] && Vehicle.exists?(license_plate: vd[:license_plate].upcase.gsub(/[^A-Z0-9]/, ''))
+  # Skip if VIN already exists
+  next if vd[:vin] && Vehicle.exists?(vin: vd[:vin].upcase.gsub(/[^A-Z0-9]/, ''))
+
+  vehicle = Vehicle.create!(vd.merge(category_id: cat&.id))
+
+  ld = data[:listing]
+  Listing.create!(
+    title: ld[:title],
+    description: "#{ld[:title]}. Véhicule en excellent état, visible sur rendez-vous.",
+    user: ld[:user],
+    vehicle: vehicle,
+    status: ld[:status] || 'active',
+    buyer_id: ld[:buyer]&.id
   )
-  
-  data[:subcategories].each do |subname|
-    Category.create!(
-      name: subname,
-      parent_id: category.id,
-      description: "Découvrez notre sélection de #{subname.downcase}s"
+  created_count += 1
+end
+puts "  ✓ #{created_count} annonces créées (#{Listing.count} total)"
+
+# ── CONVERSATIONS & MESSAGES ───────────────────────────────
+convos = [
+  { from: lucas, to: sophie, messages: [
+    { from: lucas, text: "Bonjour, la Porsche 911 est-elle encore disponible ?" },
+    { from: sophie, text: "Oui tout à fait ! Elle est visible sur rendez-vous à Monaco." },
+    { from: lucas, text: "Super. Quel serait votre meilleur prix pour un achat comptant ?" },
+    { from: sophie, text: "Pour un achat cash je peux descendre à 135 000€. Elle est vraiment impeccable." },
+    { from: lucas, text: "Je réfléchis et je reviens vers vous rapidement. Merci !" }
+  ]},
+  { from: marie, to: karim, messages: [
+    { from: marie, text: "Bonjour, la Panigale V4 S m'intéresse beaucoup. Historique d'entretien complet ?" },
+    { from: karim, text: "Oui, entretien exclusivement chez Ducati Nice. Carnet tamponné. Je peux envoyer les factures." },
+    { from: marie, text: "Parfait. Possible d'organiser un essai ce week-end ?" },
+    { from: karim, text: "Samedi matin ça vous irait ? Je suis dispo à partir de 10h." }
+  ]},
+  { from: thomas, to: julie, messages: [
+    { from: thomas, text: "La Tesla Model 3 Performance, vous avez le Full Self-Driving ?" },
+    { from: julie, text: "Non c'est l'Autopilot de base. Le FSD n'est pas transférable de toute façon." },
+    { from: thomas, text: "OK merci pour la précision. Autonomie réelle en hiver ?" },
+    { from: julie, text: "Comptez 350-380km sur autoroute en hiver, 450+ en ville/mixte." }
+  ]}
+]
+
+convos_created = 0
+convos.each do |cd|
+  convo = Conversation.find_or_create_by!(user: cd[:from], other_user: cd[:to])
+  next if Message.where(sender_id: cd[:from].id, recipient_id: cd[:to].id).exists?
+
+  cd[:messages].each_with_index do |msg, i|
+    Message.create!(
+      sender_id: msg[:from].id,
+      recipient_id: (msg[:from] == cd[:from] ? cd[:to] : cd[:from]).id,
+      content: msg[:text],
+      read: i < cd[:messages].size - 1,
+      created_at: (cd[:messages].size - i).hours.ago
     )
   end
+  convos_created += 1
 end
+puts "  ✓ #{convos_created} conversations (#{Message.count} messages)"
 
-# Création d'un utilisateur test s'il n'existe pas déjà
-user = User.find_or_create_by!(email: 'test@example.com') do |u|
-  u.password = 'password123'
-  u.first_name = 'Jean'
-  u.last_name = 'Dupont'
-  u.phone = '0612345678'
-end
-
-# Données pour les annonces de voitures
-car_listings = [
-  {
-    title: "BMW Série 3 320d M Sport - 2020",
-    description: "Magnifique BMW Série 3 en parfait état, première main, entretien régulier chez BMW. Pack M Sport complet avec jantes 19 pouces, sellerie cuir, navigation professionnelle, caméra de recul, radar de stationnement, etc. CT récent, garantie constructeur encore valable.",
-    make: "BMW",
-    model: "Série 3",
-    year: 2020,
-    price: 34900,
-    kilometers: 45000,
-    fuel_type: "Diesel",
-    transmission: "Automatique",
-    finition: "M Sport",
-    doors: 4,
-    exterior_color: "Noir métallisé",
-    interior_material: "Cuir",
-    interior_color: "Noir",
-    previous_owners: 1,
-    has_service_history: true,
-    non_smoker: true,
-    location: "Paris",
-    license_plate: "AB-123-CD",
-    vin: "WBAPK7C50AA000001",
-    fiscal_power: 6,
-    average_consumption: 4.5,
-    co2_emissions: 119,
-    safety_features: "ABS, ESP, Airbags frontaux et latéraux, Caméra de recul, Radar de stationnement",
-    comfort_features: "Climatisation automatique, Régulateur de vitesse, Volant multifonction, Sièges chauffants",
-    multimedia_features: "Navigation professionnelle, Apple CarPlay, Android Auto, Haut-parleurs Harman Kardon",
-    exterior_features: "Jantes 19 pouces M Sport, Phares LED, Rétroviseurs électriques, Toit ouvrant panoramique",
-    body_condition: "Parfait état, pas de rayures ni de bosses",
-    interior_condition: "Intérieur comme neuf, pas d'usure visible",
-    tire_condition: "Pneus Michelin en bon état, 70% d'usure restante",
-    recent_works: "Vidange récente, Filtres changés, Freins révisés"
-  },
-  {
-    title: "Renault Clio V Intens - 2021",
-    description: "Renault Clio V Intens en excellent état, deuxième main, entretien régulier. Version Intens avec jantes 17 pouces, climatisation automatique, caméra de recul, radar de stationnement, etc. CT récent, garantie constructeur encore valable.",
-    make: "Renault",
-    model: "Clio",
-    year: 2021,
-    price: 18900,
-    kilometers: 32000,
-    fuel_type: "Essence",
-    transmission: "Manuelle",
-    finition: "Intens",
-    doors: 5,
-    exterior_color: "Gris métallisé",
-    interior_material: "Tissu",
-    interior_color: "Noir",
-    previous_owners: 2,
-    has_service_history: true,
-    non_smoker: true,
-    location: "Lyon",
-    license_plate: "EF-456-GH",
-    vin: "VF1RJA00X67000001",
-    fiscal_power: 5,
-    average_consumption: 5.2,
-    co2_emissions: 120,
-    safety_features: "ABS, ESP, Airbags frontaux et latéraux, Caméra de recul, Radar de stationnement",
-    comfort_features: "Climatisation automatique, Régulateur de vitesse, Volant multifonction",
-    multimedia_features: "Écran tactile 9.3 pouces, Apple CarPlay, Android Auto, Radio DAB",
-    exterior_features: "Jantes 17 pouces, Phares LED, Rétroviseurs électriques",
-    body_condition: "Très bon état, quelques micro-rayures",
-    interior_condition: "Intérieur en très bon état",
-    tire_condition: "Pneus Continental en bon état, 60% d'usure restante",
-    recent_works: "Vidange récente, Filtres changés"
-  }
-]
-
-# Données pour les annonces de motos
-motorcycle_listings = [
-  {
-    title: "BMW R 1250 GS Adventure - 2022",
-    description: "BMW R 1250 GS Adventure en parfait état, première main. Version Adventure avec tous les équipements : selle chauffante, GPS intégré, suspensions électroniques, etc. Entretien régulier chez BMW, garantie constructeur encore valable.",
-    make: "BMW",
-    model: "R 1250 GS Adventure",
-    year: 2022,
-    price: 22900,
-    kilometers: 12000,
-    fuel_type: "Essence",
-    transmission: "Manuelle",
-    finition: "Adventure",
-    exterior_color: "Rallye",
-    interior_material: "Cuir",
-    previous_owners: 1,
-    has_service_history: true,
-    location: "Marseille",
-    license_plate: "IJ-789-KL",
-    vin: "WB10A0200A0000001",
-    fiscal_power: 12,
-    average_consumption: 5.8,
-    co2_emissions: 135,
-    safety_features: "ABS Pro, ASC, DTC, DBC, HSC",
-    comfort_features: "Selle chauffante, Suspensions électroniques, Contrôle de vitesse",
-    multimedia_features: "GPS intégré, Bluetooth, Radio",
-    exterior_features: "Protections moteur, Garde-boue avant rallongé, Selle haute",
-    body_condition: "Parfait état, pas de rayures ni de bosses",
-    interior_condition: "Intérieur comme neuf",
-    tire_condition: "Pneus Anakee Adventure en bon état, 80% d'usure restante",
-    recent_works: "Vidange récente, Filtres changés, Révision complète"
-  }
-]
-
-# Données pour les annonces de bateaux
-boat_listings = [
-  {
-    title: "Jeanneau Cap Camarat 5.5 - 2021",
-    description: "Jeanneau Cap Camarat 5.5 en excellent état, première main. Bateau équipé avec moteur Suzuki 115CV, GPS, sondeur, etc. Entretien régulier, garantie constructeur encore valable.",
-    make: "Jeanneau",
-    model: "Cap Camarat 5.5",
-    year: 2021,
-    price: 45900,
-    fuel_type: "Essence",
-    transmission: "Arbre",
-    finition: "Weekender",
-    exterior_color: "Blanc",
-    previous_owners: 1,
-    has_service_history: true,
-    location: "Nice",
-    license_plate: "MN-012-OP",
-    vin: "FR1JN00X670000018",
-    length: 5.5,
-    width: 2.3,
-    draft: 0.5,
-    hull_material: "Polyester",
-    number_of_cabins: 1,
-    number_of_berths: 2,
-    engine_hours: 120,
-    safety_features: "GPS, Sondeur, Radio VHF, Gilets de sauvetage",
-    comfort_features: "Cockpit confortable, Table à manger, Douche",
-    multimedia_features: "Enceintes Bluetooth, Prise USB",
-    exterior_features: "Bimini, Store de cockpit, Échelle de bain",
-    body_condition: "Parfait état, pas de rayures ni d'impacts",
-    interior_condition: "Intérieur comme neuf",
-    recent_works: "Révision moteur récente, Antifouling récent"
-  }
-]
-
-# Données pour les annonces d'engins de chantier
-construction_listings = [
-  {
-    title: "Caterpillar 320D2 - 2019",
-    description: "Caterpillar 320D2 en excellent état, bien entretenu. Pelle mécanique équipée avec godet standard, climatisation, radio, etc. Heures moteur vérifiées, entretien régulier.",
-    make: "Caterpillar",
-    model: "320D2",
-    year: 2019,
-    price: 125000,
-    fuel_type: "Diesel",
-    transmission: "Automatique",
-    finition: "Standard",
-    exterior_color: "Jaune",
-    previous_owners: 2,
-    has_service_history: true,
-    location: "Lille",
-    license_plate: "QR-345-ST",
-    vin: "CAT320D2X67000001",
-    operating_hours: 4500,
-    lifting_capacity: 8.5,
-    bucket_capacity: 1.2,
-    safety_features: "Caméra de recul, Alarme, Éclairage LED",
-    comfort_features: "Climatisation, Radio, Siège confortable",
-    multimedia_features: "Écran LCD, Radio CD",
-    exterior_features: "Godet standard, Lame de nivellement, Protection cabine",
-    body_condition: "Très bon état, quelques traces d'usure normales",
-    interior_condition: "Cabine en bon état",
-    recent_works: "Révision complète, Filtres changés, Huiles changées"
-  }
-]
-
-# Création des annonces
-[car_listings, motorcycle_listings, boat_listings, construction_listings].each do |listings|
-  listings.each do |listing_data|
-    puts "Création de l'annonce #{listing_data[:title]}"
-    # Création du véhicule
-    vehicle = Vehicle.create!(
-      listing_data.except(:title, :description)
-    )
-    
-    # Création de l'annonce
-    listing = Listing.create!(
-      title: listing_data[:title],
-      description: listing_data[:description],
-      user: user,
-      vehicle: vehicle,
-      status: 'active'
-    )
-
-    # Ajout des images
-    case listing_data[:make]
-    when "BMW"
-      if listing_data[:model].include?("Série 3")
-        # Images pour BMW Série 3
-        listing.photos.attach(io: File.open(Rails.root.join("app/assets/images/seed/bmw_serie3_1.jpg")), filename: "bmw_serie3_1.jpg")
-        listing.photos.attach(io: File.open(Rails.root.join("app/assets/images/seed/bmw_serie3_2.jpg")), filename: "bmw_serie3_2.jpg")
-        listing.photos.attach(io: File.open(Rails.root.join("app/assets/images/seed/bmw_serie3_3.jpg")), filename: "bmw_serie3_3.jpg")
-      elsif listing_data[:model].include?("R 1250")
-        # Images pour BMW R 1250 GS
-        listing.photos.attach(io: File.open(Rails.root.join("app/assets/images/seed/bmw_r1250_1.jpg")), filename: "bmw_r1250_1.jpg")
-        listing.photos.attach(io: File.open(Rails.root.join("app/assets/images/seed/bmw_r1250_2.jpg")), filename: "bmw_r1250_2.jpg")
-        listing.photos.attach(io: File.open(Rails.root.join("app/assets/images/seed/bmw_r1250_3.jpg")), filename: "bmw_r1250_3.jpg")
-      end
-    when "Renault"
-      # Images pour Renault Clio
-      listing.photos.attach(io: File.open(Rails.root.join("app/assets/images/seed/renault_clio_1.jpg")), filename: "renault_clio_1.jpg")
-      listing.photos.attach(io: File.open(Rails.root.join("app/assets/images/seed/renault_clio_2.jpg")), filename: "renault_clio_2.jpg")
-      listing.photos.attach(io: File.open(Rails.root.join("app/assets/images/seed/renault_clio_3.jpg")), filename: "renault_clio_3.jpg")
-    when "Jeanneau"
-      # Images pour Jeanneau Cap Camarat
-      listing.photos.attach(io: File.open(Rails.root.join("app/assets/images/seed/jeanneau_capcamarat_1.jpg")), filename: "jeanneau_capcamarat_1.jpg")
-      listing.photos.attach(io: File.open(Rails.root.join("app/assets/images/seed/jeanneau_capcamarat_2.jpg")), filename: "jeanneau_capcamarat_2.jpg")
-      listing.photos.attach(io: File.open(Rails.root.join("app/assets/images/seed/jeanneau_capcamarat_3.jpg")), filename: "jeanneau_capcamarat_3.jpg")
-    when "Caterpillar"
-      # Images pour Caterpillar 320D2
-      listing.photos.attach(io: File.open(Rails.root.join("app/assets/images/seed/caterpillar_320d2_1.jpg")), filename: "caterpillar_320d2_1.jpg")
-      listing.photos.attach(io: File.open(Rails.root.join("app/assets/images/seed/caterpillar_320d2_2.jpg")), filename: "caterpillar_320d2_2.jpg")
-      listing.photos.attach(io: File.open(Rails.root.join("app/assets/images/seed/caterpillar_320d2_3.jpg")), filename: "caterpillar_320d2_3.jpg")
-    end
-  end
-end
-
-puts "Seed terminé avec succès !"
+puts "✅ Seed terminé — #{User.count} users, #{Listing.count} annonces, #{Message.count} messages"

@@ -1,19 +1,23 @@
 class MessagesController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_recipient, only: [:show, :create]
   
   def index
-    @conversations = current_user.conversations.includes(:other_user, :messages).order(updated_at: :desc)
+    @conversations = all_conversations
     @current_conversation = @conversations.first
   end
 
   def show
-    @conversations = current_user.conversations.includes(:other_user, :messages).order(updated_at: :desc)
-    @current_conversation = current_user.conversations.find(params[:id])
+    @conversations = all_conversations
+    @current_conversation = all_conversations.find_by(user_id: params[:user_id], other_user_id: current_user.id) ||
+                            all_conversations.find_by(user_id: current_user.id, other_user_id: params[:user_id])
+
+    return head :not_found unless @current_conversation
+
+    @recipient = @current_conversation.user_id == current_user.id ? @current_conversation.other_user : @current_conversation.user
     @messages = Message.between(current_user.id, @recipient.id)
     @message = Message.new
     @current_user_id = current_user.id
-    
+
     respond_to do |format|
       format.html
       format.turbo_stream
@@ -21,15 +25,15 @@ class MessagesController < ApplicationController
   end
 
   def create
-    @conversation = current_user.conversations.find_or_create_by(other_user_id: params[:user_id])
-    redirect_to conversation_path(@conversation)
+    @conversation = Conversation.find_or_create_by!(user_id: current_user.id, other_user_id: params[:user_id])
+    redirect_to conversation_path(@conversation.other_user_id)
   end
-  
+
   private
-  
-  def set_recipient
-    user_id = params[:user_id] || params[:message]&.[](:user_id)
-    @recipient = User.find(user_id) if user_id.present?
+
+  def all_conversations
+    Conversation.where(user_id: current_user.id).or(Conversation.where(other_user_id: current_user.id))
+                .includes(:user, :other_user).order(updated_at: :desc)
   end
   
   def message_params
