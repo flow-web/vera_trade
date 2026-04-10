@@ -1,7 +1,15 @@
 class PagesController < ApplicationController
   skip_before_action :authenticate_user!
 
-  def home; end
+  def home
+    active = Listing.where(status: "active").includes(:vehicle, :user)
+
+    @featured_listing = active.order(created_at: :desc).first
+    @curated_listings = active.where.not(id: @featured_listing&.id)
+                              .order(created_at: :desc)
+                              .limit(4)
+    @listings_count   = active.count
+  end
 
   def sitemap
     @listings = Listing.where(status: "active").includes(:vehicle).order(updated_at: :desc)

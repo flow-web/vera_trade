@@ -1,144 +1,266 @@
-<!-- Hero -->
-<section class="hero min-h-[75vh]" style="background-image: url(https://images.unsplash.com/photo-1583121274602-3e2820c69888?q=80&w=2070);">
-  <div class="hero-overlay bg-opacity-80"></div>
-  <div class="hero-content text-center">
-    <div class="max-w-2xl">
-      <h1 class="text-5xl md:text-6xl font-bold mb-6">
-        <span class="text-gold">Vera</span>Trade
-      </h1>
-      <p class="text-lg md:text-xl opacity-80 mb-10">
-        La marketplace auto qui fait les choses autrement.<br>
-        Messagerie directe. Dossier complet. Zéro friction.
-      </p>
-      <%= form_with url: listings_path, method: :get, class: "max-w-lg mx-auto" do |f| %>
-        <div class="join w-full shadow-2xl">
-          <%= f.text_field :query, class: "input input-lg join-item flex-1 bg-base-100/90 border-0", placeholder: "Marque, modèle, budget..." %>
-          <button type="submit" class="btn btn-primary btn-lg join-item">Rechercher</button>
-        </div>
+<% content_for(:title) { "Vera Trade — Le magazine des voitures qui ont une âme" } %>
+<% content_for(:description) { "Youngtimers, voitures de collection et préparations. Marketplace éditoriale française. Chaque annonce, une histoire. Chaque châssis, un Rust Map." } %>
+
+<%# ========================================================================
+    HERO — featured listing ou état vide éditorial
+    ======================================================================== %>
+<section class="relative">
+  <% if @featured_listing %>
+    <% fv = @featured_listing.vehicle %>
+    <div class="relative w-full aspect-[21/9] min-h-[520px] overflow-hidden bg-bg-secondary">
+      <% if @featured_listing.photos.attached? %>
+        <%= image_tag @featured_listing.photos.first,
+              class: "absolute inset-0 w-full h-full object-cover grayscale-[10%]",
+              alt: @featured_listing.title, loading: "eager", fetchpriority: "high" %>
       <% end %>
-      <div class="flex flex-wrap justify-center gap-2 mt-6">
-        <% %w[Porsche BMW\ M Mercedes\ AMG Alpine Tesla Ducati].each do |q| %>
-          <%= link_to q, listings_path(query: q), class: "badge badge-outline badge-lg border-white/30 hover:badge-primary cursor-pointer transition-all" %>
-        <% end %>
-      </div>
-    </div>
-  </div>
-</section>
+      <!-- Gradient bas pour lisibilité -->
+      <div class="absolute inset-0 bg-gradient-to-t from-bg-primary via-bg-primary/30 to-transparent"></div>
+      <!-- Gradient gauche subtil -->
+      <div class="absolute inset-0 bg-gradient-to-r from-bg-primary/50 via-transparent to-transparent"></div>
 
-<!-- Stats -->
-<div class="bg-base-100 border-y border-base-300">
-  <div class="container mx-auto px-4 py-8">
-    <div class="stats stats-vertical md:stats-horizontal shadow w-full">
-      <div class="stat">
-        <div class="stat-title">Annonces</div>
-        <div class="stat-value text-primary"><%= Listing.where(status: 'active').count %></div>
-        <div class="stat-desc">en ligne</div>
-      </div>
-      <div class="stat">
-        <div class="stat-title">Membres</div>
-        <div class="stat-value"><%= User.count %></div>
-        <div class="stat-desc">inscrits</div>
-      </div>
-      <div class="stat">
-        <div class="stat-title">Marques</div>
-        <div class="stat-value"><%= Vehicle.distinct.pluck(:make).compact.size %></div>
-        <div class="stat-desc">représentées</div>
-      </div>
-      <div class="stat">
-        <div class="stat-title">Vérification</div>
-        <div class="stat-value text-success">100%</div>
-        <div class="stat-desc">des annonces</div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Annonces récentes -->
-<section class="py-16 px-4">
-  <div class="container mx-auto">
-    <div class="flex items-center justify-between mb-8">
-      <h2 class="text-3xl font-bold">Dernières annonces</h2>
-      <%= link_to "Tout voir →", listings_path, class: "link link-primary" %>
-    </div>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <% Listing.where(status: 'active').includes(:vehicle).order(created_at: :desc).limit(6).each do |listing| %>
-        <% v = listing.vehicle %>
-        <%= link_to listing, class: "card bg-base-100 shadow-xl card-lift cursor-pointer group overflow-hidden" do %>
-          <figure class="h-48 overflow-hidden">
-            <% if listing.photos.attached? %>
-              <%= image_tag listing.photos.first, class: "w-full h-full object-cover group-hover:scale-105 transition-transform duration-300", alt: listing.title %>
-            <% else %>
-              <div class="w-full h-full bg-base-300 flex items-center justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 opacity-20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+      <!-- Bloc titre hero -->
+      <div class="absolute inset-x-0 bottom-0">
+        <div class="max-w-[1600px] mx-auto px-5 lg:px-10 pb-12 lg:pb-20">
+          <div class="eyebrow text-accent-red mb-4">
+            Annonce en vedette · <%= listing_reference(@featured_listing) %>
+          </div>
+          <h1 class="playfair-italic text-5xl sm:text-6xl md:text-7xl lg:text-[96px] text-text-primary leading-[0.95] tracking-[-0.02em] max-w-5xl mb-6 lg:mb-8">
+            <%= @featured_listing.title %>
+          </h1>
+          <% if @featured_listing.description.present? %>
+            <p class="font-body italic text-lg md:text-xl text-text-secondary leading-relaxed max-w-2xl mb-8">
+              <%= @featured_listing.description.to_s.truncate(180) %>
+            </p>
+          <% end %>
+          <div class="flex flex-wrap items-end gap-x-8 gap-y-4">
+            <div class="font-mono text-3xl md:text-4xl lg:text-[42px] text-accent-red font-medium">
+              <%= listing_price_fr(fv) %>
+            </div>
+            <% if listing_location_tag(@featured_listing) %>
+              <div class="font-ui text-[10px] uppercase tracking-[0.2em] text-text-muted pb-2">
+                <%= listing_location_tag(@featured_listing) %>
               </div>
             <% end %>
-          </figure>
-          <div class="card-body p-5">
-            <h3 class="card-title text-sm"><%= listing.title %></h3>
-            <div class="flex flex-wrap gap-1.5 my-1">
-              <% if v&.year %><span class="badge badge-sm"><%= v.year %></span><% end %>
-              <% if v&.kilometers %><span class="badge badge-sm"><%= number_with_delimiter(v.kilometers) %> km</span><% end %>
-              <% if v&.fuel_type.present? %><span class="badge badge-sm"><%= v.fuel_type %></span><% end %>
-            </div>
-            <div class="flex items-center justify-between mt-2">
-              <span class="text-lg font-bold text-primary"><%= number_to_currency(v&.price, unit: "€", format: "%n %u", delimiter: " ", precision: 0) %></span>
-              <span class="text-xs opacity-40"><%= v&.location %></span>
-            </div>
+          </div>
+          <div class="mt-10 flex flex-wrap items-center gap-4">
+            <%= link_to "Voir l'annonce", @featured_listing, class: "btn-vera-primary" %>
+            <%= link_to "Tout le catalogue", listings_path, class: "btn-vera-secondary" %>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% else %>
+    <!-- État vide éditorial — catalogue vide -->
+    <div class="relative w-full min-h-[60vh] flex items-center justify-center border-b border-line">
+      <div class="max-w-3xl mx-auto text-center px-5 py-20">
+        <div class="eyebrow mb-6">Bientôt en ligne</div>
+        <h1 class="playfair-italic text-5xl md:text-7xl text-text-primary leading-[0.95] tracking-[-0.02em] mb-8">
+          Le catalogue est en cours d'assemblage.
+        </h1>
+        <p class="font-body italic text-lg text-text-secondary leading-relaxed mb-10 max-w-xl mx-auto">
+          Nos archivistes réunissent en ce moment la première sélection de youngtimers et véhicules de collection. Revenez dans quelques jours, ou publiez vous-même la première annonce.
+        </p>
+        <% if user_signed_in? %>
+          <%= link_to "Publier une annonce", new_listing_path, class: "btn-vera-primary" %>
+        <% else %>
+          <%= link_to "Créer un compte vendeur", new_user_registration_path, class: "btn-vera-primary" %>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</section>
+
+<%# ========================================================================
+    MANIFESTE — pull quote éditorial
+    ======================================================================== %>
+<section class="py-24 lg:py-40 bg-bg-secondary border-y border-line">
+  <div class="max-w-4xl mx-auto px-5 lg:px-10 text-center">
+    <div class="eyebrow mb-8">Manifeste</div>
+    <blockquote class="playfair-italic text-3xl md:text-4xl lg:text-[44px] text-text-primary leading-[1.25] tracking-[-0.01em]">
+      « Vera Trade n'est pas une marketplace. C'est un magazine automobile qui vend des voitures qui ont une âme. »
+    </blockquote>
+    <div class="mt-10 flex items-center justify-center gap-6">
+      <div class="h-px w-12 bg-accent-red"></div>
+      <span class="font-ui text-[10px] uppercase tracking-[0.3em] text-text-muted">L'Équipe Vera</span>
+      <div class="h-px w-12 bg-accent-red"></div>
+    </div>
+  </div>
+</section>
+
+<%# ========================================================================
+    LA SÉLECTION — curated inventory en grid bento asymétrique
+    ======================================================================== %>
+<% if @curated_listings.any? %>
+  <section class="py-24 lg:py-32">
+    <div class="max-w-[1600px] mx-auto px-5 lg:px-10">
+      <%= render "components/section_header",
+            eyebrow: "La Sélection de la rédaction",
+            title: "Le catalogue du moment.",
+            link_to_: listings_path,
+            link_label: "Tout le catalogue (#{@listings_count})" %>
+
+      <div class="grid grid-cols-12 gap-8 lg:gap-12">
+        <% curated = @curated_listings.to_a %>
+
+        <!-- Grand feature : col-span-8 -->
+        <% if curated[0] %>
+          <div class="col-span-12 lg:col-span-8">
+            <%= render "components/listing_card", listing: curated[0], size: :large %>
           </div>
         <% end %>
-      <% end %>
+
+        <!-- Sidebar vertical : col-span-4 -->
+        <% if curated[1] %>
+          <div class="col-span-12 lg:col-span-4">
+            <%= render "components/listing_card", listing: curated[1], size: :medium %>
+          </div>
+        <% end %>
+
+        <!-- Bottom row : 2 cards col-span-6 -->
+        <% if curated[2] %>
+          <div class="col-span-12 md:col-span-6">
+            <%= render "components/listing_card", listing: curated[2], size: :medium %>
+          </div>
+        <% end %>
+        <% if curated[3] %>
+          <div class="col-span-12 md:col-span-6">
+            <%= render "components/listing_card", listing: curated[3], size: :medium %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </section>
+<% end %>
+
+<%# ========================================================================
+    LE JOURNAL — preview éditoriale (placeholder disabled)
+    ======================================================================== %>
+<section class="py-24 lg:py-32 bg-bg-secondary border-y border-line">
+  <div class="max-w-[1600px] mx-auto px-5 lg:px-10">
+    <div class="grid grid-cols-12 gap-8 lg:gap-16 items-center">
+      <div class="col-span-12 lg:col-span-5">
+        <div class="relative aspect-[4/5] bg-bg-tertiary border border-line overflow-hidden">
+          <!-- Placeholder visuel — motif subtil typographique -->
+          <div class="absolute inset-0 flex items-center justify-center">
+            <span class="playfair-italic text-[14rem] lg:text-[18rem] text-text-primary/[0.03] leading-none select-none">Journal</span>
+          </div>
+          <div class="absolute bottom-6 left-6 right-6">
+            <div class="font-mono text-[10px] uppercase tracking-[0.2em] text-text-muted">
+              Premier numéro · Printemps 2026
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-span-12 lg:col-span-7">
+        <%= render "components/editorial_card",
+              eyebrow: "Le Journal",
+              title: "Pourquoi une E30 M3 coûte désormais le prix d'une maison en province.",
+              excerpt: "Trente ans après sa sortie, l'icône de Munich continue d'affoler les compteurs. Notre analyse sur le marché des youngtimers allemands, entre passion sincère et spéculation assumée.",
+              disabled: true %>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- Différenciateurs -->
-<section class="py-16 px-4 bg-base-200">
-  <div class="container mx-auto">
-    <h2 class="text-3xl font-bold text-center mb-4">Pourquoi Vera Trade</h2>
-    <p class="text-center opacity-60 mb-12 max-w-xl mx-auto">Les plateformes auto classiques brident vos échanges. Nous faisons l'inverse.</p>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <div class="card bg-base-100 shadow-lg">
-        <div class="card-body items-center text-center">
-          <div class="text-primary mb-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
-          </div>
-          <h3 class="card-title text-base">Messagerie libre</h3>
-          <p class="text-sm opacity-60">Pas de messages bridés, pas de numéros cachés. Communiquez directement.</p>
-        </div>
-      </div>
-      <div class="card bg-base-100 shadow-lg">
-        <div class="card-body items-center text-center">
-          <div class="text-primary mb-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-          </div>
-          <h3 class="card-title text-base">Dossier complet</h3>
-          <p class="text-sm opacity-60">Photos, vidéos, CT, factures : tout accessible avant de vous déplacer.</p>
-        </div>
-      </div>
-      <div class="card bg-base-100 shadow-lg">
-        <div class="card-body items-center text-center">
-          <div class="text-primary mb-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
-          </div>
-          <h3 class="card-title text-base">Annonces modérées</h3>
-          <p class="text-sm opacity-60">Chaque annonce vérifiée. Pas de doublons, pas d'arnaques.</p>
-        </div>
-      </div>
+<%# ========================================================================
+    CATÉGORIES — 3 tuiles éditoriales
+    ======================================================================== %>
+<section class="py-24 lg:py-32">
+  <div class="max-w-[1600px] mx-auto px-5 lg:px-10">
+    <%= render "components/section_header",
+          eyebrow: "Les Segments",
+          title: "Choisissez votre chapitre." %>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+      <%= render "components/category_tile",
+            subtitle: "JDM · Années 80–90",
+            title: "Youngtimers Japonais",
+            query: "Honda" %>
+
+      <%= render "components/category_tile",
+            subtitle: "Europe · 1975–2000",
+            title: "Icônes Européennes",
+            query: "BMW" %>
+
+      <%= render "components/category_tile",
+            subtitle: "Rallye & Compétition",
+            title: "Préparations Réglées",
+            query: "Lancia" %>
     </div>
   </div>
 </section>
 
-<!-- CTA -->
-<section class="py-16 px-4">
-  <div class="container mx-auto text-center">
-    <h2 class="text-3xl font-bold mb-4">Vendez votre véhicule</h2>
-    <p class="opacity-60 mb-8 max-w-md mx-auto">Annonce gratuite. Photos illimitées. Visibilité maximale.</p>
-    <div class="flex flex-col sm:flex-row gap-4 justify-center">
-      <%= link_to new_listing_path, class: "btn btn-primary btn-lg" do %>
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
-        Déposer une annonce
-      <% end %>
-      <%= link_to "Parcourir", listings_path, class: "btn btn-outline btn-lg" %>
+<%# ========================================================================
+    SIGNATURE VERA — 4 trust indicators
+    ======================================================================== %>
+<section class="py-24 lg:py-32 bg-bg-secondary border-y border-line">
+  <div class="max-w-[1600px] mx-auto px-5 lg:px-10">
+    <div class="max-w-3xl mb-16 lg:mb-20">
+      <div class="eyebrow mb-4">La Signature Vera</div>
+      <h2 class="playfair-italic text-4xl md:text-5xl lg:text-6xl text-text-primary leading-[1.05] tracking-[-0.015em]">
+        Ce que vous ne trouverez nulle part ailleurs.
+      </h2>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-16">
+      <%= render "components/trust_indicator",
+            icon_name: :rust_map,
+            title: "Rust Map",
+            body: "Cartographie interactive de la corrosion, zone par zone. Inspection rigoureuse des soubassements et historique climatique complet du châssis." %>
+
+      <%= render "components/trust_indicator",
+            icon_name: :experts,
+            title: "Archivistes Vera",
+            body: "Chaque annonce relue par nos spécialistes : originalité mécanique, cohérence historique, authenticité des documents." %>
+
+      <%= render "components/trust_indicator",
+            icon_name: :provenance,
+            title: "Provenance Ledger",
+            body: "Une timeline vérifiée des propriétaires successifs, entretiens, restaurations et événements notables. La mémoire du véhicule." %>
+
+      <%= render "components/trust_indicator",
+            icon_name: :escrow,
+            title: "Paiement Séquestré",
+            body: "Transactions via compte séquestre dédié. Les fonds ne quittent pas votre compte tant que le véhicule n'est pas livré." %>
+    </div>
+  </div>
+</section>
+
+<%# ========================================================================
+    CTA FINAL — vendeur
+    ======================================================================== %>
+<section class="py-28 lg:py-40">
+  <div class="max-w-[1600px] mx-auto px-5 lg:px-10">
+    <div class="grid grid-cols-12 gap-8 items-center">
+      <div class="col-span-12 lg:col-span-7">
+        <div class="eyebrow mb-4">Vous vendez</div>
+        <h2 class="playfair-italic text-4xl md:text-5xl lg:text-[64px] text-text-primary leading-[1.05] tracking-[-0.015em] mb-8">
+          Votre voiture mérite un récit, pas une fiche produit.
+        </h2>
+        <p class="font-body text-base lg:text-lg text-text-secondary leading-relaxed max-w-2xl mb-10">
+          Publiez votre youngtimer, votre collection ou votre préparation sur Vera Trade. Nous fournissons le Rust Map, le Provenance Ledger et l'accompagnement éditorial. Vous gardez la main sur votre prix et vos échanges.
+        </p>
+        <div class="flex flex-wrap items-center gap-4">
+          <%= link_to (user_signed_in? ? "Publier une annonce" : "Créer un compte vendeur"),
+                (user_signed_in? ? new_listing_path : new_user_registration_path),
+                class: "btn-vera-primary" %>
+          <%= link_to "Parcourir le catalogue", listings_path, class: "btn-vera-secondary" %>
+        </div>
+      </div>
+
+      <div class="hidden lg:block col-span-5">
+        <!-- Bloc décoratif typographique -->
+        <div class="relative aspect-square border border-line bg-bg-secondary flex flex-col items-center justify-center">
+          <span class="playfair-italic text-[8rem] text-accent-red leading-none">V</span>
+          <span class="font-ui text-[10px] uppercase tracking-[0.4em] text-text-muted mt-6">
+            Vera Trade
+          </span>
+          <span class="font-mono text-[10px] uppercase tracking-[0.15em] text-text-muted mt-2">
+            Est. 2026
+          </span>
+        </div>
+      </div>
     </div>
   </div>
 </section>
