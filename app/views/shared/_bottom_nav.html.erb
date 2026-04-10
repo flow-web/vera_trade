@@ -1,0 +1,41 @@
+<%# Mobile bottom navigation — visible on small screens only, supports safe-area for notched phones %>
+<nav class="btm-nav btm-nav-sm lg:hidden bg-base-100 border-t border-base-300 z-50"
+     style="padding-bottom: env(safe-area-inset-bottom, 0px);">
+
+  <%= link_to listings_path, class: "#{request.path.start_with?('/listings') && request.path == '/listings' ? 'active text-primary' : 'text-base-content/60'}" do %>
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+    </svg>
+    <span class="btm-nav-label text-xs">Annonces</span>
+  <% end %>
+
+  <%= link_to favorites_path, class: "#{request.path == '/favorites' ? 'active text-primary' : 'text-base-content/60'}" do %>
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+    </svg>
+    <span class="btm-nav-label text-xs">Favoris</span>
+  <% end %>
+
+  <%= link_to new_listing_path, class: "text-primary" do %>
+    <div class="bg-primary text-primary-content rounded-full p-2 -mt-4 shadow-lg">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+      </svg>
+    </div>
+    <span class="btm-nav-label text-xs">Vendre</span>
+  <% end %>
+
+  <%= link_to messages_path, class: "#{request.path.start_with?('/messages') || request.path.start_with?('/conversations') ? 'active text-primary' : 'text-base-content/60'}" do %>
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+    </svg>
+    <span class="btm-nav-label text-xs">Messages</span>
+  <% end %>
+
+  <%= link_to dashboard_path, class: "#{request.path == '/dashboard' ? 'active text-primary' : 'text-base-content/60'}" do %>
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+    </svg>
+    <span class="btm-nav-label text-xs">Profil</span>
+  <% end %>
+</nav>

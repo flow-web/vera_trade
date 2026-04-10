@@ -29,4 +29,9 @@ Rails.application.routes.draw do
 
   # SEO sitemap
   get "sitemap.xml", to: "pages#sitemap", defaults: { format: :xml }
+
+  # PWA
+  get "manifest.webmanifest", to: "pwa#manifest"
+  get "service-worker.js", to: "pwa#service_worker"
+  get "offline", to: "pwa#offline"
 end

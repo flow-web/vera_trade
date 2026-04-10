@@ -2,23 +2,32 @@
 <html data-theme="luxury">
   <head>
     <title><%= content_for(:title) || "Vera Trade" %></title>
-    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
     <meta name="description" content="<%= content_for(:description) || "Vera Trade — La marketplace automobile premium. Messagerie directe, dossier véhicule complet, annonces vérifiées." %>">
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="VeraTrade">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#0F172A">
+    <meta name="application-name" content="Vera Trade">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
     <%= yield :head %>
 
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.webmanifest">
+
     <!-- Fonts: Space Grotesk (headings) + DM Sans (body) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
+    <!-- Icons -->
     <link rel="icon" href="/icon.png" type="image/png">
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="/icon.png">
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/icons/icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-180x180.png">
 
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
@@ -47,8 +56,19 @@
     </main>
 
     <!-- Footer -->
-    <footer class="footer footer-center p-6 bg-base-300 text-base-content/60 text-sm mt-16">
+    <footer class="footer footer-center p-6 bg-base-300 text-base-content/60 text-sm mt-16 pb-24 lg:pb-6">
       <p>Vera Trade &copy; <%= Date.current.year %> &mdash; Marketplace automobile premium</p>
     </footer>
+
+    <%= render "shared/bottom_nav" if user_signed_in? %>
+
+    <!-- Service Worker Registration -->
+    <script>
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("/service-worker.js", { scope: "/" })
+          .then((reg) => console.log("SW registered:", reg.scope))
+          .catch((err) => console.error("SW registration failed:", err));
+      }
+    </script>
   </body>
 </html>
