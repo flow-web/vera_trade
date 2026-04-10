@@ -1,120 +1,200 @@
-<!-- Header -->
-<div class="bg-base-200 py-10 border-b border-base-300">
-  <div class="container mx-auto px-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-    <div>
-      <h1 class="text-3xl font-bold">Annonces</h1>
-      <p class="opacity-60 mt-1"><%= pluralize(@listings.count, "véhicule") %> disponible<%= @listings.count > 1 ? "s" : "" %></p>
+<% content_for(:title) { "Catalogue — Vera Trade" } %>
+<% content_for(:description) { "Le catalogue Vera Trade : #{@total_count} youngtimers, voitures de collection et préparations, vérifiés et documentés." } %>
+
+<%# ========================================================================
+    HEADER CATALOGUE
+    ======================================================================== %>
+<header class="relative border-b border-line">
+  <div class="max-w-[1600px] mx-auto px-5 lg:px-10 pt-16 lg:pt-24 pb-10 lg:pb-16">
+    <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-10">
+
+      <div class="flex-1 max-w-3xl">
+        <div class="eyebrow mb-4">Le Catalogue · Mis à jour en continu</div>
+        <h1 class="playfair-italic text-6xl md:text-7xl lg:text-[112px] text-text-primary leading-[0.9] tracking-[-0.02em]">
+          Le catalogue.
+        </h1>
+        <p class="font-body italic text-lg md:text-xl text-text-secondary leading-relaxed mt-8 max-w-2xl">
+          La sélection des archivistes Vera Trade. Chaque voiture est publiée par son propriétaire, vérifiée par nos spécialistes et accompagnée d'un dossier documenté.
+        </p>
+      </div>
+
+      <!-- Compteur éditorial -->
+      <div class="flex flex-col items-start lg:items-end gap-2 pb-4">
+        <span class="font-mono text-5xl md:text-6xl text-text-primary leading-none">
+          <%= @total_count.to_s.rjust(3, "0") %>
+        </span>
+        <span class="font-ui text-[10px] uppercase tracking-[0.3em] text-text-muted">
+          Véhicules répertoriés
+        </span>
+      </div>
     </div>
-    <% if user_signed_in? %>
-      <%= link_to new_listing_path, class: "btn btn-primary" do %>
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
-        Publier
-      <% end %>
+  </div>
+</header>
+
+<%# ========================================================================
+    FILTRES — form GET sticky sous le header
+    ======================================================================== %>
+<%= form_with url: listings_path, method: :get, local: true, class: "sticky top-[64px] lg:top-[80px] z-40 bg-bg-primary border-b border-line" do |f| %>
+  <div class="max-w-[1600px] mx-auto px-5 lg:px-10 py-5 flex flex-wrap items-center gap-x-10 gap-y-4">
+
+    <div class="flex items-center gap-3">
+      <%= f.text_field :query,
+            value: params[:query],
+            placeholder: "Recherche (marque, modèle, ville…)",
+            class: "bg-transparent border-0 border-b border-line focus:border-accent-red focus:outline-none font-body text-sm text-text-primary placeholder:text-text-muted placeholder:italic px-1 py-2 w-64" %>
+    </div>
+
+    <% makes = Vehicle.distinct.pluck(:make).compact.sort %>
+    <% if makes.any? %>
+      <label class="flex items-center gap-2 cursor-pointer">
+        <span class="font-ui text-[10px] uppercase tracking-[0.2em] text-text-muted">Marque</span>
+        <%= f.select :make,
+              options_for_select([["Toutes", ""]] + makes.map { |m| [m, m] }, params[:make]),
+              {},
+              class: "bg-transparent border-0 font-ui text-[11px] uppercase tracking-[0.15em] text-text-primary focus:outline-none appearance-none pr-6 cursor-pointer",
+              style: "background-image: url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238A857A' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E\"); background-repeat: no-repeat; background-position: right center;" %>
+      </label>
+    <% end %>
+
+    <% fuels = Vehicle.distinct.pluck(:fuel_type).compact.sort %>
+    <% if fuels.any? %>
+      <label class="flex items-center gap-2 cursor-pointer">
+        <span class="font-ui text-[10px] uppercase tracking-[0.2em] text-text-muted">Carburant</span>
+        <%= f.select :fuel_type,
+              options_for_select([["Tous", ""]] + fuels.map { |x| [x, x] }, params[:fuel_type]),
+              {},
+              class: "bg-transparent border-0 font-ui text-[11px] uppercase tracking-[0.15em] text-text-primary focus:outline-none appearance-none pr-6 cursor-pointer",
+              style: "background-image: url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238A857A' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E\"); background-repeat: no-repeat; background-position: right center;" %>
+      </label>
+    <% end %>
+
+    <% transmissions = Vehicle.distinct.pluck(:transmission).compact.sort %>
+    <% if transmissions.any? %>
+      <label class="flex items-center gap-2 cursor-pointer">
+        <span class="font-ui text-[10px] uppercase tracking-[0.2em] text-text-muted">Transmission</span>
+        <%= f.select :transmission,
+              options_for_select([["Toutes", ""]] + transmissions.map { |x| [x, x] }, params[:transmission]),
+              {},
+              class: "bg-transparent border-0 font-ui text-[11px] uppercase tracking-[0.15em] text-text-primary focus:outline-none appearance-none pr-6 cursor-pointer",
+              style: "background-image: url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238A857A' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E\"); background-repeat: no-repeat; background-position: right center;" %>
+      </label>
+    <% end %>
+
+    <!-- Tri — aligné à droite -->
+    <label class="flex items-center gap-3 ml-auto cursor-pointer">
+      <span class="font-ui text-[10px] uppercase tracking-[0.2em] text-text-muted">Trier par</span>
+      <%= f.select :sort,
+            options_for_select([
+              ["Plus récent",  "created_at_desc"],
+              ["Prix ↑",       "price_asc"],
+              ["Prix ↓",       "price_desc"],
+              ["Année ↑",      "year_asc"],
+              ["Année ↓",      "year_desc"],
+              ["Kilométrage ↑", "km_asc"]
+            ], params[:sort]),
+            {},
+            class: "bg-transparent border-0 font-ui text-[11px] uppercase tracking-[0.15em] text-text-primary focus:outline-none appearance-none pr-6 cursor-pointer",
+            style: "background-image: url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238A857A' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E\"); background-repeat: no-repeat; background-position: right center;",
+            onchange: "this.form.submit()" %>
+    </label>
+
+    <%= f.submit "Filtrer", class: "btn-vera-primary text-[10px] px-6 py-2.5 ml-2" %>
+
+    <% if params.values_at(:query, :make, :fuel_type, :transmission, :sort, :price_min, :price_max, :year_min, :year_max, :km_max).any?(&:present?) %>
+      <%= link_to "Réinitialiser", listings_path, class: "font-ui text-[10px] uppercase tracking-[0.2em] text-text-muted hover:text-accent-red transition-colors" %>
     <% end %>
   </div>
-</div>
+<% end %>
 
-<!-- Filters -->
-<div class="bg-base-100 border-b border-base-300 py-4">
-  <div class="container mx-auto px-4 flex flex-wrap gap-3">
-    <select class="select select-sm select-bordered">
-      <option value="">Toutes marques</option>
-      <% Vehicle.distinct.pluck(:make).compact.sort.each do |m| %>
-        <option><%= m %></option>
-      <% end %>
-    </select>
-    <select class="select select-sm select-bordered">
-      <option value="">Carburant</option>
-      <% Vehicle.distinct.pluck(:fuel_type).compact.sort.each do |f| %>
-        <option><%= f %></option>
-      <% end %>
-    </select>
-    <select class="select select-sm select-bordered">
-      <option value="">Transmission</option>
-      <% Vehicle.distinct.pluck(:transmission).compact.sort.each do |t| %>
-        <option><%= t %></option>
-      <% end %>
-    </select>
-    <select class="select select-sm select-bordered">
-      <option value="created_at_desc">Plus récent</option>
-      <option value="price_asc">Prix ↑</option>
-      <option value="price_desc">Prix ↓</option>
-    </select>
-  </div>
-</div>
-
-<!-- Grid -->
-<div class="container mx-auto px-4 py-10">
+<%# ========================================================================
+    GRID — bento asymétrique éditorial
+    ======================================================================== %>
+<section class="max-w-[1600px] mx-auto px-5 lg:px-10 py-16 lg:py-24">
   <% if @listings.any? %>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <% @listings.each do |listing| %>
-        <% v = listing.vehicle %>
-        <%= link_to listing, class: "card bg-base-100 shadow-xl card-lift cursor-pointer group overflow-hidden" do %>
-          <figure class="relative h-52 overflow-hidden">
-            <% if listing.photos.attached? %>
-              <%= image_tag listing.photos.first, class: "w-full h-full object-cover group-hover:scale-105 transition-transform duration-300", alt: listing.title %>
-            <% else %>
-              <div class="w-full h-full bg-base-300 flex items-center justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 opacity-20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-              </div>
-            <% end %>
-            <div class="absolute top-3 right-3 badge badge-primary font-bold"><%= number_to_currency(v&.price, unit: "€", format: "%n%u", delimiter: " ", precision: 0) %></div>
-            <% if listing.status == 'sold' %>
-              <div class="absolute inset-0 bg-black/60 flex items-center justify-center">
-                <span class="badge badge-lg badge-error font-bold">VENDU</span>
-              </div>
-            <% end %>
-          </figure>
-          <div class="card-body p-5">
-            <h3 class="card-title text-sm line-clamp-1"><%= listing.title %></h3>
-            <div class="flex flex-wrap gap-1.5 my-1">
-              <% if v&.year %><span class="badge badge-sm badge-ghost"><%= v.year %></span><% end %>
-              <% if v&.kilometers %><span class="badge badge-sm badge-ghost"><%= number_with_delimiter(v.kilometers) %> km</span><% end %>
-              <% if v&.fuel_type.present? %><span class="badge badge-sm badge-ghost"><%= v.fuel_type %></span><% end %>
-              <% if v&.transmission.present? %><span class="badge badge-sm badge-ghost"><%= v.transmission %></span><% end %>
-            </div>
-            <% if v&.location.present? %>
-              <p class="text-xs opacity-40 mt-1">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 inline" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-                <%= v.location %>
-              </p>
-            <% end %>
-          </div>
-        <% end %>
+    <% listings_arr = @listings.to_a %>
+    <div class="grid grid-cols-12 gap-8 lg:gap-12">
+      <% listings_arr.each_with_index do |listing, idx| %>
+        <%
+          # Pattern bento répétitif : 8/4, 6/6, 4/4/4, puis restart
+          # Index 0 = col-span-8, 1 = col-span-4, 2 = 6, 3 = 6, 4/5/6 = 4 each
+          cycle_idx = idx % 7
+          span = case cycle_idx
+                 when 0 then "lg:col-span-8"
+                 when 1 then "lg:col-span-4"
+                 when 2, 3 then "lg:col-span-6"
+                 else "lg:col-span-4"
+                 end
+          size = case cycle_idx
+                 when 0 then :large
+                 when 1 then :medium
+                 when 2, 3 then :medium
+                 else :small
+                 end
+        %>
+        <div class="col-span-12 md:col-span-6 <%= span %>">
+          <%= render "components/listing_card", listing: listing, size: size %>
+        </div>
       <% end %>
     </div>
   <% else %>
-    <div class="text-center py-20">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto opacity-20 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-      <h3 class="text-xl font-bold mb-2">Aucune annonce</h3>
-      <p class="opacity-50 mb-6">Revenez bientôt ou déposez la première annonce.</p>
-      <% if user_signed_in? %>
-        <%= link_to "Publier une annonce", new_listing_path, class: "btn btn-primary" %>
-      <% end %>
+    <div class="py-32 text-center max-w-2xl mx-auto">
+      <div class="eyebrow mb-6">Résultats</div>
+      <h3 class="playfair-italic text-4xl md:text-5xl text-text-primary leading-tight mb-6">
+        Aucune voiture ne correspond à votre recherche.
+      </h3>
+      <p class="font-body italic text-base text-text-secondary mb-10">
+        Ajustez vos filtres, élargissez votre période, ou revenez bientôt — de nouvelles annonces arrivent chaque semaine.
+      </p>
+      <%= link_to "Voir tout le catalogue", listings_path, class: "btn-vera-secondary" %>
     </div>
   <% end %>
 
-  <!-- Pagination -->
+  <%# -------------------- PAGINATION -------------------- %>
   <% if @total_pages && @total_pages > 1 %>
-    <div class="flex justify-center mt-10">
-      <div class="join">
+    <nav class="mt-24 lg:mt-32 border-t border-line pt-12 flex flex-col md:flex-row items-center justify-between gap-6" aria-label="Pagination">
+      <% base_params = request.params.except("page") %>
+
+      <div class="flex items-center gap-4">
         <% if @page > 1 %>
-          <%= link_to "«", request.params.merge(page: @page - 1), class: "join-item btn btn-sm" %>
-        <% end %>
-        <% (1..@total_pages).each do |p| %>
-          <% if p == @page %>
-            <span class="join-item btn btn-sm btn-primary"><%= p %></span>
-          <% elsif (p - @page).abs <= 2 || p == 1 || p == @total_pages %>
-            <%= link_to p, request.params.merge(page: p), class: "join-item btn btn-sm" %>
-          <% elsif (p - @page).abs == 3 %>
-            <span class="join-item btn btn-sm btn-disabled">…</span>
+          <%= link_to base_params.merge(page: @page - 1), class: "inline-flex items-center gap-2 font-ui text-[10px] uppercase tracking-[0.2em] text-text-secondary hover:text-accent-red transition-colors" do %>
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+            Précédent
           <% end %>
-        <% end %>
-        <% if @page < @total_pages %>
-          <%= link_to "»", request.params.merge(page: @page + 1), class: "join-item btn btn-sm" %>
+        <% else %>
+          <span class="inline-flex items-center gap-2 font-ui text-[10px] uppercase tracking-[0.2em] text-text-muted/50">
+            Précédent
+          </span>
         <% end %>
       </div>
-    </div>
-    <p class="text-center text-xs opacity-40 mt-3"><%= @total_count %> résultats — page <%= @page %>/<%= @total_pages %></p>
+
+      <div class="flex items-center gap-8">
+        <% (1..@total_pages).each do |p| %>
+          <% if p == @page %>
+            <span class="font-mono text-base text-accent-red border-b border-accent-red pb-1"><%= p.to_s.rjust(2, "0") %></span>
+          <% elsif (p - @page).abs <= 2 || p == 1 || p == @total_pages %>
+            <%= link_to p.to_s.rjust(2, "0"), base_params.merge(page: p), class: "font-mono text-base text-text-muted hover:text-text-primary transition-colors" %>
+          <% elsif (p - @page).abs == 3 %>
+            <span class="font-mono text-base text-text-muted/40">···</span>
+          <% end %>
+        <% end %>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <% if @page < @total_pages %>
+          <%= link_to base_params.merge(page: @page + 1), class: "inline-flex items-center gap-2 font-ui text-[10px] uppercase tracking-[0.2em] text-text-primary hover:text-accent-red transition-colors" do %>
+            Suivant
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          <% end %>
+        <% else %>
+          <span class="inline-flex items-center gap-2 font-ui text-[10px] uppercase tracking-[0.2em] text-text-muted/50">
+            Suivant
+          </span>
+        <% end %>
+      </div>
+    </nav>
+
+    <p class="text-center font-mono text-[10px] uppercase tracking-[0.2em] text-text-muted mt-6">
+      <%= @total_count %> résultats · page <%= @page %> / <%= @total_pages %>
+    </p>
   <% end %>
-</div>
+</section>
