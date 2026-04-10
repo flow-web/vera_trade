@@ -1,255 +1,537 @@
-<% content_for(:title) { "#{@listing.title} — Vera Trade" } %>
-<% content_for(:description) { "#{@vehicle&.make} #{@vehicle&.model} #{@vehicle&.year} — #{number_to_currency(@vehicle&.price, unit: '€', format: '%n %u', delimiter: ' ', precision: 0)} — #{@vehicle&.location}" } %>
+<% content_for(:title) { "#{@listing.title} — Annonce #{listing_reference(@listing)} — Vera Trade" } %>
+<% content_for(:description) { "#{@vehicle&.make} #{@vehicle&.model} #{@vehicle&.year} — #{listing_price_fr(@vehicle)} — #{@vehicle&.location}" } %>
 
-<div class="container mx-auto px-4 py-8 max-w-6xl">
-  <!-- Breadcrumb -->
-  <div class="text-sm breadcrumbs mb-6">
-    <ul>
-      <li><%= link_to "Annonces", listings_path %></li>
-      <li><%= @vehicle&.make %></li>
-      <li class="opacity-60"><%= @listing.title.truncate(40) %></li>
-    </ul>
+<% photos = @listing.photos.attached? ? @listing.photos.to_a : [] %>
+<% hero_photo = photos.first %>
+
+<%# ========================================================================
+    HERO — image 21:9 pleine largeur + titre superposé en Playfair
+    ======================================================================== %>
+<section class="relative">
+  <div class="relative w-full aspect-[21/9] min-h-[420px] lg:min-h-[560px] overflow-hidden bg-bg-secondary">
+    <% if hero_photo %>
+      <%= image_tag hero_photo,
+            class: "absolute inset-0 w-full h-full object-cover grayscale-[5%]",
+            alt: @listing.title, loading: "eager", fetchpriority: "high" %>
+    <% end %>
+    <div class="absolute inset-0 bg-gradient-to-t from-bg-primary via-bg-primary/20 to-transparent"></div>
+
+    <!-- Status VENDU overlay -->
+    <% if @listing.status == "sold" %>
+      <div class="absolute top-8 right-8">
+        <span class="font-ui text-xs font-bold uppercase tracking-[0.3em] text-accent-red border-2 border-accent-red px-5 py-3 bg-bg-primary/70">
+          Vendu
+        </span>
+      </div>
+    <% end %>
   </div>
 
-  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-    <!-- Colonne principale -->
-    <div class="lg:col-span-2 space-y-6">
-      <!-- Photos -->
-      <div class="rounded-xl overflow-hidden bg-base-300">
-        <% if @listing.photos.attached? %>
-          <div class="aspect-video">
-            <%= image_tag @listing.photos.first, class: "w-full h-full object-cover", alt: @listing.title, id: "main-photo" %>
-          </div>
-          <% if @listing.photos.count > 1 %>
-            <div class="flex gap-2 p-3 overflow-x-auto">
-              <% @listing.photos.each_with_index do |photo, i| %>
-                <%= image_tag photo, class: "w-20 h-14 object-cover rounded cursor-pointer hover:opacity-80 transition-opacity #{'ring-2 ring-primary' if i == 0}", alt: "Photo #{i + 1}" %>
-              <% end %>
-            </div>
-          <% end %>
-        <% else %>
-          <div class="aspect-video flex items-center justify-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-20 w-20 opacity-20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-          </div>
-        <% end %>
-      </div>
+  <!-- Titre + metadata sous image -->
+  <div class="max-w-[1600px] mx-auto px-5 lg:px-10 -mt-24 lg:-mt-32 relative z-10">
+    <div class="eyebrow mb-4 text-accent-red">
+      Annonce <%= listing_reference(@listing) %>
+      <% if listing_segment(@vehicle) %>
+        <span class="text-text-muted"> · <%= listing_segment(@vehicle) %></span>
+      <% end %>
+    </div>
 
-      <!-- Titre + prix mobile -->
-      <div class="lg:hidden">
-        <h1 class="text-2xl font-bold mb-2"><%= @listing.title %></h1>
-        <p class="text-3xl font-bold text-primary"><%= number_to_currency(@vehicle&.price, unit: "€", format: "%n %u", delimiter: " ", precision: 0) %></p>
-      </div>
+    <h1 class="playfair-italic text-5xl md:text-6xl lg:text-[88px] text-text-primary leading-[0.95] tracking-[-0.02em] max-w-5xl mb-8 lg:mb-10">
+      <%= @listing.title %>
+    </h1>
 
-      <!-- Specs principales -->
-      <div class="card bg-base-100 shadow">
-        <div class="card-body p-5">
-          <h2 class="card-title text-base mb-4">Caractéristiques</h2>
-          <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-            <% specs = [
-              ["Marque", @vehicle&.make],
-              ["Modèle", @vehicle&.model],
-              ["Année", @vehicle&.year],
-              ["Kilométrage", @vehicle&.kilometers ? "#{number_with_delimiter(@vehicle.kilometers)} km" : nil],
-              ["Carburant", @vehicle&.fuel_type],
-              ["Transmission", @vehicle&.transmission],
-              ["Finition", @vehicle&.finition],
-              ["Portes", @vehicle&.doors],
-              ["Couleur ext.", @vehicle&.exterior_color],
-              ["Intérieur", @vehicle&.interior_material],
-              ["Couleur int.", @vehicle&.interior_color],
-              ["Propriétaires", @vehicle&.previous_owners],
-              ["Puissance fiscale", @vehicle&.fiscal_power ? "#{@vehicle.fiscal_power} CV" : nil],
-              ["CO2", @vehicle&.co2_emissions ? "#{@vehicle.co2_emissions} g/km" : nil],
-              ["Consommation", @vehicle&.average_consumption ? "#{@vehicle.average_consumption} L/100km" : nil],
-              ["Localisation", @vehicle&.location],
-            ] %>
-            <% specs.each do |label, value| %>
-              <% next unless value.present? %>
-              <div>
-                <p class="text-xs opacity-50 uppercase tracking-wide"><%= label %></p>
-                <p class="font-medium text-sm"><%= value %></p>
-              </div>
-            <% end %>
-          </div>
-        </div>
+    <% if listing_location_tag(@listing) %>
+      <div class="font-ui text-[11px] uppercase tracking-[0.2em] text-text-muted mb-10">
+        <%= listing_location_tag(@listing) %>
       </div>
+    <% end %>
 
-      <!-- État du véhicule -->
-      <% conditions = [
-        ["Carrosserie", @vehicle&.body_condition],
-        ["Intérieur", @vehicle&.interior_condition],
-        ["Pneus", @vehicle&.tire_condition],
-        ["Travaux récents", @vehicle&.recent_works],
-        ["Points à prévoir", @vehicle&.issues],
-        ["Coûts estimés", @vehicle&.expected_costs],
-      ].select { |_, v| v.present? } %>
-      <% if conditions.any? %>
-        <div class="card bg-base-100 shadow">
-          <div class="card-body p-5">
-            <h2 class="card-title text-base mb-4">État du véhicule</h2>
-            <div class="space-y-3">
-              <% conditions.each do |label, value| %>
-                <div>
-                  <p class="text-xs opacity-50 uppercase tracking-wide mb-1"><%= label %></p>
-                  <p class="text-sm"><%= value %></p>
-                </div>
-              <% end %>
-            </div>
-          </div>
+    <!-- Specs bar principale -->
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 lg:gap-8 border-t border-line pt-8">
+      <% specs_row = [
+        ["Année",        @vehicle&.year&.to_s],
+        ["Kilométrage",  listing_kilometers_fr(@vehicle&.kilometers)],
+        ["Transmission", @vehicle&.transmission&.upcase],
+        ["Carburant",    @vehicle&.fuel_type],
+        ["Puissance",    @vehicle&.fiscal_power ? "#{@vehicle.fiscal_power} CV" : nil],
+        ["VIN",          @vehicle&.vin.present? ? "#{@vehicle.vin[0, 6]}…" : nil]
+      ] %>
+      <% specs_row.each do |label, value| %>
+        <% next unless value.present? %>
+        <div>
+          <div class="label-micro mb-2"><%= label %></div>
+          <div class="font-mono text-base md:text-lg text-text-primary tracking-tight"><%= value %></div>
         </div>
       <% end %>
+    </div>
+  </div>
+</section>
 
-      <!-- Équipements -->
+<%# ========================================================================
+    STICKY CTA BAR
+    ======================================================================== %>
+<div class="sticky top-[64px] lg:top-[80px] z-40 bg-bg-primary border-y border-line mt-16">
+  <div class="max-w-[1600px] mx-auto px-5 lg:px-10 py-5 flex flex-wrap items-center justify-between gap-5">
+    <div class="flex items-baseline gap-3">
+      <span class="font-mono text-3xl md:text-4xl text-accent-red font-medium">
+        <%= listing_price_fr(@vehicle) %>
+      </span>
+      <span class="font-ui text-[10px] uppercase tracking-[0.2em] text-text-muted">
+        Prix ferme
+      </span>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <% if user_signed_in? && @listing.user != current_user %>
+        <%= link_to conversation_path(@listing.user), class: "btn-vera-secondary text-[10px] px-6 py-3" do %>
+          Poser une question
+        <% end %>
+        <%= link_to conversation_path(@listing.user), class: "btn-vera-primary text-[10px] px-6 py-3" do %>
+          Contacter le vendeur
+        <% end %>
+      <% elsif !user_signed_in? %>
+        <%= link_to new_user_session_path, class: "btn-vera-primary text-[10px] px-6 py-3" do %>
+          Connectez-vous pour contacter
+        <% end %>
+      <% else %>
+        <%= link_to edit_listing_path(@listing), class: "btn-vera-secondary text-[10px] px-6 py-3" do %>
+          Modifier mon annonce
+        <% end %>
+        <%= button_to @listing, method: :delete, data: { turbo_confirm: "Supprimer définitivement cette annonce ?" }, class: "btn-vera-primary text-[10px] px-6 py-3 bg-accent-red-dark" do %>
+          Supprimer
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<main class="max-w-[1600px] mx-auto px-5 lg:px-10 py-20 lg:py-28">
+
+  <%# -------------------- GALLERY mosaic asymétrique -------------------- %>
+  <% if photos.any? %>
+    <section class="mb-24 lg:mb-32">
+      <% if photos.count >= 4 %>
+        <div class="grid grid-cols-12 gap-3 lg:gap-4">
+          <div class="col-span-12 md:col-span-8 aspect-video overflow-hidden bg-bg-secondary">
+            <%= image_tag photos[1], class: "w-full h-full object-cover", alt: "#{@listing.title} — vue 2", loading: "lazy" %>
+          </div>
+          <div class="col-span-6 md:col-span-4 aspect-square overflow-hidden bg-bg-secondary">
+            <%= image_tag photos[2], class: "w-full h-full object-cover", alt: "#{@listing.title} — détail", loading: "lazy" %>
+          </div>
+          <div class="col-span-6 md:col-span-4 aspect-square overflow-hidden bg-bg-secondary">
+            <%= image_tag photos[3], class: "w-full h-full object-cover", alt: "#{@listing.title} — détail", loading: "lazy" %>
+          </div>
+          <% if photos[4] %>
+            <div class="col-span-12 md:col-span-8 aspect-[16/9] overflow-hidden bg-bg-secondary">
+              <%= image_tag photos[4], class: "w-full h-full object-cover", alt: "#{@listing.title} — vue supplémentaire", loading: "lazy" %>
+            </div>
+          <% end %>
+        </div>
+        <% if photos.count > 5 %>
+          <p class="mt-6 font-mono text-[11px] uppercase tracking-[0.2em] text-text-muted">
+            <%= photos.count %> photos disponibles · Galerie complète bientôt accessible
+          </p>
+        <% end %>
+      <% elsif photos.count > 1 %>
+        <div class="grid grid-cols-2 md:grid-cols-<%= photos.count - 1 %> gap-3 lg:gap-4">
+          <% photos[1..].each_with_index do |photo, i| %>
+            <div class="aspect-square overflow-hidden bg-bg-secondary">
+              <%= image_tag photo, class: "w-full h-full object-cover", alt: "#{@listing.title} — vue #{i + 2}", loading: "lazy" %>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+    </section>
+  <% end %>
+
+  <div class="grid grid-cols-12 gap-12 lg:gap-20">
+
+    <%# ========================================================================
+        COLONNE PRINCIPALE (8/12)
+        ======================================================================== %>
+    <div class="col-span-12 lg:col-span-8 space-y-24 lg:space-y-32">
+
+      <%# -------------------- NARRATIVE -------------------- %>
+      <section class="grid grid-cols-1 md:grid-cols-12 gap-10 items-start">
+        <div class="md:col-span-4 md:sticky md:top-40">
+          <div class="eyebrow mb-4">Le récit</div>
+          <h2 class="playfair-italic text-3xl md:text-4xl text-text-primary leading-tight mb-8">
+            Ce que ce châssis raconte.
+          </h2>
+          <div class="flex items-center gap-4 border-t border-line pt-6">
+            <div class="w-11 h-11 bg-bg-tertiary border border-line flex items-center justify-center">
+              <span class="font-ui text-xs font-bold text-text-primary uppercase">
+                <%= @seller.display_name.first.upcase %>
+              </span>
+            </div>
+            <div>
+              <div class="label-micro mb-1">Vendeur vérifié</div>
+              <div class="playfair-italic text-base text-text-primary"><%= @seller.display_name %></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="md:col-span-8">
+          <% if @listing.description.present? %>
+            <div class="font-body text-lg lg:text-xl text-text-secondary leading-[1.65] drop-cap">
+              <%= simple_format(@listing.description) %>
+            </div>
+          <% else %>
+            <p class="font-body italic text-text-muted">Aucune description rédigée pour cette annonce.</p>
+          <% end %>
+
+          <% if @vehicle&.recent_works.present? %>
+            <div class="mt-12 border-l-2 border-accent-red bg-bg-secondary px-8 py-7">
+              <div class="eyebrow mb-3 text-accent-red">Travaux récents</div>
+              <p class="font-body italic text-base lg:text-lg text-text-primary leading-relaxed">
+                <%= @vehicle.recent_works %>
+              </p>
+            </div>
+          <% end %>
+        </div>
+      </section>
+
+      <%# -------------------- RUST MAP (stubbé) -------------------- %>
+      <section>
+        <div class="flex items-end justify-between gap-8 pb-6 border-b border-line mb-10">
+          <div>
+            <div class="eyebrow mb-3">Rust Map · Cartographie de corrosion</div>
+            <h2 class="playfair-italic text-3xl md:text-4xl text-text-primary leading-tight">
+              État structurel du châssis.
+            </h2>
+          </div>
+          <div class="hidden md:flex items-center gap-6">
+            <div class="text-right">
+              <div class="playfair-italic text-5xl text-text-muted leading-none">— / 100</div>
+              <div class="label-micro mt-2">Score (bientôt)</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-bg-secondary border border-line p-8 lg:p-12">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+
+            <!-- SVG silhouette véhicule (générique) + dots stubbed -->
+            <div class="lg:col-span-8">
+              <div class="relative w-full aspect-[16/7] max-w-2xl mx-auto">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 300" class="w-full h-full fill-none stroke-line-strong stroke-2">
+                  <path d="M50 220 L120 220 C120 180 180 180 180 220 L620 220 C620 180 680 180 680 220 L750 220 L750 180 L700 140 L550 100 L300 100 L150 140 L50 180 Z"/>
+                  <circle cx="150" cy="220" r="35"/>
+                  <circle cx="650" cy="220" r="35"/>
+                  <path class="stroke-line" d="M150 140 L650 140 M300 100 L300 140 M550 100 L550 140"/>
+                </svg>
+                <!-- Dots placeholder grisés (pas de vraies données) -->
+                <div class="absolute inset-0 opacity-30">
+                  <div class="absolute top-[55%] left-[15%] w-3 h-3 rounded-full rust-dot-ok"></div>
+                  <div class="absolute top-[50%] left-[35%] w-3 h-3 rounded-full rust-dot-ok"></div>
+                  <div class="absolute top-[60%] left-[55%] w-3 h-3 rounded-full rust-dot-surface"></div>
+                  <div class="absolute top-[55%] left-[75%] w-3 h-3 rounded-full rust-dot-ok"></div>
+                </div>
+              </div>
+
+              <!-- Légende -->
+              <div class="mt-8 flex flex-wrap justify-center gap-8 pt-6 border-t border-line">
+                <div class="flex items-center gap-2">
+                  <div class="w-2.5 h-2.5 rounded-full rust-dot-ok"></div>
+                  <span class="font-ui text-[10px] uppercase tracking-[0.2em] text-text-muted">Sain</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <div class="w-2.5 h-2.5 rounded-full rust-dot-surface"></div>
+                  <span class="font-ui text-[10px] uppercase tracking-[0.2em] text-text-muted">Surface</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <div class="w-2.5 h-2.5 rounded-full rust-dot-deep"></div>
+                  <span class="font-ui text-[10px] uppercase tracking-[0.2em] text-text-muted">Profonde</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <div class="w-2.5 h-2.5 rounded-full rust-dot-perforation"></div>
+                  <span class="font-ui text-[10px] uppercase tracking-[0.2em] text-text-muted">Perforation</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Message état stubbed -->
+            <div class="lg:col-span-4">
+              <div class="eyebrow mb-4">Bientôt disponible</div>
+              <p class="font-body italic text-base text-text-secondary leading-relaxed">
+                Le Rust Map est notre cartographie interactive de la corrosion zone par zone, assortie d'un score transparence sur 100. Cette annonce ne l'a pas encore. Les prochaines annonces publiées via le nouveau parcours vendeur l'intégreront systématiquement.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <%# -------------------- PROVENANCE (stubbed minimal) -------------------- %>
+      <section>
+        <div class="flex items-end justify-between gap-8 pb-6 border-b border-line mb-10">
+          <div>
+            <div class="eyebrow mb-3">Provenance · Historique</div>
+            <h2 class="playfair-italic text-3xl md:text-4xl text-text-primary leading-tight">
+              La mémoire du véhicule.
+            </h2>
+          </div>
+        </div>
+
+        <div class="space-y-0">
+          <% if @vehicle&.year %>
+            <div class="grid grid-cols-12 gap-6 border-t border-line py-8 px-4 hover:bg-bg-secondary transition-colors">
+              <div class="col-span-12 md:col-span-2 font-mono text-2xl text-accent-red"><%= @vehicle.year %></div>
+              <div class="col-span-12 md:col-span-3 font-ui text-[11px] uppercase tracking-[0.15em] text-text-muted pt-1">Mise en circulation</div>
+              <div class="col-span-12 md:col-span-7 font-body text-base text-text-primary leading-relaxed">
+                Première immatriculation <%= @vehicle.location.present? ? "— #{@vehicle.location}" : "" %>.
+              </div>
+            </div>
+          <% end %>
+
+          <% if @vehicle&.previous_owners && @vehicle.previous_owners > 0 %>
+            <div class="grid grid-cols-12 gap-6 border-t border-line py-8 px-4 hover:bg-bg-secondary transition-colors">
+              <div class="col-span-12 md:col-span-2 font-mono text-2xl text-accent-red"><%= @vehicle.previous_owners %></div>
+              <div class="col-span-12 md:col-span-3 font-ui text-[11px] uppercase tracking-[0.15em] text-text-muted pt-1">Propriétaires successifs</div>
+              <div class="col-span-12 md:col-span-7 font-body text-base text-text-primary leading-relaxed">
+                <%= @vehicle.previous_owners %> propriétaire<%= @vehicle.previous_owners > 1 ? "s" : "" %> déclaré<%= @vehicle.previous_owners > 1 ? "s" : "" %>.
+              </div>
+            </div>
+          <% end %>
+
+          <% if @vehicle&.last_service_date %>
+            <div class="grid grid-cols-12 gap-6 border-t border-line py-8 px-4 hover:bg-bg-secondary transition-colors">
+              <div class="col-span-12 md:col-span-2 font-mono text-2xl text-accent-red"><%= @vehicle.last_service_date.year %></div>
+              <div class="col-span-12 md:col-span-3 font-ui text-[11px] uppercase tracking-[0.15em] text-text-muted pt-1">Dernière révision</div>
+              <div class="col-span-12 md:col-span-7 font-body text-base text-text-primary leading-relaxed">
+                Entretien complet réalisé le <%= l(@vehicle.last_service_date, format: "%d %B %Y") rescue @vehicle.last_service_date.strftime("%d/%m/%Y") %>.
+              </div>
+            </div>
+          <% end %>
+
+          <div class="border-t border-b border-line py-8 px-4 text-center">
+            <p class="font-body italic text-sm text-text-muted">
+              Le Provenance Ledger complet (propriétaires, factures, événements) arrive avec le nouveau parcours d'annonce.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <%# -------------------- SPÉCIFICATIONS TECHNIQUES -------------------- %>
+      <section class="bg-bg-secondary border border-line p-8 lg:p-12">
+        <div class="eyebrow mb-3">Fiche Technique</div>
+        <h2 class="playfair-italic text-3xl md:text-4xl text-text-primary leading-tight mb-12">
+          Spécifications détaillées.
+        </h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-12 lg:gap-16">
+
+          <!-- Moteur -->
+          <div>
+            <h4 class="label-small text-accent-red pb-3 border-b border-line mb-6">Moteur</h4>
+            <dl class="space-y-4">
+              <% [
+                ["Carburant",     @vehicle&.fuel_type],
+                ["Puissance",     @vehicle&.fiscal_power ? "#{@vehicle.fiscal_power} CV" : nil],
+                ["Cylindres",     nil],
+                ["Cylindrée",     nil],
+                ["Consommation",  @vehicle&.average_consumption ? "#{@vehicle.average_consumption} L/100" : nil],
+                ["CO₂",           @vehicle&.co2_emissions ? "#{@vehicle.co2_emissions} g/km" : nil]
+              ].each do |k, v| %>
+                <% next unless v %>
+                <div class="flex justify-between items-baseline gap-4">
+                  <dt class="font-ui text-[10px] uppercase tracking-[0.15em] text-text-muted"><%= k %></dt>
+                  <dd class="font-mono text-sm text-text-primary text-right"><%= v %></dd>
+                </div>
+              <% end %>
+            </dl>
+          </div>
+
+          <!-- Châssis -->
+          <div>
+            <h4 class="label-small text-accent-red pb-3 border-b border-line mb-6">Châssis</h4>
+            <dl class="space-y-4">
+              <% [
+                ["Transmission",    @vehicle&.transmission],
+                ["Portes",          @vehicle&.doors],
+                ["Couleur ext.",    @vehicle&.exterior_color],
+                ["Couleur int.",    @vehicle&.interior_color],
+                ["Matière int.",    @vehicle&.interior_material],
+                ["Finition",        @vehicle&.finition]
+              ].each do |k, v| %>
+                <% next unless v.present? %>
+                <div class="flex justify-between items-baseline gap-4">
+                  <dt class="font-ui text-[10px] uppercase tracking-[0.15em] text-text-muted"><%= k %></dt>
+                  <dd class="font-mono text-sm text-text-primary text-right"><%= v %></dd>
+                </div>
+              <% end %>
+            </dl>
+          </div>
+
+          <!-- Administratif -->
+          <div>
+            <h4 class="label-small text-accent-red pb-3 border-b border-line mb-6">Administratif</h4>
+            <dl class="space-y-4">
+              <% [
+                ["Kilométrage",     listing_kilometers_fr(@vehicle&.kilometers)],
+                ["Propriétaires",   @vehicle&.previous_owners],
+                ["Immatriculation", @vehicle&.license_plate],
+                ["VIN",             @vehicle&.vin],
+                ["CT valide",       (@vehicle&.ct_expiry_date ? @vehicle.ct_expiry_date.strftime("%m/%Y") : nil)],
+                ["Carnet entretien", @vehicle&.has_service_history ? "Oui" : nil]
+              ].each do |k, v| %>
+                <% next unless v.present? %>
+                <div class="flex justify-between items-baseline gap-4">
+                  <dt class="font-ui text-[10px] uppercase tracking-[0.15em] text-text-muted"><%= k %></dt>
+                  <dd class="font-mono text-xs text-text-primary text-right truncate max-w-[60%]" title="<%= v %>"><%= v %></dd>
+                </div>
+              <% end %>
+            </dl>
+          </div>
+        </div>
+      </section>
+
+      <%# -------------------- ÉQUIPEMENTS -------------------- %>
       <% features = [
-        ["Sécurité", @vehicle&.safety_features],
-        ["Confort", @vehicle&.comfort_features],
-        ["Multimédia", @vehicle&.multimedia_features],
-        ["Extérieur", @vehicle&.exterior_features],
-        ["Autres", @vehicle&.other_features],
+        ["Sécurité",    @vehicle&.safety_features],
+        ["Confort",     @vehicle&.comfort_features],
+        ["Multimédia",  @vehicle&.multimedia_features],
+        ["Extérieur",   @vehicle&.exterior_features],
+        ["Autres",      @vehicle&.other_features]
       ].select { |_, v| v.present? } %>
+
       <% if features.any? %>
-        <div class="card bg-base-100 shadow">
-          <div class="card-body p-5">
-            <h2 class="card-title text-base mb-4">Équipements</h2>
+        <section>
+          <div class="eyebrow mb-3">Équipements</div>
+          <h2 class="playfair-italic text-3xl md:text-4xl text-text-primary leading-tight mb-10">
+            Dotations et options.
+          </h2>
+          <div class="space-y-10">
             <% features.each do |label, value| %>
-              <div class="mb-3">
-                <p class="text-xs opacity-50 uppercase tracking-wide mb-1"><%= label %></p>
-                <div class="flex flex-wrap gap-1.5">
+              <div>
+                <h4 class="label-small text-accent-red mb-4"><%= label %></h4>
+                <div class="flex flex-wrap gap-2">
                   <% value.split(",").map(&:strip).each do |item| %>
-                    <span class="badge badge-sm badge-ghost"><%= item %></span>
+                    <span class="badge-vera"><%= item %></span>
                   <% end %>
                 </div>
               </div>
             <% end %>
           </div>
-        </div>
+        </section>
       <% end %>
 
-      <!-- Description -->
-      <% if @listing.description.present? %>
-        <div class="card bg-base-100 shadow">
-          <div class="card-body p-5">
-            <h2 class="card-title text-base mb-3">Description</h2>
-            <p class="text-sm leading-relaxed opacity-80"><%= simple_format(@listing.description) %></p>
-          </div>
+      <%# -------------------- Q&A (stubbed) -------------------- %>
+      <section>
+        <div class="eyebrow mb-3">Questions & Réponses</div>
+        <h2 class="playfair-italic text-3xl md:text-4xl text-text-primary leading-tight mb-10">
+          L'avis des autres collectionneurs.
+        </h2>
+        <div class="border border-line bg-bg-secondary p-8 lg:p-10 text-center">
+          <p class="font-body italic text-sm text-text-muted max-w-xl mx-auto">
+            La section Questions & Réponses publiques — à la manière de Bring a Trailer — sera ouverte dans la prochaine version. En attendant, contactez directement le vendeur.
+          </p>
         </div>
-      <% end %>
+      </section>
     </div>
 
-    <!-- Sidebar -->
-    <div class="space-y-6">
-      <!-- Prix + actions (desktop) -->
-      <div class="card bg-base-100 shadow sticky top-20">
-        <div class="card-body p-5">
-          <h1 class="text-xl font-bold mb-1 hidden lg:block"><%= @listing.title %></h1>
-          <p class="text-3xl font-bold text-primary mb-4"><%= number_to_currency(@vehicle&.price, unit: "€", format: "%n %u", delimiter: " ", precision: 0) %></p>
-
-          <div class="flex flex-wrap gap-2 mb-4">
-            <% if @vehicle&.year %><span class="badge"><%= @vehicle.year %></span><% end %>
-            <% if @vehicle&.kilometers %><span class="badge"><%= number_with_delimiter(@vehicle.kilometers) %> km</span><% end %>
-            <% if @vehicle&.fuel_type.present? %><span class="badge"><%= @vehicle.fuel_type %></span><% end %>
-          </div>
-
-          <!-- Actions -->
-          <div class="space-y-2">
-            <% if user_signed_in? && @listing.user != current_user %>
-              <%= link_to conversation_path(@listing.user), class: "btn btn-primary w-full" do %>
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
-                Contacter le vendeur
-              <% end %>
-
-              <% if @is_favorited %>
-                <%= button_to listing_favorite_path(@listing), method: :delete, class: "btn btn-outline btn-error w-full" do %>
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd" /></svg>
-                  Retirer des favoris
-                <% end %>
-              <% else %>
-                <%= button_to listing_favorite_path(@listing), class: "btn btn-outline w-full" do %>
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
-                  Ajouter aux favoris
-                <% end %>
-              <% end %>
-            <% elsif !user_signed_in? %>
-              <%= link_to new_user_session_path, class: "btn btn-primary w-full" do %>
-                Connectez-vous pour contacter
-              <% end %>
-            <% else %>
-              <%= link_to edit_listing_path(@listing), class: "btn btn-outline w-full" do %>
-                Modifier mon annonce
-              <% end %>
-            <% end %>
-          </div>
-
-          <!-- Stats -->
-          <div class="divider my-3"></div>
-          <div class="flex justify-between text-xs opacity-50">
-            <span><%= @listing.views_count %> vues</span>
-            <span>Publiée <%= time_ago_in_words(@listing.created_at) %></span>
-          </div>
-        </div>
-      </div>
+    <%# ========================================================================
+        SIDEBAR (4/12)
+        ======================================================================== %>
+    <aside class="col-span-12 lg:col-span-4 space-y-10">
 
       <!-- Vendeur -->
-      <div class="card bg-base-100 shadow">
-        <div class="card-body p-5">
-          <h3 class="text-sm font-bold mb-3">Vendeur</h3>
-          <div class="flex items-center gap-3">
-            <div class="avatar placeholder">
-              <div class="bg-primary/20 text-primary rounded-full w-10">
-                <span class="font-bold"><%= @seller.display_name.first.upcase %></span>
-              </div>
+      <div class="bg-bg-secondary border border-line p-8">
+        <div class="eyebrow mb-4">Vendeur</div>
+        <div class="flex items-start gap-4 pb-6 border-b border-line">
+          <div class="w-12 h-12 bg-bg-tertiary border border-line flex items-center justify-center shrink-0">
+            <span class="font-ui text-sm font-bold text-text-primary uppercase">
+              <%= @seller.display_name.first.upcase %>
+            </span>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="playfair-italic text-xl text-text-primary leading-tight mb-1">
+              <%= @seller.display_name %>
             </div>
-            <div>
-              <p class="font-medium text-sm"><%= @seller.display_name %></p>
-              <p class="text-xs opacity-50">Membre depuis <%= @seller.created_at.strftime("%B %Y") %></p>
+            <div class="font-ui text-[10px] uppercase tracking-[0.15em] text-text-muted">
+              Membre depuis <%= @seller.created_at.strftime("%B %Y").downcase %>
             </div>
           </div>
-          <% if @seller.listings.where(status: "active").count > 1 %>
-            <p class="text-xs opacity-50 mt-2"><%= @seller.listings.where(status: "active").count %> annonces en ligne</p>
-          <% end %>
         </div>
-      </div>
 
-      <!-- Infos légales -->
-      <div class="card bg-base-100 shadow">
-        <div class="card-body p-5">
-          <h3 class="text-sm font-bold mb-3">Informations</h3>
-          <div class="space-y-2 text-xs opacity-60">
-            <% if @vehicle&.vin.present? %><p>VIN : <%= @vehicle.vin %></p><% end %>
-            <% if @vehicle&.license_plate.present? %><p>Immatriculation : <%= @vehicle.license_plate %></p><% end %>
-            <% if @vehicle&.has_service_history %><p>Carnet d'entretien disponible</p><% end %>
-            <% if @vehicle&.non_smoker %><p>Véhicule non-fumeur</p><% end %>
-            <% if @vehicle&.ct_expiry_date %><p>CT valide jusqu'au <%= @vehicle.ct_expiry_date.strftime("%d/%m/%Y") %></p><% end %>
+        <% active_count = @seller.listings.where(status: "active").count %>
+        <% if active_count > 1 %>
+          <div class="mt-6 flex items-center justify-between">
+            <span class="font-ui text-[10px] uppercase tracking-[0.15em] text-text-muted">Annonces en ligne</span>
+            <span class="font-mono text-sm text-text-primary"><%= active_count.to_s.rjust(2, "0") %></span>
           </div>
-        </div>
-      </div>
-    </div>
-  </div>
+        <% end %>
 
-  <!-- Autres annonces du vendeur -->
-  <% if @other_listings.any? %>
-    <div class="mt-12">
-      <h2 class="text-xl font-bold mb-6">Autres annonces de <%= @seller.display_name %></h2>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <% @other_listings.each do |listing| %>
-          <% v = listing.vehicle %>
-          <%= link_to listing, class: "card bg-base-100 shadow card-lift cursor-pointer group overflow-hidden" do %>
-            <figure class="h-40 overflow-hidden">
-              <% if listing.photos.attached? %>
-                <%= image_tag listing.photos.first, class: "w-full h-full object-cover group-hover:scale-105 transition-transform duration-300", alt: listing.title %>
-              <% else %>
-                <div class="w-full h-full bg-base-300 flex items-center justify-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 opacity-20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                </div>
-              <% end %>
-            </figure>
-            <div class="card-body p-4">
-              <h3 class="text-sm font-bold line-clamp-1"><%= listing.title %></h3>
-              <p class="text-primary font-bold"><%= number_to_currency(v&.price, unit: "€", format: "%n %u", delimiter: " ", precision: 0) %></p>
-            </div>
+        <% if user_signed_in? && @listing.user != current_user %>
+          <%= link_to conversation_path(@listing.user), class: "btn-vera-secondary w-full mt-8 justify-center" do %>
+            Contacter
           <% end %>
         <% end %>
       </div>
-    </div>
+
+      <!-- Favori -->
+      <% if user_signed_in? && @listing.user != current_user %>
+        <% if @is_favorited %>
+          <%= button_to listing_favorite_path(@listing), method: :delete, class: "btn-vera-secondary w-full justify-center" do %>
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.5" class="text-accent-red">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+            </svg>
+            Retirer des favoris
+          <% end %>
+        <% else %>
+          <%= button_to listing_favorite_path(@listing), class: "btn-vera-secondary w-full justify-center" do %>
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+            </svg>
+            Sauvegarder
+          <% end %>
+        <% end %>
+      <% end %>
+
+      <!-- Documents & vérifications -->
+      <div class="bg-bg-secondary border border-line p-8">
+        <div class="eyebrow mb-6">Documents & Vérifications</div>
+        <ul class="space-y-4">
+          <% [
+            ["Carnet d'entretien",  @vehicle&.has_service_history],
+            ["Véhicule non-fumeur", @vehicle&.non_smoker],
+            ["Contrôle technique",  @vehicle&.ct_expiry_date.present?],
+            ["VIN vérifié",         @vehicle&.vin.present?],
+            ["Immatriculation",     @vehicle&.license_plate.present?]
+          ].each do |label, ok| %>
+            <li class="flex items-center justify-between border-b border-line pb-3 last:border-0">
+              <span class="font-ui text-[11px] uppercase tracking-[0.15em] text-text-secondary"><%= label %></span>
+              <% if ok %>
+                <span class="font-mono text-xs text-rust-ok">✓</span>
+              <% else %>
+                <span class="font-mono text-xs text-text-muted">—</span>
+              <% end %>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+
+      <!-- Stats -->
+      <div class="pt-6 border-t border-line flex items-center justify-between">
+        <span class="font-ui text-[10px] uppercase tracking-[0.2em] text-text-muted">
+          <%= @listing.views_count %> vue<%= @listing.views_count > 1 ? "s" : "" %>
+        </span>
+        <span class="font-ui text-[10px] uppercase tracking-[0.2em] text-text-muted">
+          Publiée <%= time_ago_in_words(@listing.created_at) %>
+        </span>
+      </div>
+    </aside>
+  </div>
+
+  <%# -------------------- AUTRES ANNONCES DU VENDEUR -------------------- %>
+  <% if @other_listings.any? %>
+    <section class="mt-32 lg:mt-40">
+      <%= render "components/section_header",
+            eyebrow: "Dans le même garage",
+            title: "Autres annonces de #{@seller.display_name}" %>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
+        <% @other_listings.each do |other| %>
+          <%= render "components/listing_card", listing: other, size: :medium %>
+        <% end %>
+      </div>
+    </section>
   <% end %>
-</div>
+</main>
