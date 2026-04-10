@@ -1,104 +1,88 @@
 <!-- Hero -->
-<section class="relative min-h-[80vh] flex items-center justify-center overflow-hidden">
-  <div class="absolute inset-0">
-    <img src="https://images.unsplash.com/photo-1583121274602-3e2820c69888?q=80&w=2070" alt="" class="w-full h-full object-cover opacity-30">
-    <div class="absolute inset-0 bg-gradient-to-t from-base-200 via-base-200/80 to-base-200/40"></div>
-  </div>
-  <div class="relative z-10 text-center max-w-3xl mx-auto px-4">
-    <h1 class="text-5xl md:text-7xl font-bold mb-6 tracking-tight">
-      <span class="text-gold-gradient">Vera</span>Trade
-    </h1>
-    <p class="text-xl md:text-2xl text-base-content/70 mb-10 leading-relaxed">
-      La marketplace auto qui fait les choses autrement.<br class="hidden md:block">
-      Messagerie directe. Dossier complet. Zéro friction.
-    </p>
-
-    <!-- Search bar hero -->
-    <%= form_with url: listings_path, method: :get, class: "max-w-xl mx-auto" do |f| %>
-      <div class="join w-full">
-        <%= f.text_field :query,
-            class: "input input-lg join-item flex-1 bg-base-100/60 border-white/10 placeholder:text-base-content/40 focus:border-primary focus:bg-base-100",
-            placeholder: "Marque, modèle, budget..." %>
-        <button type="submit" class="btn btn-primary btn-lg join-item">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
-          Rechercher
-        </button>
-      </div>
-    <% end %>
-
-    <!-- Quick filters -->
-    <div class="flex flex-wrap justify-center gap-2 mt-6">
-      <% ["Porsche", "BMW M", "Mercedes AMG", "Alpine", "Tesla"].each do |q| %>
-        <%= link_to q, listings_path(query: q), class: "badge badge-lg badge-outline border-white/20 text-base-content/60 hover:border-primary hover:text-primary cursor-pointer transition-colors duration-200" %>
+<section class="hero min-h-[75vh]" style="background-image: url(https://images.unsplash.com/photo-1583121274602-3e2820c69888?q=80&w=2070);">
+  <div class="hero-overlay bg-opacity-80"></div>
+  <div class="hero-content text-center">
+    <div class="max-w-2xl">
+      <h1 class="text-5xl md:text-6xl font-bold mb-6">
+        <span class="text-gold">Vera</span>Trade
+      </h1>
+      <p class="text-lg md:text-xl opacity-80 mb-10">
+        La marketplace auto qui fait les choses autrement.<br>
+        Messagerie directe. Dossier complet. Zéro friction.
+      </p>
+      <%= form_with url: listings_path, method: :get, class: "max-w-lg mx-auto" do |f| %>
+        <div class="join w-full shadow-2xl">
+          <%= f.text_field :query, class: "input input-lg join-item flex-1 bg-base-100/90 border-0", placeholder: "Marque, modèle, budget..." %>
+          <button type="submit" class="btn btn-primary btn-lg join-item">Rechercher</button>
+        </div>
       <% end %>
+      <div class="flex flex-wrap justify-center gap-2 mt-6">
+        <% %w[Porsche BMW\ M Mercedes\ AMG Alpine Tesla Ducati].each do |q| %>
+          <%= link_to q, listings_path(query: q), class: "badge badge-outline badge-lg border-white/30 hover:badge-primary cursor-pointer transition-all" %>
+        <% end %>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- Stats bar -->
-<section class="border-y border-white/5 bg-base-100/40">
+<!-- Stats -->
+<div class="bg-base-100 border-y border-base-300">
   <div class="container mx-auto px-4 py-8">
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-      <div>
-        <p class="text-3xl font-bold text-gold-gradient"><%= Listing.where(status: 'active').count %></p>
-        <p class="text-sm text-base-content/50 mt-1">Annonces en ligne</p>
+    <div class="stats stats-vertical md:stats-horizontal shadow w-full">
+      <div class="stat">
+        <div class="stat-title">Annonces</div>
+        <div class="stat-value text-primary"><%= Listing.where(status: 'active').count %></div>
+        <div class="stat-desc">en ligne</div>
       </div>
-      <div>
-        <p class="text-3xl font-bold text-gold-gradient"><%= User.count %></p>
-        <p class="text-sm text-base-content/50 mt-1">Membres</p>
+      <div class="stat">
+        <div class="stat-title">Membres</div>
+        <div class="stat-value"><%= User.count %></div>
+        <div class="stat-desc">inscrits</div>
       </div>
-      <div>
-        <p class="text-3xl font-bold text-gold-gradient"><%= Vehicle.distinct.pluck(:make).compact.size %></p>
-        <p class="text-sm text-base-content/50 mt-1">Marques</p>
+      <div class="stat">
+        <div class="stat-title">Marques</div>
+        <div class="stat-value"><%= Vehicle.distinct.pluck(:make).compact.size %></div>
+        <div class="stat-desc">représentées</div>
       </div>
-      <div>
-        <p class="text-3xl font-bold text-gold-gradient">100%</p>
-        <p class="text-sm text-base-content/50 mt-1">Annonces vérifiées</p>
+      <div class="stat">
+        <div class="stat-title">Vérification</div>
+        <div class="stat-value text-success">100%</div>
+        <div class="stat-desc">des annonces</div>
       </div>
     </div>
   </div>
-</section>
+</div>
 
 <!-- Annonces récentes -->
-<section class="section-padding">
-  <div class="container mx-auto px-4">
-    <div class="flex items-center justify-between mb-10">
-      <h2 class="text-3xl font-bold">Annonces récentes</h2>
-      <%= link_to "Tout voir", listings_path, class: "btn btn-ghost btn-sm text-primary" %>
+<section class="py-16 px-4">
+  <div class="container mx-auto">
+    <div class="flex items-center justify-between mb-8">
+      <h2 class="text-3xl font-bold">Dernières annonces</h2>
+      <%= link_to "Tout voir →", listings_path, class: "link link-primary" %>
     </div>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       <% Listing.where(status: 'active').includes(:vehicle).order(created_at: :desc).limit(6).each do |listing| %>
-        <%= link_to listing, class: "card card-glass card-hover cursor-pointer group" do %>
+        <% v = listing.vehicle %>
+        <%= link_to listing, class: "card bg-base-100 shadow-xl card-lift cursor-pointer group overflow-hidden" do %>
           <figure class="h-48 overflow-hidden">
             <% if listing.photos.attached? %>
-              <%= image_tag listing.photos.first, class: "w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" %>
+              <%= image_tag listing.photos.first, class: "w-full h-full object-cover group-hover:scale-105 transition-transform duration-300", alt: listing.title %>
             <% else %>
               <div class="w-full h-full bg-base-300 flex items-center justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-base-content/20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 opacity-20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
               </div>
             <% end %>
           </figure>
-          <div class="card-body p-4">
-            <h3 class="card-title text-base"><%= listing.title %></h3>
-            <div class="flex items-center gap-2 text-sm text-base-content/50">
-              <% v = listing.vehicle %>
-              <span><%= v&.year %></span>
-              <% if v&.kilometers %>
-                <span>&middot;</span>
-                <span><%= number_with_delimiter(v.kilometers) %> km</span>
-              <% end %>
-              <% if v&.fuel_type.present? %>
-                <span>&middot;</span>
-                <span><%= v.fuel_type %></span>
-              <% end %>
+          <div class="card-body p-5">
+            <h3 class="card-title text-sm"><%= listing.title %></h3>
+            <div class="flex flex-wrap gap-1.5 my-1">
+              <% if v&.year %><span class="badge badge-sm"><%= v.year %></span><% end %>
+              <% if v&.kilometers %><span class="badge badge-sm"><%= number_with_delimiter(v.kilometers) %> km</span><% end %>
+              <% if v&.fuel_type.present? %><span class="badge badge-sm"><%= v.fuel_type %></span><% end %>
             </div>
-            <div class="card-actions justify-between items-center mt-3">
-              <span class="text-lg font-bold text-primary"><%= number_to_currency(v&.price, unit: "€", format: "%n %u", delimiter: " ") %></span>
-              <span class="text-xs text-base-content/40"><%= v&.location %></span>
+            <div class="flex items-center justify-between mt-2">
+              <span class="text-lg font-bold text-primary"><%= number_to_currency(v&.price, unit: "€", format: "%n %u", delimiter: " ", precision: 0) %></span>
+              <span class="text-xs opacity-40"><%= v&.location %></span>
             </div>
           </div>
         <% end %>
@@ -108,59 +92,53 @@
 </section>
 
 <!-- Différenciateurs -->
-<section class="section-padding bg-base-100/40 border-y border-white/5">
-  <div class="container mx-auto px-4">
+<section class="py-16 px-4 bg-base-200">
+  <div class="container mx-auto">
     <h2 class="text-3xl font-bold text-center mb-4">Pourquoi Vera Trade</h2>
-    <p class="text-center text-base-content/50 mb-12 max-w-2xl mx-auto">Les plateformes auto classiques brident vos échanges. Nous faisons l'inverse.</p>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-
-      <div class="stat-card card-hover cursor-default">
-        <div class="text-primary mb-4">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-          </svg>
+    <p class="text-center opacity-60 mb-12 max-w-xl mx-auto">Les plateformes auto classiques brident vos échanges. Nous faisons l'inverse.</p>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="card bg-base-100 shadow-lg">
+        <div class="card-body items-center text-center">
+          <div class="text-primary mb-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
+          </div>
+          <h3 class="card-title text-base">Messagerie libre</h3>
+          <p class="text-sm opacity-60">Pas de messages bridés, pas de numéros cachés. Communiquez directement.</p>
         </div>
-        <h3 class="text-lg font-bold mb-2">Messagerie libre</h3>
-        <p class="text-sm text-base-content/60 leading-relaxed">Pas de messages bridés, pas de numéros cachés. Communiquez directement, sans filtre.</p>
       </div>
-
-      <div class="stat-card card-hover cursor-default">
-        <div class="text-primary mb-4">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-          </svg>
+      <div class="card bg-base-100 shadow-lg">
+        <div class="card-body items-center text-center">
+          <div class="text-primary mb-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+          </div>
+          <h3 class="card-title text-base">Dossier complet</h3>
+          <p class="text-sm opacity-60">Photos, vidéos, CT, factures : tout accessible avant de vous déplacer.</p>
         </div>
-        <h3 class="text-lg font-bold mb-2">Dossier complet</h3>
-        <p class="text-sm text-base-content/60 leading-relaxed">Photos, vidéos, CT, factures : tout le dossier véhicule accessible avant de vous déplacer.</p>
       </div>
-
-      <div class="stat-card card-hover cursor-default">
-        <div class="text-primary mb-4">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-          </svg>
+      <div class="card bg-base-100 shadow-lg">
+        <div class="card-body items-center text-center">
+          <div class="text-primary mb-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+          </div>
+          <h3 class="card-title text-base">Annonces modérées</h3>
+          <p class="text-sm opacity-60">Chaque annonce vérifiée. Pas de doublons, pas d'arnaques.</p>
         </div>
-        <h3 class="text-lg font-bold mb-2">Annonces modérées</h3>
-        <p class="text-sm text-base-content/60 leading-relaxed">Chaque annonce est vérifiée. Pas de doublons, pas d'arnaques, pas de prix fantaisistes.</p>
       </div>
-
     </div>
   </div>
 </section>
 
 <!-- CTA -->
-<section class="section-padding">
-  <div class="container mx-auto px-4 text-center">
+<section class="py-16 px-4">
+  <div class="container mx-auto text-center">
     <h2 class="text-3xl font-bold mb-4">Vendez votre véhicule</h2>
-    <p class="text-base-content/60 mb-8 max-w-lg mx-auto">Annonce gratuite. Photos illimitées. Visibilité maximale.</p>
+    <p class="opacity-60 mb-8 max-w-md mx-auto">Annonce gratuite. Photos illimitées. Visibilité maximale.</p>
     <div class="flex flex-col sm:flex-row gap-4 justify-center">
       <%= link_to new_listing_path, class: "btn btn-primary btn-lg" do %>
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-        </svg>
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
         Déposer une annonce
       <% end %>
-      <%= link_to "Parcourir les annonces", listings_path, class: "btn btn-outline btn-lg border-white/20 hover:border-primary" %>
+      <%= link_to "Parcourir", listings_path, class: "btn btn-outline btn-lg" %>
     </div>
   </div>
 </section>

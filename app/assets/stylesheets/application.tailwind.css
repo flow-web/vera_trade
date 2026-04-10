@@ -1,63 +1,30 @@
 @import "tailwindcss";
-@plugin "daisyui";
+@plugin "daisyui" {
+  themes: luxury --default
+}
 
-/* ── Vera Trade Design System ──────────────────────────── */
-
-/* Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap');
 
-/* Custom properties */
 @theme {
   --font-heading: 'Space Grotesk', system-ui, sans-serif;
   --font-body: 'DM Sans', system-ui, sans-serif;
 }
 
-/* DaisyUI theme override via CSS vars */
-:root, [data-theme="veratrade"] {
-  --b1: 222 47% 16%;  /* base-100: #1E293B */
-  --b2: 222 47% 9%;   /* base-200: #0F172A */
-  --b3: 215 25% 27%;  /* base-300: #334155 */
-  --bc: 210 40% 96%;  /* base-content: #F1F5F9 */
-  --p: 44 88% 40%;    /* primary: #CA8A04 */
-  --pc: 222 47% 9%;   /* primary-content */
-  --s: 215 16% 47%;   /* secondary: #64748B */
-  --sc: 210 40% 96%;  /* secondary-content */
-  --a: 38 92% 50%;    /* accent: #F59E0B */
-  --ac: 222 47% 9%;   /* accent-content */
-  --n: 222 47% 16%;   /* neutral */
-  --nc: 213 27% 84%;  /* neutral-content: #CBD5E1 */
-  --in: 217 91% 60%;  /* info: #3B82F6 */
-  --su: 142 71% 45%;  /* success: #22C55E */
-  --wa: 38 92% 50%;   /* warning: #F59E0B */
-  --er: 0 84% 60%;    /* error: #EF4444 */
-  --rounded-box: 0.75rem;
-  --rounded-btn: 0.5rem;
-  --animation-btn: 0.2s;
-  color-scheme: dark;
-}
-
-/* Base styles */
 @layer base {
   body {
     font-family: var(--font-body);
-    background-color: #0F172A;
-    color: #F1F5F9;
     -webkit-font-smoothing: antialiased;
   }
-
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-heading);
     font-weight: 600;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.025em;
   }
-
   a { cursor: pointer; }
-
   *:focus-visible {
-    outline: 2px solid #CA8A04;
+    outline: 2px solid oklch(var(--p));
     outline-offset: 2px;
   }
-
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
       animation-duration: 0.01ms !important;
@@ -66,47 +33,24 @@
   }
 }
 
-/* Components */
 @layer components {
-  .card-glass {
-    background: rgba(30, 41, 59, 0.8);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(148, 163, 184, 0.1);
-    border-radius: 0.75rem;
-  }
-
-  .text-gold-gradient {
-    background: linear-gradient(135deg, #CA8A04, #F59E0B);
+  .text-gold {
+    background: linear-gradient(135deg, #dca54c, #f0c674);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
-
-  .card-hover {
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  .glass-card {
+    background: oklch(var(--b2) / 0.8);
+    backdrop-filter: blur(12px);
+    border: 1px solid oklch(var(--bc) / 0.08);
+    border-radius: var(--rounded-box);
   }
-  .card-hover:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  .card-lift {
+    transition: transform 0.2s, box-shadow 0.2s;
   }
-
-  .section-padding {
-    padding: 4rem 1rem;
-  }
-  @media (min-width: 768px) {
-    .section-padding { padding: 6rem 2rem; }
-  }
-
-  .stat-card {
-    background: rgba(30, 41, 59, 0.6);
-    border: 1px solid rgba(148, 163, 184, 0.1);
-    border-radius: 0.75rem;
-    padding: 1.5rem;
-  }
-
-  .badge-gold {
-    background: linear-gradient(135deg, #CA8A04, #F59E0B);
-    color: #0F172A;
-    font-weight: 600;
+  .card-lift:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 40px oklch(0 0 0 / 0.4);
   }
 }

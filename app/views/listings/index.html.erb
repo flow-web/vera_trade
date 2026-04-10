@@ -1,134 +1,120 @@
 <!-- Header -->
-<section class="border-b border-white/5 py-10">
-  <div class="container mx-auto px-4">
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-      <div>
-        <h1 class="text-3xl font-bold">Annonces</h1>
-        <p class="text-base-content/50 mt-1"><%= pluralize(@listings.count, "véhicule") %> disponible<%= @listings.count > 1 ? "s" : "" %></p>
-      </div>
-      <% if user_signed_in? %>
-        <%= link_to new_listing_path, class: "btn btn-primary" do %>
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-          </svg>
-          Publier une annonce
+<div class="bg-base-200 py-10 border-b border-base-300">
+  <div class="container mx-auto px-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+    <div>
+      <h1 class="text-3xl font-bold">Annonces</h1>
+      <p class="opacity-60 mt-1"><%= pluralize(@listings.count, "véhicule") %> disponible<%= @listings.count > 1 ? "s" : "" %></p>
+    </div>
+    <% if user_signed_in? %>
+      <%= link_to new_listing_path, class: "btn btn-primary" do %>
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+        Publier
+      <% end %>
+    <% end %>
+  </div>
+</div>
+
+<!-- Filters -->
+<div class="bg-base-100 border-b border-base-300 py-4">
+  <div class="container mx-auto px-4 flex flex-wrap gap-3">
+    <select class="select select-sm select-bordered">
+      <option value="">Toutes marques</option>
+      <% Vehicle.distinct.pluck(:make).compact.sort.each do |m| %>
+        <option><%= m %></option>
+      <% end %>
+    </select>
+    <select class="select select-sm select-bordered">
+      <option value="">Carburant</option>
+      <% Vehicle.distinct.pluck(:fuel_type).compact.sort.each do |f| %>
+        <option><%= f %></option>
+      <% end %>
+    </select>
+    <select class="select select-sm select-bordered">
+      <option value="">Transmission</option>
+      <% Vehicle.distinct.pluck(:transmission).compact.sort.each do |t| %>
+        <option><%= t %></option>
+      <% end %>
+    </select>
+    <select class="select select-sm select-bordered">
+      <option value="created_at_desc">Plus récent</option>
+      <option value="price_asc">Prix ↑</option>
+      <option value="price_desc">Prix ↓</option>
+    </select>
+  </div>
+</div>
+
+<!-- Grid -->
+<div class="container mx-auto px-4 py-10">
+  <% if @listings.any? %>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <% @listings.each do |listing| %>
+        <% v = listing.vehicle %>
+        <%= link_to listing, class: "card bg-base-100 shadow-xl card-lift cursor-pointer group overflow-hidden" do %>
+          <figure class="relative h-52 overflow-hidden">
+            <% if listing.photos.attached? %>
+              <%= image_tag listing.photos.first, class: "w-full h-full object-cover group-hover:scale-105 transition-transform duration-300", alt: listing.title %>
+            <% else %>
+              <div class="w-full h-full bg-base-300 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 opacity-20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+              </div>
+            <% end %>
+            <div class="absolute top-3 right-3 badge badge-primary font-bold"><%= number_to_currency(v&.price, unit: "€", format: "%n%u", delimiter: " ", precision: 0) %></div>
+            <% if listing.status == 'sold' %>
+              <div class="absolute inset-0 bg-black/60 flex items-center justify-center">
+                <span class="badge badge-lg badge-error font-bold">VENDU</span>
+              </div>
+            <% end %>
+          </figure>
+          <div class="card-body p-5">
+            <h3 class="card-title text-sm line-clamp-1"><%= listing.title %></h3>
+            <div class="flex flex-wrap gap-1.5 my-1">
+              <% if v&.year %><span class="badge badge-sm badge-ghost"><%= v.year %></span><% end %>
+              <% if v&.kilometers %><span class="badge badge-sm badge-ghost"><%= number_with_delimiter(v.kilometers) %> km</span><% end %>
+              <% if v&.fuel_type.present? %><span class="badge badge-sm badge-ghost"><%= v.fuel_type %></span><% end %>
+              <% if v&.transmission.present? %><span class="badge badge-sm badge-ghost"><%= v.transmission %></span><% end %>
+            </div>
+            <% if v&.location.present? %>
+              <p class="text-xs opacity-40 mt-1">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 inline" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                <%= v.location %>
+              </p>
+            <% end %>
+          </div>
         <% end %>
       <% end %>
     </div>
-  </div>
-</section>
-
-<!-- Filters -->
-<section class="border-b border-white/5 py-6">
-  <div class="container mx-auto px-4">
-    <div class="flex flex-wrap gap-3">
-      <select class="select select-sm bg-base-100 border-white/10" data-filter="make">
-        <option value="">Toutes marques</option>
-        <% Vehicle.distinct.pluck(:make).compact.sort.each do |make| %>
-          <option value="<%= make %>"><%= make %></option>
-        <% end %>
-      </select>
-
-      <select class="select select-sm bg-base-100 border-white/10" data-filter="fuel_type">
-        <option value="">Carburant</option>
-        <% Vehicle.distinct.pluck(:fuel_type).compact.sort.each do |ft| %>
-          <option value="<%= ft %>"><%= ft %></option>
-        <% end %>
-      </select>
-
-      <select class="select select-sm bg-base-100 border-white/10" data-filter="transmission">
-        <option value="">Transmission</option>
-        <% Vehicle.distinct.pluck(:transmission).compact.sort.each do |t| %>
-          <option value="<%= t %>"><%= t %></option>
-        <% end %>
-      </select>
-
-      <select class="select select-sm bg-base-100 border-white/10" data-sort>
-        <option value="created_at_desc">Plus récent</option>
-        <option value="price_asc">Prix croissant</option>
-        <option value="price_desc">Prix décroissant</option>
-        <option value="year_desc">Année récente</option>
-      </select>
+  <% else %>
+    <div class="text-center py-20">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto opacity-20 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+      <h3 class="text-xl font-bold mb-2">Aucune annonce</h3>
+      <p class="opacity-50 mb-6">Revenez bientôt ou déposez la première annonce.</p>
+      <% if user_signed_in? %>
+        <%= link_to "Publier une annonce", new_listing_path, class: "btn btn-primary" %>
+      <% end %>
     </div>
-  </div>
-</section>
+  <% end %>
 
-<!-- Listings Grid -->
-<section class="section-padding">
-  <div class="container mx-auto px-4">
-    <% if @listings.any? %>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <% @listings.each do |listing| %>
-          <% v = listing.vehicle %>
-          <%= link_to listing, class: "card card-glass card-hover cursor-pointer group" do %>
-            <!-- Image -->
-            <figure class="h-52 overflow-hidden relative">
-              <% if listing.photos.attached? %>
-                <%= image_tag listing.photos.first, class: "w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" %>
-              <% else %>
-                <div class="w-full h-full bg-base-300 flex items-center justify-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-base-content/20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
-                </div>
-              <% end %>
-              <!-- Price badge -->
-              <div class="absolute top-3 right-3 badge-gold px-3 py-1 rounded-full text-sm font-bold">
-                <%= number_to_currency(v&.price, unit: "€", format: "%n %u", delimiter: " ", precision: 0) %>
-              </div>
-              <% if listing.status == 'sold' %>
-                <div class="absolute inset-0 bg-black/60 flex items-center justify-center">
-                  <span class="badge badge-lg badge-error font-bold">VENDU</span>
-                </div>
-              <% end %>
-            </figure>
-
-            <!-- Content -->
-            <div class="p-5">
-              <h3 class="font-bold text-base line-clamp-1 mb-2"><%= listing.title %></h3>
-
-              <!-- Specs -->
-              <div class="flex flex-wrap gap-2 mb-3">
-                <% if v&.year %>
-                  <span class="badge badge-sm badge-outline border-white/15 text-base-content/60"><%= v.year %></span>
-                <% end %>
-                <% if v&.kilometers %>
-                  <span class="badge badge-sm badge-outline border-white/15 text-base-content/60"><%= number_with_delimiter(v.kilometers) %> km</span>
-                <% end %>
-                <% if v&.fuel_type.present? %>
-                  <span class="badge badge-sm badge-outline border-white/15 text-base-content/60"><%= v.fuel_type %></span>
-                <% end %>
-                <% if v&.transmission.present? %>
-                  <span class="badge badge-sm badge-outline border-white/15 text-base-content/60"><%= v.transmission %></span>
-                <% end %>
-              </div>
-
-              <!-- Location -->
-              <% if v&.location.present? %>
-                <p class="text-xs text-base-content/40 flex items-center gap-1">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
-                  <%= v.location %>
-                </p>
-              <% end %>
-            </div>
+  <!-- Pagination -->
+  <% if @total_pages && @total_pages > 1 %>
+    <div class="flex justify-center mt-10">
+      <div class="join">
+        <% if @page > 1 %>
+          <%= link_to "«", request.params.merge(page: @page - 1), class: "join-item btn btn-sm" %>
+        <% end %>
+        <% (1..@total_pages).each do |p| %>
+          <% if p == @page %>
+            <span class="join-item btn btn-sm btn-primary"><%= p %></span>
+          <% elsif (p - @page).abs <= 2 || p == 1 || p == @total_pages %>
+            <%= link_to p, request.params.merge(page: p), class: "join-item btn btn-sm" %>
+          <% elsif (p - @page).abs == 3 %>
+            <span class="join-item btn btn-sm btn-disabled">…</span>
           <% end %>
         <% end %>
-      </div>
-    <% else %>
-      <!-- Empty state -->
-      <div class="text-center py-20">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-base-content/20 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-        </svg>
-        <h3 class="text-xl font-bold mb-2">Aucune annonce</h3>
-        <p class="text-base-content/50 mb-6">Aucun véhicule ne correspond à vos critères.</p>
-        <% if user_signed_in? %>
-          <%= link_to "Publier la première annonce", new_listing_path, class: "btn btn-primary" %>
+        <% if @page < @total_pages %>
+          <%= link_to "»", request.params.merge(page: @page + 1), class: "join-item btn btn-sm" %>
         <% end %>
       </div>
-    <% end %>
-  </div>
-</section>
+    </div>
+    <p class="text-center text-xs opacity-40 mt-3"><%= @total_count %> résultats — page <%= @page %>/<%= @total_pages %></p>
+  <% end %>
+</div>
