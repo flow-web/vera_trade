@@ -6,18 +6,28 @@ class DashboardController < ApplicationController
     @my_purchases = Listing.where(buyer_id: current_user.id).includes(:vehicle).order(created_at: :desc)
     @wallet = current_user.wallet
 
+    # Wishlist — favoris du user
+    @my_favorites = current_user.favorited_listings
+                                .includes(:vehicle)
+                                .where(status: "active")
+                                .limit(6)
+
     # Conversations bidirectionnelles
     @conversations = Conversation.where(user_id: current_user.id)
-      .or(Conversation.where(other_user_id: current_user.id))
-      .includes(:user, :other_user)
-      .order(updated_at: :desc)
-      .limit(5)
+                                 .or(Conversation.where(other_user_id: current_user.id))
+                                 .includes(:user, :other_user)
+                                 .order(updated_at: :desc)
+                                 .limit(5)
 
-    @stats = {
-      active_listings: @my_listings.where(status: :active).count,
-      total_sales: @my_listings.where(status: :sold).count,
-      total_purchases: @my_purchases.count,
-      unread_messages: current_user.received_messages.unread.count
-    }
+    # KPIs éditoriaux "Votre Garage"
+    active_scope             = @my_listings.where(status: "active")
+    @active_listings_count   = active_scope.count
+    @total_views             = active_scope.sum(:views_count)
+    @total_favorites_received = Favorite.joins(:listing)
+                                        .where(listings: { user_id: current_user.id, status: "active" })
+                                        .count
+    @collection_value        = active_scope.joins(:vehicle).sum("vehicles.price")
+    @unread_messages_count   = current_user.received_messages.unread.count
+    @total_sales_count       = @my_listings.where(status: "sold").count
   end
 end
