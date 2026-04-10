@@ -1,34 +1,111 @@
 @import "tailwindcss";
-@plugin "daisyui" {
-  themes: luxury --default
-}
 
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap');
+/* =============================================================================
+   VERA TRADE — "Le magazine des voitures qui ont une âme"
+   Design system "Cinematic Archivist" — Organic Brutalism éditorial
+   Refonte 2026-04 — Remplace DaisyUI luxury par tokens propres du briefing
+   ============================================================================= */
+
+/* TODO(RGPD) : migrer vers @fontsource self-hosted via esbuild bundling en PR
+   dédiée. Actuellement CDN Google Fonts (même que Stitch) pour débloquer la
+   refonte. Pour self-host : yarn add @fontsource/playfair-display
+   @fontsource/source-serif-4 @fontsource/inter @fontsource/jetbrains-mono puis
+   import depuis app/javascript/application.js. */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Source+Serif+4:ital,opsz,wght@0,8..60,300..700;1,8..60,300..700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap');
 
 @theme {
-  --font-heading: 'Space Grotesk', system-ui, sans-serif;
-  --font-body: 'DM Sans', system-ui, sans-serif;
+  /* -- Fonds -------------------------------------------------------------- */
+  --color-bg-primary:   #0A0A0A;
+  --color-bg-secondary: #141414;
+  --color-bg-tertiary:  #1C1C1C;
+
+  /* -- Texte -------------------------------------------------------------- */
+  --color-text-primary:   #F5F1E8;
+  --color-text-secondary: #C9C4B8;
+  --color-text-muted:     #8A857A;
+
+  /* -- Accents ------------------------------------------------------------ */
+  --color-accent-red:      #C41E3A;
+  --color-accent-red-dark: #8B0000;
+  --color-chrome:          #8B8680;
+  --color-racing:          #004225;
+  --color-gold:            #B8860B;
+
+  /* -- Lignes ------------------------------------------------------------- */
+  --color-line:        #2A2A2A;
+  --color-line-strong: #3A3A3A;
+
+  /* -- Rust Map (sémantique corrosion) ----------------------------------- */
+  --color-rust-ok:          #4A7C59;
+  --color-rust-surface:     #B8860B;
+  --color-rust-deep:        #8B6914;
+  --color-rust-perforation: #C41E3A;
+
+  /* -- Typographies ------------------------------------------------------- */
+  --font-display: "Playfair Display", Georgia, serif;
+  --font-body:    "Source Serif 4", "Source Serif Pro", Georgia, serif;
+  --font-ui:      Inter, system-ui, sans-serif;
+  --font-mono:    "JetBrains Mono", "SF Mono", monospace;
+
+  /* -- Letter spacing (labels) ------------------------------------------- */
+  --tracking-label:       0.15em;
+  --tracking-label-wide:  0.2em;
+  --tracking-label-xwide: 0.25em;
+  --tracking-display:     -0.015em;
+
+  /* -- Radii : zéro par défaut (Organic Brutalism) ----------------------- */
+  --radius-xs:   0;
+  --radius-sm:   2px;
+  --radius-md:   2px;
+  --radius-lg:   0;
+  --radius-xl:   0;
+  --radius-2xl:  0;
+  --radius-3xl:  0;
+  --radius-full: 9999px; /* avatars uniquement */
 }
 
+/* =============================================================================
+   BASE
+   ============================================================================= */
 @layer base {
+  html {
+    background-color: var(--color-bg-primary);
+    color-scheme: dark;
+  }
+
   body {
+    background-color: var(--color-bg-primary);
+    color: var(--color-text-primary);
     font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.65;
     -webkit-font-smoothing: antialiased;
-    /* PWA safe areas for notched phones */
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    /* PWA safe areas */
     padding-top: env(safe-area-inset-top, 0px);
     padding-left: env(safe-area-inset-left, 0px);
     padding-right: env(safe-area-inset-right, 0px);
   }
-  h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-heading);
-    font-weight: 600;
-    letter-spacing: -0.025em;
+
+  ::selection {
+    background-color: var(--color-accent-red);
+    color: var(--color-text-primary);
   }
-  a { cursor: pointer; }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    color: var(--color-text-primary);
+    line-height: 1.1;
+  }
+
+  a { cursor: pointer; color: inherit; text-decoration: none; }
+
   *:focus-visible {
-    outline: 2px solid oklch(var(--p));
+    outline: 1px solid var(--color-accent-red);
     outline-offset: 2px;
   }
+
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
       animation-duration: 0.01ms !important;
@@ -37,29 +114,177 @@
   }
 }
 
+/* =============================================================================
+   COMPOSANTS (@layer components = override-able par les utilities Tailwind)
+   ============================================================================= */
 @layer components {
-  .text-gold {
-    background: linear-gradient(135deg, #dca54c, #f0c674);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-  .glass-card {
-    background: oklch(var(--b2) / 0.8);
-    backdrop-filter: blur(12px);
-    border: 1px solid oklch(var(--bc) / 0.08);
-    border-radius: var(--rounded-box);
-  }
-  .card-lift {
-    transition: transform 0.2s, box-shadow 0.2s;
-  }
-  .card-lift:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 12px 40px oklch(0 0 0 / 0.4);
-  }
-}
 
-/* Hide bottom nav when native keyboard is open */
-body.keyboard-open .btm-nav {
-  display: none;
+  /* ----- Typographie éditoriale --------------------------------------- */
+  .playfair-italic {
+    font-family: var(--font-display);
+    font-style: italic;
+  }
+
+  .eyebrow {
+    font-family: var(--font-ui);
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-label-wide);
+    color: var(--color-accent-red);
+  }
+
+  .label-micro {
+    font-family: var(--font-ui);
+    font-size: 9px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-label-xwide);
+    color: var(--color-text-muted);
+  }
+
+  .label-small {
+    font-family: var(--font-ui);
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-label);
+    color: var(--color-text-muted);
+  }
+
+  /* Lettrine éditoriale — à appliquer sur un <p> avec class .drop-cap */
+  .drop-cap::first-letter {
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-style: italic;
+    font-size: 5.5rem;
+    line-height: 0.85;
+    float: left;
+    padding-right: 0.75rem;
+    padding-top: 0.25rem;
+    color: var(--color-accent-red);
+  }
+
+  /* ----- Boutons -------------------------------------------------------- */
+  .btn-vera-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.875rem 2rem;
+    background-color: var(--color-accent-red);
+    color: var(--color-text-primary);
+    font-family: var(--font-ui);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-label-wide);
+    border: 1px solid var(--color-accent-red);
+    transition: background-color 300ms cubic-bezier(0.4, 0, 0.2, 1),
+                border-color 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .btn-vera-primary:hover {
+    background-color: var(--color-accent-red-dark);
+    border-color: var(--color-accent-red-dark);
+  }
+
+  .btn-vera-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.875rem 2rem;
+    background-color: transparent;
+    color: var(--color-text-primary);
+    font-family: var(--font-ui);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-label-wide);
+    border: 1px solid var(--color-line-strong);
+    transition: background-color 300ms cubic-bezier(0.4, 0, 0.2, 1),
+                border-color 300ms cubic-bezier(0.4, 0, 0.2, 1),
+                color 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .btn-vera-secondary:hover {
+    background-color: var(--color-text-primary);
+    color: var(--color-bg-primary);
+    border-color: var(--color-text-primary);
+  }
+
+  /* ----- Inputs --------------------------------------------------------- */
+  .input-vera {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    background-color: var(--color-bg-tertiary);
+    color: var(--color-text-primary);
+    font-family: var(--font-body);
+    font-size: 15px;
+    border: 1px solid var(--color-line);
+    transition: border-color 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .input-vera:focus {
+    outline: none;
+    border-color: var(--color-accent-red);
+  }
+  .input-vera::placeholder {
+    color: var(--color-text-muted);
+    font-style: italic;
+  }
+
+  .input-mono {
+    font-family: var(--font-mono);
+    letter-spacing: 0.05em;
+  }
+
+  /* ----- Cards ---------------------------------------------------------- */
+  .card-vera {
+    background-color: var(--color-bg-secondary);
+    border: 1px solid var(--color-line);
+    transition: border-color 400ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .card-vera:hover { border-color: var(--color-line-strong); }
+
+  /* ----- Badges --------------------------------------------------------- */
+  .badge-vera {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.375rem 0.75rem;
+    font-family: var(--font-ui);
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-label);
+    border: 1px solid var(--color-line-strong);
+    color: var(--color-text-secondary);
+  }
+  .badge-vera-red {
+    border-color: var(--color-accent-red);
+    color: var(--color-accent-red);
+  }
+  .badge-vera-gold {
+    border-color: var(--color-gold);
+    color: var(--color-gold);
+  }
+
+  /* ----- Rust Map — glows par statut ----------------------------------- */
+  .rust-dot-ok          { background-color: var(--color-rust-ok);          box-shadow: 0 0 6px rgba(74, 124, 89, 0.6); }
+  .rust-dot-surface     { background-color: var(--color-rust-surface);     box-shadow: 0 0 6px rgba(184, 134, 11, 0.6); }
+  .rust-dot-deep        { background-color: var(--color-rust-deep);        box-shadow: 0 0 6px rgba(139, 105, 20, 0.6); }
+  .rust-dot-perforation { background-color: var(--color-rust-perforation); box-shadow: 0 0 10px rgba(196, 30, 58, 0.8); }
+
+  /* ----- Hide bottom nav when native keyboard opens -------------------- */
+  body.keyboard-open .bottom-nav-vera { display: none; }
+
+  /* ----- Wordmark décoratif du footer ---------------------------------- */
+  .wordmark-deco {
+    font-family: var(--font-ui);
+    font-weight: 900;
+    line-height: 0.8;
+    letter-spacing: -0.04em;
+    color: rgba(255, 255, 255, 0.02);
+    user-select: none;
+    pointer-events: none;
+    text-transform: uppercase;
+  }
 }

@@ -1,14 +1,15 @@
 <!DOCTYPE html>
-<html data-theme="luxury">
+<html lang="fr">
   <head>
-    <title><%= content_for(:title) || "Vera Trade" %></title>
+    <title><%= content_for(:title) || "Vera Trade — Le magazine des voitures qui ont une âme" %></title>
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-    <meta name="description" content="<%= content_for(:description) || "Vera Trade — La marketplace automobile premium. Messagerie directe, dossier véhicule complet, annonces vérifiées." %>">
+    <meta name="description" content="<%= content_for(:description) || "Vera Trade — La marketplace éditoriale des youngtimers, voitures de collection et préparations. Chaque annonce, une histoire. Chaque châssis, un Rust Map." %>">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="VeraTrade">
+    <meta name="apple-mobile-web-app-title" content="Vera Trade">
     <meta name="mobile-web-app-capable" content="yes">
-    <meta name="theme-color" content="#0F172A">
+    <meta name="theme-color" content="#0A0A0A">
     <meta name="application-name" content="Vera Trade">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
@@ -18,10 +19,6 @@
     <!-- PWA Manifest -->
     <link rel="manifest" href="/manifest.webmanifest">
 
-    <!-- Fonts: Space Grotesk (headings) + DM Sans (body) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
     <!-- Icons -->
     <link rel="icon" href="/icon.png" type="image/png">
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
@@ -29,36 +26,37 @@
     <link rel="apple-touch-icon" sizes="152x152" href="/icons/icon-152x152.png">
     <link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-180x180.png">
 
+    <!-- Fonts: préconnexion CDN Google (TODO: self-host RGPD en PR dédiée) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
   </head>
 
-  <body class="min-h-screen bg-base-200 text-base-content">
-    <%= render 'shared/navbar' %>
+  <body class="min-h-screen bg-bg-primary text-text-primary font-body antialiased">
+    <%= render "shared/top_nav" %>
 
     <% if notice %>
-      <div class="container mx-auto px-4 mt-4">
-        <div class="alert alert-success shadow-lg">
-          <span><%= notice %></span>
+      <div class="max-w-7xl mx-auto px-6 mt-6">
+        <div class="border-l-2 border-accent-red bg-bg-secondary px-5 py-4">
+          <p class="font-body text-sm text-text-primary"><%= notice %></p>
         </div>
       </div>
     <% end %>
     <% if alert %>
-      <div class="container mx-auto px-4 mt-4">
-        <div class="alert alert-error shadow-lg">
-          <span><%= alert %></span>
+      <div class="max-w-7xl mx-auto px-6 mt-6">
+        <div class="border-l-2 border-accent-red-dark bg-bg-secondary px-5 py-4">
+          <p class="font-body text-sm text-accent-red"><%= alert %></p>
         </div>
       </div>
     <% end %>
 
-    <main>
+    <main class="pt-[72px] lg:pt-[80px]">
       <%= yield %>
     </main>
 
-    <!-- Footer -->
-    <footer class="footer footer-center p-6 bg-base-300 text-base-content/60 text-sm mt-16 pb-24 lg:pb-6">
-      <p>Vera Trade &copy; <%= Date.current.year %> &mdash; Marketplace automobile premium</p>
-    </footer>
+    <%= render "shared/footer" %>
 
     <%= render "shared/bottom_nav" if user_signed_in? %>
 

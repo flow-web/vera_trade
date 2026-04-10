@@ -1,41 +1,56 @@
-<%# Mobile bottom navigation — visible on small screens only, supports safe-area for notched phones %>
-<nav class="btm-nav btm-nav-sm lg:hidden bg-base-100 border-t border-base-300 z-50"
-     style="padding-bottom: env(safe-area-inset-bottom, 0px);">
+<%#
+  Bottom navigation mobile — visible lg:hidden. Fond solide bg-bg-primary,
+  border-top 1px #2A2A2A, SVG custom line icons, labels FR.
+%>
+<nav class="bottom-nav-vera lg:hidden fixed bottom-0 inset-x-0 z-[100] bg-bg-primary border-t border-line"
+     style="padding-bottom: env(safe-area-inset-bottom, 0px);"
+     aria-label="Navigation mobile">
+  <div class="grid grid-cols-5 h-[62px]">
 
-  <%= link_to listings_path, class: "#{request.path.start_with?('/listings') && request.path == '/listings' ? 'active text-primary' : 'text-base-content/60'}" do %>
-    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-    </svg>
-    <span class="btm-nav-label text-xs">Annonces</span>
-  <% end %>
-
-  <%= link_to favorites_path, class: "#{request.path == '/favorites' ? 'active text-primary' : 'text-base-content/60'}" do %>
-    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-    </svg>
-    <span class="btm-nav-label text-xs">Favoris</span>
-  <% end %>
-
-  <%= link_to new_listing_path, class: "text-primary" do %>
-    <div class="bg-primary text-primary-content rounded-full p-2 -mt-4 shadow-lg">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+    <!-- Catalogue -->
+    <% catalogue_active = request.path.start_with?("/listings") && request.path == "/listings" %>
+    <%= link_to listings_path, class: "flex flex-col items-center justify-center gap-1 #{catalogue_active ? 'text-accent-red' : 'text-text-muted'} transition-colors" do %>
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
       </svg>
-    </div>
-    <span class="btm-nav-label text-xs">Vendre</span>
-  <% end %>
+      <span class="font-ui text-[9px] uppercase tracking-[0.15em]">Catalogue</span>
+    <% end %>
 
-  <%= link_to messages_path, class: "#{request.path.start_with?('/messages') || request.path.start_with?('/conversations') ? 'active text-primary' : 'text-base-content/60'}" do %>
-    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-    </svg>
-    <span class="btm-nav-label text-xs">Messages</span>
-  <% end %>
+    <!-- Favoris -->
+    <% favorites_active = request.path == "/favorites" %>
+    <%= link_to favorites_path, class: "flex flex-col items-center justify-center gap-1 #{favorites_active ? 'text-accent-red' : 'text-text-muted'} transition-colors" do %>
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+      </svg>
+      <span class="font-ui text-[9px] uppercase tracking-[0.15em]">Favoris</span>
+    <% end %>
 
-  <%= link_to dashboard_path, class: "#{request.path == '/dashboard' ? 'active text-primary' : 'text-base-content/60'}" do %>
-    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-    </svg>
-    <span class="btm-nav-label text-xs">Profil</span>
-  <% end %>
+    <!-- Publier (CTA central, accent rouge) -->
+    <%= link_to new_listing_path, class: "flex flex-col items-center justify-center gap-1 text-accent-red" do %>
+      <div class="flex items-center justify-center w-9 h-9 bg-accent-red text-text-primary border border-accent-red -mt-2">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 5v14M5 12h14"/>
+        </svg>
+      </div>
+      <span class="font-ui text-[9px] uppercase tracking-[0.15em]">Publier</span>
+    <% end %>
+
+    <!-- Messagerie -->
+    <% messages_active = request.path.start_with?("/messages") || request.path.start_with?("/conversations") %>
+    <%= link_to messages_path, class: "flex flex-col items-center justify-center gap-1 #{messages_active ? 'text-accent-red' : 'text-text-muted'} transition-colors" do %>
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+      </svg>
+      <span class="font-ui text-[9px] uppercase tracking-[0.15em]">Messages</span>
+    <% end %>
+
+    <!-- Garage -->
+    <% dashboard_active = request.path == "/dashboard" %>
+    <%= link_to dashboard_path, class: "flex flex-col items-center justify-center gap-1 #{dashboard_active ? 'text-accent-red' : 'text-text-muted'} transition-colors" do %>
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+      </svg>
+      <span class="font-ui text-[9px] uppercase tracking-[0.15em]">Garage</span>
+    <% end %>
+  </div>
 </nav>

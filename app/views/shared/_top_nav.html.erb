@@ -1,0 +1,108 @@
+<%#
+  Top navigation — Organic Brutalism, fond solide #0A0A0A, pas de backdrop-blur.
+  Border-bottom 1px, h-[72px] desktop / h-[64px] mobile. Menu français strict.
+%>
+<header class="fixed top-0 left-0 right-0 z-[100] h-[64px] lg:h-[80px] bg-bg-primary border-b border-line">
+  <nav class="h-full max-w-[1600px] mx-auto px-5 lg:px-10 flex items-center justify-between" aria-label="Navigation principale">
+
+    <!-- Wordmark -->
+    <%= link_to root_path, class: "flex items-center gap-3 group", aria: { label: "Vera Trade — Accueil" } do %>
+      <span class="font-ui text-[15px] lg:text-[16px] font-black tracking-[0.18em] uppercase text-text-primary group-hover:text-accent-red transition-colors duration-300">
+        Vera Trade
+      </span>
+    <% end %>
+
+    <!-- Menu desktop -->
+    <ul class="hidden lg:flex items-center gap-10" role="menubar">
+      <% nav_items = [
+        { label: "Catalogue",  path: listings_path, current: request.path.start_with?("/listings") && !request.path.include?("/new") },
+        { label: "Le Journal", path: "#",           current: false, disabled: true },
+        { label: "Enchères",   path: "#",           current: false, disabled: true },
+        { label: "Expertises", path: "#",           current: false, disabled: true }
+      ] %>
+      <% nav_items.each do |item| %>
+        <li role="none">
+          <% if item[:disabled] %>
+            <span class="relative inline-flex items-center gap-2 font-ui text-[10px] font-medium uppercase tracking-[0.2em] text-text-muted cursor-not-allowed" role="menuitem" aria-disabled="true">
+              <%= item[:label] %>
+              <span class="font-ui text-[8px] text-text-muted/60 tracking-[0.15em] border border-line px-1.5 py-0.5">Bientôt</span>
+            </span>
+          <% else %>
+            <%= link_to item[:path], class: "font-ui text-[10px] font-medium uppercase tracking-[0.2em] transition-colors duration-300 #{item[:current] ? 'text-accent-red border-b border-accent-red pb-1' : 'text-text-secondary hover:text-text-primary'}", role: "menuitem", aria: { current: item[:current] ? "page" : nil } do %>
+              <%= item[:label] %>
+            <% end %>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+
+    <!-- Actions droite -->
+    <div class="flex items-center gap-4 lg:gap-6">
+
+      <!-- Recherche mobile -->
+      <%= link_to listings_path, class: "lg:hidden text-text-secondary hover:text-text-primary transition-colors", aria: { label: "Rechercher" } do %>
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+      <% end %>
+
+      <% if user_signed_in? %>
+        <!-- CTA Publier (desktop) -->
+        <%= link_to new_listing_path, class: "hidden lg:inline-flex btn-vera-primary text-[10px] px-6 py-2.5" do %>
+          Publier une annonce
+        <% end %>
+
+        <!-- CTA Publier icône (mobile) -->
+        <%= link_to new_listing_path, class: "lg:hidden text-text-secondary hover:text-accent-red transition-colors", aria: { label: "Publier une annonce" } do %>
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 5v14M5 12h14"/>
+          </svg>
+        <% end %>
+
+        <!-- Avatar + menu -->
+        <div class="relative group">
+          <button type="button" class="flex items-center justify-center w-9 h-9 border border-line hover:border-line-strong transition-colors" aria-label="Compte">
+            <span class="font-ui text-xs font-bold text-text-primary">
+              <%= (current_user.respond_to?(:first_name) && current_user.first_name&.first&.upcase) || current_user.email.first.upcase %>
+            </span>
+          </button>
+          <div class="absolute right-0 top-full mt-2 w-56 bg-bg-secondary border border-line opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity duration-200 z-[110]">
+            <div class="px-5 py-4 border-b border-line">
+              <p class="label-micro mb-1">Connecté</p>
+              <p class="font-ui text-xs text-text-primary truncate"><%= current_user.email %></p>
+            </div>
+            <nav class="py-2">
+              <%= link_to dashboard_path, class: "block px-5 py-2.5 font-ui text-[11px] uppercase tracking-[0.15em] text-text-secondary hover:text-text-primary hover:bg-bg-tertiary transition-colors" do %>
+                Votre Garage
+              <% end %>
+              <%= link_to my_listings_path, class: "block px-5 py-2.5 font-ui text-[11px] uppercase tracking-[0.15em] text-text-secondary hover:text-text-primary hover:bg-bg-tertiary transition-colors" do %>
+                Mes Annonces
+              <% end %>
+              <%= link_to favorites_path, class: "block px-5 py-2.5 font-ui text-[11px] uppercase tracking-[0.15em] text-text-secondary hover:text-text-primary hover:bg-bg-tertiary transition-colors" do %>
+                Favoris
+              <% end %>
+              <%= link_to messages_path, class: "block px-5 py-2.5 font-ui text-[11px] uppercase tracking-[0.15em] text-text-secondary hover:text-text-primary hover:bg-bg-tertiary transition-colors" do %>
+                Messagerie
+              <% end %>
+              <%= link_to edit_user_registration_path, class: "block px-5 py-2.5 font-ui text-[11px] uppercase tracking-[0.15em] text-text-secondary hover:text-text-primary hover:bg-bg-tertiary transition-colors" do %>
+                Paramètres
+              <% end %>
+            </nav>
+            <div class="border-t border-line">
+              <%= button_to destroy_user_session_path, method: :delete, class: "block w-full text-left px-5 py-2.5 font-ui text-[11px] uppercase tracking-[0.15em] text-text-muted hover:text-accent-red transition-colors" do %>
+                Déconnexion
+              <% end %>
+            </div>
+          </div>
+        </div>
+      <% else %>
+        <%= link_to new_user_session_path, class: "hidden sm:inline-flex font-ui text-[10px] font-medium uppercase tracking-[0.2em] text-text-secondary hover:text-text-primary transition-colors" do %>
+          Connexion
+        <% end %>
+        <%= link_to new_user_registration_path, class: "btn-vera-primary text-[10px] px-5 py-2.5" do %>
+          Publier une annonce
+        <% end %>
+      <% end %>
+    </div>
+  </nav>
+</header>
