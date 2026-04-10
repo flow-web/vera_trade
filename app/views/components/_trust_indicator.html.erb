@@ -1,0 +1,56 @@
+<%#
+  Trust indicator — bloc de confiance éditorial (Rust Map, Experts, Paiement…).
+  Locals :
+    icon_name — :rust_map | :experts | :escrow | :provenance (SVG inline custom)
+    title     — string
+    body      — string
+%>
+
+<%
+  icon_name ||= :rust_map
+  title     ||= ""
+  body      ||= ""
+%>
+
+<div class="flex flex-col">
+  <!-- SVG line icon custom — pas Material Symbols -->
+  <div class="mb-6 text-accent-red">
+    <% case icon_name %>
+    <% when :rust_map %>
+      <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 6v15c0 .6.4 1 1 1l5-3 6 3 5-3c.6-.4 1-.9 1-1.5V3.5c0-.8-.5-1.3-1.3-1.1L15 4 9 1 4 4c-.6.4-1 .9-1 1.5"/>
+        <path d="M9 1v19"/><path d="M15 4v19"/>
+        <circle cx="6.5" cy="10" r="0.8" fill="currentColor"/>
+        <circle cx="12" cy="14" r="0.8" fill="currentColor"/>
+        <circle cx="17" cy="7" r="0.8" fill="currentColor"/>
+      </svg>
+    <% when :experts %>
+      <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 15a6 6 0 1 0 0-12 6 6 0 0 0 0 12z"/>
+        <path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/>
+      </svg>
+    <% when :escrow %>
+      <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        <path d="m9 12 2 2 4-4"/>
+      </svg>
+    <% when :provenance %>
+      <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+        <path d="M14 2v6h6"/><path d="M8 13h8"/><path d="M8 17h8"/><path d="M8 9h2"/>
+      </svg>
+    <% else %>
+      <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>
+      </svg>
+    <% end %>
+  </div>
+
+  <h4 class="font-ui text-[11px] font-semibold uppercase tracking-[0.2em] text-text-primary mb-4">
+    <%= title %>
+  </h4>
+
+  <p class="font-body italic text-sm text-text-secondary leading-relaxed max-w-[32ch]">
+    <%= body %>
+  </p>
+</div>

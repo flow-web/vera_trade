@@ -1,0 +1,37 @@
+<%#
+  Section header — titre de section éditorial uniforme.
+  Locals :
+    eyebrow  — string (ex: "La Sélection")
+    title    — string (titre Playfair italic, optionnel)
+    link_to_ — path optionnel pour "Tout voir"
+    link_label — string (défaut "Tout voir")
+%>
+
+<%
+  eyebrow    ||= ""
+  title        = local_assigns[:title]
+  link_target  = local_assigns[:link_to_]
+  link_label ||= "Tout voir"
+%>
+
+<div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12 lg:mb-16 pb-6 border-b border-line">
+  <div class="flex-1">
+    <% if eyebrow.present? %>
+      <div class="eyebrow mb-3"><%= eyebrow %></div>
+    <% end %>
+    <% if title %>
+      <h2 class="playfair-italic text-4xl md:text-5xl lg:text-6xl text-text-primary leading-[1.05] tracking-[-0.015em]">
+        <%= title %>
+      </h2>
+    <% end %>
+  </div>
+
+  <% if link_target %>
+    <%= link_to link_target, class: "inline-flex items-center gap-3 font-ui text-[10px] font-medium uppercase tracking-[0.2em] text-text-secondary hover:text-accent-red transition-colors duration-300 whitespace-nowrap" do %>
+      <%= link_label %>
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
+      </svg>
+    <% end %>
+  <% end %>
+</div>

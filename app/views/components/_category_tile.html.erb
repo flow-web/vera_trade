@@ -1,0 +1,43 @@
+<%#
+  Category tile — tuile catégorie éditoriale pour homepage.
+  Locals :
+    title    — string (ex: "Youngtimers Japonais")
+    subtitle — string optional (ex: "JDM années 80-90")
+    query    — string (ex: "Honda") — pour listings_path(query: ...)
+    image_url — string (image de fond)
+%>
+
+<%
+  title     ||= "Catégorie"
+  subtitle    = local_assigns[:subtitle]
+  query     ||= ""
+  image_url   = local_assigns[:image_url]
+%>
+
+<%= link_to listings_path(query: query), class: "group relative block aspect-square overflow-hidden bg-bg-secondary" do %>
+  <% if image_url %>
+    <%= image_tag image_url,
+          class: "absolute inset-0 w-full h-full object-cover brightness-[0.45] grayscale-[30%] group-hover:brightness-[0.6] group-hover:grayscale-0 scale-[1.08] group-hover:scale-100 transition-all duration-[900ms] ease-out",
+          alt: title, loading: "lazy" %>
+  <% end %>
+
+  <!-- Overlay subtil pour garantir lisibilité -->
+  <div class="absolute inset-0 bg-gradient-to-t from-bg-primary/70 via-bg-primary/20 to-transparent"></div>
+
+  <!-- Label centré -->
+  <div class="absolute inset-0 flex flex-col items-center justify-center text-center px-6">
+    <% if subtitle %>
+      <span class="eyebrow text-accent-red mb-4"><%= subtitle %></span>
+    <% end %>
+    <h3 class="playfair-italic text-3xl md:text-4xl text-text-primary leading-tight tracking-[-0.01em]">
+      <%= title %>
+    </h3>
+  </div>
+
+  <!-- Coin inférieur — arrow cue -->
+  <div class="absolute bottom-6 right-6 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="text-text-primary">
+      <path d="M7 17 17 7"/><path d="M7 7h10v10"/>
+    </svg>
+  </div>
+<% end %>
