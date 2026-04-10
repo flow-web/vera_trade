@@ -58,3 +58,8 @@
     box-shadow: 0 12px 40px oklch(0 0 0 / 0.4);
   }
 }
+
+/* Hide bottom nav when native keyboard is open */
+body.keyboard-open .btm-nav {
+  display: none;
+}

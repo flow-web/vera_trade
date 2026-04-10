@@ -40,3 +40,12 @@
 backups/*.sql.gz
 design-system/
 package-lock.json
+
+# Capacitor native builds (generated, heavy)
+/ios/App/Pods/
+/ios/App/App.xcworkspace/xcuserdata/
+/ios/App/DerivedData/
+/android/.gradle/
+/android/app/build/
+/android/build/
+*.keystore
