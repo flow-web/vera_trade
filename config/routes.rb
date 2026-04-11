@@ -21,6 +21,14 @@ Rails.application.routes.draw do
     resources :listing_questions, only: [ :create ], path: "questions" do
       resource :listing_answer, only: [ :create ], path: "answer"
     end
+
+    # PR3 feat/buyer-contact — modal "Contacter le vendeur / Faire une offre".
+    # new → renders the Turbo Frame modal, create → find_or_create_for
+    # the (listing, buyer) conversation + appends the first message.
+    resource :listing_contact,
+             only: [ :new, :create ],
+             controller: "listing_contacts",
+             path: "contact"
   end
 
   resources :vehicles, only: [] do
