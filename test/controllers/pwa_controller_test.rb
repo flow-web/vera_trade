@@ -61,4 +61,44 @@ class PwaControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_equal "application/manifest+json", response.media_type
   end
+
+  # D1.5 / fix/pwa-reset-endpoint — guard the manual cleanup escape hatch
+  # that early testers hit when Safari iOS or Chrome mobile refuses to
+  # evict the legacy FlowMotor SW on its own.
+
+  test "reset responds with an HTML page" do
+    get "/reset"
+
+    assert_response :success
+    assert_equal "text/html", response.media_type
+  end
+
+  test "reset sends Clear-Site-Data to wipe cache and storage on the browser" do
+    get "/reset"
+
+    clear_site_data = response.headers["Clear-Site-Data"]
+    assert_not_nil clear_site_data, "Clear-Site-Data header must be present"
+    assert_includes clear_site_data, '"cache"'
+    assert_includes clear_site_data, '"storage"'
+    assert_not_includes clear_site_data, '"cookies"',
+                        "reset must preserve cookies so users stay signed in"
+  end
+
+  test "reset is never cached by browsers or proxies" do
+    get "/reset"
+
+    assert_includes response.headers["Cache-Control"].to_s, "no-store"
+  end
+
+  test "reset page redirects to home via meta refresh" do
+    get "/reset"
+
+    assert_includes response.body, 'http-equiv="refresh"'
+    assert_includes response.body, "url=/",
+                    "meta refresh must point back to the homepage"
+    assert_includes response.body, "Nettoyage du cache",
+                    "user-facing message must be present"
+    assert_includes response.body, 'href="/"',
+                    "manual fallback link must be present if meta refresh fails"
+  end
 end
