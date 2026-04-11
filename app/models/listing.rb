@@ -1,4 +1,6 @@
 class Listing < ApplicationRecord
+  include PgSearch::Model
+
   belongs_to :user
   belongs_to :vehicle
   has_many :favorites, dependent: :destroy
@@ -18,6 +20,15 @@ class Listing < ApplicationRecord
   PHOTO_MAX_BYTES = 5.megabytes
   PHOTO_ALLOWED_TYPES = %w[image/jpeg image/jpg image/webp image/png].freeze
   VEHICLE_STUB_STRING = "À définir".freeze
+
+  # PR1 catalogue-search — segments collector basés sur l'année véhicule.
+  # Le filtre UI traduit un segment en range d'année appliqué sur vehicles.year.
+  SEGMENT_YEAR_RANGES = {
+    "classique"  => ..1984,
+    "youngtimer" => 1985..1999,
+    "moderne"    => 2000..2015,
+    "recent"     => 2016..
+  }.freeze
 
   validates :title, :description, :status, presence: true
   validates :slug, uniqueness: true, allow_nil: true
@@ -52,17 +63,45 @@ class Listing < ApplicationRecord
     slug || id.to_s
   end
 
-  # Full-text search scope
-  scope :search_query, ->(query) {
-    return all if query.blank?
-    joins(:vehicle).where(
-      "listings.title ILIKE :q OR vehicles.make ILIKE :q OR vehicles.model ILIKE :q OR vehicles.location ILIKE :q",
-      q: "%#{sanitize_sql_like(query)}%"
-    )
-  }
+  # PR1 catalogue-search — full-text search with weighted rank.
+  #
+  # Pondération :
+  #   - A (highest) : listings.title
+  #   - B           : vehicles.make, vehicles.model
+  #   - C           : listings.description, vehicles.location
+  #
+  # `any_word: true` pour matcher "BMW E30" sur des annonces qui contiennent
+  # au moins un des deux termes — le ranking remonte naturellement en tête
+  # celles qui matchent les deux. `prefix: true` autorise les recherches
+  # partielles ("bmw" matche "BMW M3").
+  pg_search_scope :search_query,
+    against: {
+      title: "A",
+      description: "C"
+    },
+    associated_against: {
+      vehicle: {
+        make: "B",
+        model: "B",
+        location: "C"
+      }
+    },
+    using: {
+      tsearch: {
+        prefix: true,
+        any_word: true,
+        dictionary: "simple"
+      }
+    }
 
   # Filter scopes
   scope :by_make, ->(make) { joins(:vehicle).where(vehicles: { make: make }) if make.present? }
+  scope :by_segment, ->(segment) {
+    return all if segment.blank?
+    range = SEGMENT_YEAR_RANGES[segment.to_s.downcase]
+    return none unless range
+    joins(:vehicle).where(vehicles: { year: range })
+  }
   scope :by_fuel, ->(fuel) { joins(:vehicle).where(vehicles: { fuel_type: fuel }) if fuel.present? }
   scope :by_transmission, ->(t) { joins(:vehicle).where(vehicles: { transmission: t }) if t.present? }
   scope :by_price_range, ->(min, max) {
