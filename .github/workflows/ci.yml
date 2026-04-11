@@ -3,7 +3,7 @@ name: CI
 on:
   pull_request:
   push:
-    branches: [ main ]
+    branches: [ master, main ]
 
 jobs:
   scan_ruby:
@@ -72,7 +72,13 @@ jobs:
       - name: Run tests
         env:
           RAILS_ENV: test
-          DATABASE_URL: postgres://postgres:postgres@localhost:5432
+          # Connect as the postgres superuser from the GitHub Actions service
+          # container. database.yml test block is ENV-driven; these vars tell
+          # Rails which host / role / password / database name to use.
+          DATABASE_HOST: localhost
+          TEST_DATABASE_USERNAME: postgres
+          TEST_DATABASE_PASSWORD: postgres
+          TEST_DATABASE_NAME: vera_trade_real_test
           # REDIS_URL: redis://localhost:6379/0
         run: bin/rails db:test:prepare test test:system
 
