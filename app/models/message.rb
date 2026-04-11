@@ -26,6 +26,7 @@ class Message < ApplicationRecord
   scope :with_offer, -> { where.not(offer_cents: nil) }
 
   after_create_commit :broadcast_to_users
+  after_create_commit :notify_recipient_by_email
 
   def offer?
     offer_cents.present?
@@ -47,6 +48,10 @@ class Message < ApplicationRecord
   end
 
   private
+
+  def notify_recipient_by_email
+    ConversationMailer.new_message(self).deliver_later
+  end
 
   def broadcast_to_users
     # Broadcast individually to each user with their own current_user_id

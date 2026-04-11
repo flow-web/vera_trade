@@ -1,0 +1,6 @@
+one:
+  user: two        # buyer (Bob contacts Alice about her BX GTi)
+  other_user: one  # seller (Alice owns listings :one)
+  listing: one
+  created_at: <%= Time.current %>
+  updated_at: <%= Time.current %>
