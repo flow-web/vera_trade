@@ -49,7 +49,8 @@ class ListingQaTest < ApplicationSystemTestCase
     click_on "Envoyer la question"
 
     assert_text "Quelle est l'origine exacte des ressorts"
-    assert_text "En attente de réponse du vendeur"
+    # Rendered uppercase via `.uppercase` Tailwind class in _listing_question.html.erb.
+    assert_text "EN ATTENTE DE RÉPONSE DU VENDEUR"
   end
 
   test "listing owner cannot post a question on their own listing" do
@@ -80,7 +81,8 @@ class ListingQaTest < ApplicationSystemTestCase
     end
 
     assert_text "Oui, carnet d'entretien complet disponible en mains propres."
-    assert_text "Réponse du vendeur", exact: false
+    # Rendered uppercase via `.uppercase` Tailwind class.
+    assert_text "RÉPONSE DU VENDEUR", exact: false
   end
 
   # ---------- Perspective 4 : full loop visible anonymously ----------
