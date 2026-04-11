@@ -58,10 +58,21 @@ jobs:
 
     steps:
       - name: Install packages
-        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y build-essential git libpq-dev libyaml-dev node-gyp pkg-config python-is-python3 google-chrome-stable
+        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y build-essential git libpq-dev libyaml-dev pkg-config python-is-python3 google-chrome-stable
 
       - name: Checkout code
         uses: actions/checkout@v4
+
+      # Node 22+ is required by @capacitor/cli@8.3.0; the ubuntu-latest
+      # runner ships Node 20 by default which blocks `yarn install` and
+      # therefore `jsbundling-rails` during `db:test:prepare`.
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Enable Corepack (yarn)
+        run: corepack enable
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
