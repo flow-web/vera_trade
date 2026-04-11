@@ -1,6 +1,6 @@
 class SearchPresetsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_preset, only: [:show, :edit, :update, :destroy]
+  before_action :set_preset, only: [ :show, :edit, :update, :destroy ]
 
   def index
     @presets = current_user.search_presets.order(created_at: :desc)
@@ -8,10 +8,10 @@ class SearchPresetsController < ApplicationController
 
   def create
     @preset = current_user.search_presets.build(preset_params)
-    
+
     if @preset.save
-      render json: { 
-        success: true, 
+      render json: {
+        success: true,
         preset: {
           id: @preset.id,
           name: @preset.name,
@@ -19,17 +19,17 @@ class SearchPresetsController < ApplicationController
         }
       }
     else
-      render json: { 
-        success: false, 
-        errors: @preset.errors.full_messages 
+      render json: {
+        success: false,
+        errors: @preset.errors.full_messages
       }, status: :unprocessable_entity
     end
   end
 
   def update
     if @preset.update(preset_params)
-      render json: { 
-        success: true, 
+      render json: {
+        success: true,
         preset: {
           id: @preset.id,
           name: @preset.name,
@@ -37,9 +37,9 @@ class SearchPresetsController < ApplicationController
         }
       }
     else
-      render json: { 
-        success: false, 
-        errors: @preset.errors.full_messages 
+      render json: {
+        success: false,
+        errors: @preset.errors.full_messages
       }, status: :unprocessable_entity
     end
   end

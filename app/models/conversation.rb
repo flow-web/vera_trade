@@ -1,6 +1,6 @@
 class Conversation < ApplicationRecord
   belongs_to :user
-  belongs_to :other_user, class_name: 'User'
+  belongs_to :other_user, class_name: "User"
   has_many :messages, dependent: :destroy
 
   validates :user_id, uniqueness: { scope: :other_user_id }
@@ -12,4 +12,4 @@ class Conversation < ApplicationRecord
   def unread_count
     messages.where(recipient: user, read: false).count
   end
-end 
+end

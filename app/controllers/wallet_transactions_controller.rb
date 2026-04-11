@@ -1,6 +1,6 @@
 class WalletTransactionsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_transaction, only: [:show]
+  before_action :set_transaction, only: [ :show ]
 
   def index
     @transactions = current_user.wallet_transactions
