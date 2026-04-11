@@ -1,0 +1,15 @@
+<%#
+  Turbo Stream response après création réussie d'une question.
+  1. Supprime l'état vide s'il existait
+  2. Append la nouvelle question à #listing_questions
+  3. Remplace le form par un form vide (nouvel ListingQuestion.new)
+%>
+<%= turbo_stream.remove "listing_questions_empty" %>
+
+<%= turbo_stream.append "listing_questions",
+      partial: "listings/listing_question",
+      locals: { question: @question, listing: @listing, current_user: current_user } %>
+
+<%= turbo_stream.replace "listing_question_form",
+      partial: "listings/listing_question_form",
+      locals: { listing: @listing, question: ListingQuestion.new } %>

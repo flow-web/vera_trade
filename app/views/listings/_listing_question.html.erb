@@ -1,0 +1,83 @@
+<%#
+  Partial pour une question + sa réponse éventuelle.
+  Locals :
+    - question      : ListingQuestion
+    - listing       : Listing (parent, pour les URL)
+    - current_user  : User courant (peut être nil)
+    - answer_errors : ActiveModel::Errors ou nil — présent si un POST
+                      answer vient d'échouer, permet de rendre les
+                      erreurs inline sans rediriger ailleurs
+%>
+<% answer_errors ||= nil %>
+<% current_user ||= nil %>
+<% is_owner = current_user.present? && listing.user_id == current_user.id %>
+
+<article id="<%= dom_id(question) %>" class="border-t border-line pt-8 mb-8">
+  <%# Question %>
+  <div class="flex items-start gap-4">
+    <div class="shrink-0 w-10 h-10 bg-bg-tertiary border border-line flex items-center justify-center">
+      <span class="font-ui text-[10px] font-bold text-text-primary uppercase">
+        <%= question.user.display_name.first.upcase %>
+      </span>
+    </div>
+    <div class="flex-1 min-w-0">
+      <div class="flex items-baseline justify-between gap-4 mb-2">
+        <div class="font-ui text-[11px] uppercase tracking-[0.15em] text-text-primary">
+          <%= question.user.display_name %>
+        </div>
+        <time class="font-mono text-[10px] text-text-muted" datetime="<%= question.created_at.iso8601 %>">
+          <%= l(question.created_at.to_date, format: :long) rescue question.created_at.strftime("%d %B %Y") %>
+        </time>
+      </div>
+      <p class="font-body text-base text-text-primary leading-relaxed">
+        <%= simple_format(question.body, {}, wrapper_tag: "span") %>
+      </p>
+    </div>
+  </div>
+
+  <%# Réponse si présente %>
+  <% if question.answer.present? %>
+    <div class="mt-6 ml-14 border-l-2 border-accent-red pl-6">
+      <div class="flex items-baseline justify-between gap-4 mb-2">
+        <div class="font-ui text-[11px] uppercase tracking-[0.15em] text-accent-red">
+          Réponse du vendeur · <%= question.answer.user.display_name %>
+        </div>
+        <time class="font-mono text-[10px] text-text-muted" datetime="<%= question.answer.created_at.iso8601 %>">
+          <%= l(question.answer.created_at.to_date, format: :long) rescue question.answer.created_at.strftime("%d %B %Y") %>
+        </time>
+      </div>
+      <p class="font-body text-base text-text-secondary leading-relaxed italic">
+        <%= simple_format(question.answer.body, {}, wrapper_tag: "span") %>
+      </p>
+    </div>
+  <% elsif is_owner %>
+    <%# Form inline pour répondre — visible uniquement si c'est le vendeur %>
+    <div class="mt-6 ml-14">
+      <%= form_with model: [ listing, question, question.build_answer ],
+                    url: listing_listing_question_listing_answer_path(listing, question),
+                    class: "space-y-3" do |f| %>
+        <% if answer_errors&.any? %>
+          <div class="font-ui text-[10px] uppercase tracking-[0.15em] text-accent-red">
+            <%= answer_errors.full_messages.to_sentence %>
+          </div>
+        <% end %>
+        <%= f.text_area :body,
+              placeholder: "Votre réponse publique — elle sera visible par tous les visiteurs.",
+              rows: 3,
+              maxlength: ListingAnswer::BODY_MAX_LENGTH,
+              class: "input-vera w-full" %>
+        <div class="flex items-center gap-4">
+          <%= f.submit "Publier la réponse",
+                class: "btn-vera-primary text-[10px] px-5 py-2" %>
+          <span class="font-ui text-[10px] uppercase tracking-[0.15em] text-text-muted">
+            Réponse publique · visible par tous
+          </span>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="mt-4 ml-14 font-ui text-[10px] uppercase tracking-[0.15em] text-text-muted">
+      En attente de réponse du vendeur
+    </div>
+  <% end %>
+</article>

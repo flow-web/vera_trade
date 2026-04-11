@@ -481,17 +481,43 @@
         </section>
       <% end %>
 
-      <%# -------------------- Q&A (stubbed) -------------------- %>
-      <section>
+      <%# -------------------- Q&A publiques (BaT-style) -------------------- %>
+      <section id="listing_qa_section">
         <div class="eyebrow mb-3">Questions & Réponses</div>
         <h2 class="playfair-italic text-3xl md:text-4xl text-text-primary leading-tight mb-10">
           L'avis des autres collectionneurs.
         </h2>
-        <div class="border border-line bg-bg-secondary p-8 lg:p-10 text-center">
-          <p class="font-body italic text-sm text-text-muted max-w-xl mx-auto">
-            La section Questions & Réponses publiques — à la manière de Bring a Trailer — sera ouverte dans la prochaine version. En attendant, contactez directement le vendeur.
-          </p>
+
+        <% questions = @listing.listing_questions.published.includes(:user, answer: :user).ordered %>
+        <% is_owner = user_signed_in? && current_user.id == @listing.user_id %>
+
+        <div id="listing_questions" class="mb-10">
+          <% if questions.any? %>
+            <%= render partial: "listings/listing_question",
+                  collection: questions,
+                  as: :question,
+                  locals: { listing: @listing, current_user: current_user } %>
+          <% else %>
+            <div class="border border-line bg-bg-secondary p-8 lg:p-10 text-center" id="listing_questions_empty">
+              <p class="font-body italic text-sm text-text-muted max-w-xl mx-auto">
+                Aucune question pour l'instant. Soyez le premier à interroger le vendeur — votre échange aidera aussi les futurs acheteurs.
+              </p>
+            </div>
+          <% end %>
         </div>
+
+        <% if user_signed_in? && !is_owner %>
+          <%= render "listings/listing_question_form",
+                listing: @listing,
+                question: ListingQuestion.new %>
+        <% elsif !user_signed_in? %>
+          <div class="border border-line bg-bg-secondary p-6 lg:p-8 text-center">
+            <p class="font-body italic text-sm text-text-muted mb-4">
+              Connectez-vous pour poser une question au vendeur.
+            </p>
+            <%= link_to "Se connecter", new_user_session_path, class: "btn-vera-secondary text-[10px] px-6 py-2.5" %>
+          </div>
+        <% end %>
       </section>
     </div>
 

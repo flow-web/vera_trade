@@ -1,0 +1,8 @@
+<%#
+  Turbo Stream response après création réussie d'une réponse vendeur.
+  Remplace le bloc question (qui contient maintenant la réponse inline)
+  par une re-render complète du partial.
+%>
+<%= turbo_stream.replace dom_id(@question),
+      partial: "listings/listing_question",
+      locals: { question: @question.reload, listing: @listing, current_user: current_user } %>
