@@ -53,6 +53,14 @@ gem "image_processing", "~> 1.2"
 gem "sentry-ruby"
 gem "sentry-rails"
 
+# Pagination — pagy is ~10x faster and uses ~100x less memory than
+# kaminari, which matters on a single-VPS deployment. [https://github.com/ddnexus/pagy]
+gem "pagy", "~> 9.3"
+
+# Postgres full-text search with weighted ranking. Used by Listing to
+# build a real search UX instead of string LIKEs. [https://github.com/Casecommons/pg_search]
+gem "pg_search", "~> 2.3"
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
