@@ -1,0 +1,45 @@
+<%#
+  Partial pour le formulaire "Poser une question".
+  Locals :
+    - listing     : Listing parent
+    - question    : ListingQuestion.new (ou invalide, pour re-render erreurs)
+    - flash_alert : String optionnel, erreur rate-limit à afficher
+%>
+<% question ||= ListingQuestion.new %>
+<% flash_alert ||= nil %>
+
+<div id="listing_question_form" class="border border-line bg-bg-secondary p-6 lg:p-8">
+  <% if flash_alert.present? %>
+    <div class="mb-4 font-ui text-[10px] uppercase tracking-[0.15em] text-accent-red">
+      <%= flash_alert %>
+    </div>
+  <% end %>
+
+  <% if question.errors.any? %>
+    <div class="mb-4 font-ui text-[10px] uppercase tracking-[0.15em] text-accent-red">
+      <%= question.errors.full_messages.to_sentence %>
+    </div>
+  <% end %>
+
+  <%= form_with model: [ listing, question ],
+                url: listing_listing_questions_path(listing),
+                class: "space-y-4" do |f| %>
+    <label for="listing_question_body" class="block font-ui text-[10px] uppercase tracking-[0.2em] text-text-muted">
+      Poser une question publique au vendeur
+    </label>
+    <%= f.text_area :body,
+          id: "listing_question_body",
+          placeholder: "Demandez ce qui vous manque pour vous décider : état mécanique, historique, provenance, revisions…",
+          rows: 3,
+          maxlength: ListingQuestion::BODY_MAX_LENGTH,
+          required: true,
+          class: "input-vera w-full" %>
+    <div class="flex items-center justify-between gap-4 flex-wrap">
+      <span class="font-ui text-[10px] uppercase tracking-[0.15em] text-text-muted">
+        Votre question et sa réponse seront visibles publiquement · <%= ListingQuestion::RATE_LIMIT_PER_DAY %> max/jour
+      </span>
+      <%= f.submit "Envoyer la question",
+            class: "btn-vera-primary text-[10px] px-6 py-2.5" %>
+    </div>
+  <% end %>
+</div>
