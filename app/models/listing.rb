@@ -94,37 +94,67 @@ class Listing < ApplicationRecord
       }
     }
 
-  # Filter scopes
-  scope :by_make, ->(make) { joins(:vehicle).where(vehicles: { make: make }) if make.present? }
+  # Filter scopes.
+  #
+  # IMPORTANT : tous les scopes WHERE utilisent la forme singulière
+  # `where(vehicle: { ... })` (nom d'association) plutôt que la forme
+  # plurielle `where(vehicles: { ... })` (nom de table).
+  #
+  # Pourquoi : quand ces scopes sont chaînés APRÈS `search_query` (pg_search),
+  # le gem ajoute une sous-requête `pg_search_documents` et Rails alias la
+  # table `vehicles` en `"vehicles" "vehicles_listings"` pour éviter la
+  # collision. Une référence en dur au nom de table (plural form OR raw SQL
+  # `"vehicles.year"` OR même `merge(Vehicle.where(...))`) génère alors un
+  # SQL qui casse avec `invalid reference to FROM-clause entry`.
+  #
+  # La forme singulière `where(vehicle: { ... })` passe par l'association
+  # reflection de Rails, qui connaît l'alias courant et le résout à la
+  # génération du SQL. C'est la seule forme alias-safe dans toutes les
+  # chaînes — y compris post-pg_search.
+  scope :by_make, ->(make) {
+    joins(:vehicle).where(vehicle: { make: make }) if make.present?
+  }
   scope :by_segment, ->(segment) {
     return all if segment.blank?
     range = SEGMENT_YEAR_RANGES[segment.to_s.downcase]
     return none unless range
-    joins(:vehicle).where(vehicles: { year: range })
+    joins(:vehicle).where(vehicle: { year: range })
   }
-  scope :by_fuel, ->(fuel) { joins(:vehicle).where(vehicles: { fuel_type: fuel }) if fuel.present? }
-  scope :by_transmission, ->(t) { joins(:vehicle).where(vehicles: { transmission: t }) if t.present? }
+  scope :by_fuel, ->(fuel) {
+    joins(:vehicle).where(vehicle: { fuel_type: fuel }) if fuel.present?
+  }
+  scope :by_transmission, ->(t) {
+    joins(:vehicle).where(vehicle: { transmission: t }) if t.present?
+  }
   scope :by_price_range, ->(min, max) {
-    scope = joins(:vehicle)
-    scope = scope.where("vehicles.price >= ?", min) if min.present?
-    scope = scope.where("vehicles.price <= ?", max) if max.present?
-    scope
+    result = joins(:vehicle)
+    result = result.where(vehicle: { price: min.to_f.. }) if min.present?
+    result = result.where(vehicle: { price: ..max.to_f }) if max.present?
+    result
   }
   scope :by_year_range, ->(min, max) {
-    scope = joins(:vehicle)
-    scope = scope.where("vehicles.year >= ?", min) if min.present?
-    scope = scope.where("vehicles.year <= ?", max) if max.present?
-    scope
+    result = joins(:vehicle)
+    result = result.where(vehicle: { year: min.to_i.. }) if min.present?
+    result = result.where(vehicle: { year: ..max.to_i }) if max.present?
+    result
   }
-  scope :by_km_max, ->(km) { joins(:vehicle).where("vehicles.kilometers <= ?", km) if km.present? }
+  scope :by_km_max, ->(km) {
+    joins(:vehicle).where(vehicle: { kilometers: ..km.to_i }) if km.present?
+  }
 
+  # sorted_by utilise du SQL brut référençant `vehicles.*`. Rails n'a pas
+  # d'équivalent singulier pour `order` sur une association. Ce scope ne
+  # doit donc JAMAIS être chaîné après `search_query` — le controller
+  # garantit ce contrat en utilisant `sorted_by` uniquement quand aucun
+  # query pg_search n'est actif (auquel cas pg_search trie par rank DESC,
+  # ce qui est le comportement attendu : "recherche → tri par pertinence").
   scope :sorted_by, ->(sort) {
     case sort
-    when "price_asc" then joins(:vehicle).order("vehicles.price ASC")
+    when "price_asc"  then joins(:vehicle).order("vehicles.price ASC")
     when "price_desc" then joins(:vehicle).order("vehicles.price DESC")
-    when "year_desc" then joins(:vehicle).order("vehicles.year DESC")
-    when "year_asc" then joins(:vehicle).order("vehicles.year ASC")
-    when "km_asc" then joins(:vehicle).order("vehicles.kilometers ASC")
+    when "year_desc"  then joins(:vehicle).order("vehicles.year DESC")
+    when "year_asc"   then joins(:vehicle).order("vehicles.year ASC")
+    when "km_asc"     then joins(:vehicle).order("vehicles.kilometers ASC")
     else order(created_at: :desc)
     end
   }

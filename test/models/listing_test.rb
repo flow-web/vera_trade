@@ -42,6 +42,43 @@ class ListingTest < ActiveSupport::TestCase
     assert_empty Listing.search_query("zzzzzunknowncar")
   end
 
+  # ---------- Regression guard : chaining pg_search with joins(:vehicle) scopes ----------
+  # When search_query (pg_search) is chained with any scope that joins
+  # vehicles (by_make, by_segment, by_price_range...), pg_search's inner
+  # subquery forces Rails to alias the outer vehicles join (e.g. to
+  # "vehicle" or "vehicles_listings"). Any scope referencing `vehicles.foo`
+  # directly blows up with `invalid reference to FROM-clause entry`.
+  #
+  # These tests lock in the `where(vehicle: { ... })` singular-association
+  # pattern that resolves the alias correctly.
+  #
+  # Note : sorted_by is intentionally NOT tested in chain with search_query
+  # because sorted_by uses raw `vehicles.*` SQL for ORDER BY and Rails has
+  # no alias-safe singular form for order. The controller enforces the
+  # contract "pg_search active ⇒ relevance sort, custom sort ignored" —
+  # see ListingsController#index.
+
+  test "search_query chained with by_segment does not raise on aliased vehicles table" do
+    results = Listing.search_query("Peugeot").by_segment("youngtimer")
+    assert_equal [ listings(:two) ], results.to_a
+  end
+
+  test "search_query chained with by_make works" do
+    results = Listing.search_query("Twingo").by_make("Renault")
+    assert_equal [ listings(:three) ], results.to_a
+  end
+
+  test "search_query chained with by_price_range works" do
+    results = Listing.search_query("gti").by_price_range(20_000, nil)
+    assert_includes results, listings(:two)
+    refute_includes results, listings(:one)
+  end
+
+  test "search_query chained with by_year_range works" do
+    results = Listing.search_query("Citroën").by_year_range(1980, 1995)
+    assert_equal [ listings(:one) ], results.to_a
+  end
+
   # ---------- by_make ----------
   test "by_make restricts to the given vehicle make" do
     results = Listing.by_make("Renault")

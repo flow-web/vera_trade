@@ -9,7 +9,8 @@ class ListingsController < ApplicationController
 
   def index
     listings = Listing.where(status: "active").includes(:vehicle, :user)
-    listings = listings.search_query(params[:query]) if params[:query].present?
+    searching = params[:query].present?
+    listings = listings.search_query(params[:query]) if searching
     listings = listings.by_make(params[:make])
     listings = listings.by_segment(params[:segment])
     listings = listings.by_fuel(params[:fuel_type])
@@ -17,7 +18,11 @@ class ListingsController < ApplicationController
     listings = listings.by_price_range(params[:price_min], params[:price_max])
     listings = listings.by_year_range(params[:year_min], params[:year_max])
     listings = listings.by_km_max(params[:km_max])
-    listings = listings.sorted_by(params[:sort])
+    # When pg_search is active the natural sort is relevance rank (handled
+    # by the scope itself). sorted_by references vehicles.* in raw SQL which
+    # collides with pg_search's aliased join — we deliberately skip it in
+    # that case. This also matches the common UX: "search → sort by match".
+    listings = listings.sorted_by(params[:sort]) unless searching
 
     @total_count = listings.count
     @pagy, @listings = pagy(listings, limit: PER_PAGE)
