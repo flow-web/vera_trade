@@ -6,10 +6,25 @@ class Listing < ApplicationRecord
 
   has_many_attached :photos
 
+  # M8 — Wizard dépôt associations
+  has_one :rust_map, dependent: :destroy
+  has_many :provenance_events, dependent: :destroy
+  has_one :originality_score, dependent: :destroy
+  has_many :listing_questions, dependent: :destroy
+
   validates :title, :description, :status, presence: true
   validates :slug, uniqueness: true, allow_nil: true
 
-  enum :status, { active: "active", pending: "pending", sold: "sold" }, default: "active"
+  enum :status, { active: "active", pending: "pending", sold: "sold", draft: "draft" }, default: "draft"
+
+  # M8 — Helpers wizard
+  def wizard_in_progress?
+    draft? && wizard_step < 7
+  end
+
+  def publishable?
+    draft? && vehicle.present? && photos.any? && rust_map.present?
+  end
 
   before_validation :generate_slug, on: :create
   before_validation :set_default_status, on: :create

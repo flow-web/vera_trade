@@ -1,0 +1,7 @@
+one:
+  listing: one
+  silhouette_variant: sedan
+  transparency_score: 94
+  notes: "Véhicule globalement sain, 2 zones surface au plancher arrière"
+  created_at: <%= Time.current %>
+  updated_at: <%= Time.current %>

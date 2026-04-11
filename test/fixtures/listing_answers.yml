@@ -1,0 +1,6 @@
+one:
+  listing_question: one
+  user: one
+  body: "Non, le capot et l'aile arrière droite ont été repeints en 2012 après léger accroc."
+  created_at: <%= Time.current %>
+  updated_at: <%= Time.current %>
