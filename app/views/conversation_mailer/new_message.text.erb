@@ -1,0 +1,19 @@
+Vera Trade — Nouveau message
+==============================
+
+Bonjour <%= @recipient.display_name %>,
+
+<%= @sender.display_name %> vous a envoyé un message.<%= " (Annonce : #{@listing.title})" if @listing %>
+
+---
+<%= truncate(@message.content, length: 500) %>
+---
+<% if @message.offer? %>
+Offre jointe : <%= number_to_currency(@message.offer_euros, unit: "€", format: "%n %u") %>
+<% end %>
+
+Répondre : <%= @conversation_url %>
+
+---
+Vera Trade · veratrade.fr
+Ce message est envoyé automatiquement, ne pas répondre directement.

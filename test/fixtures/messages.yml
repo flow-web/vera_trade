@@ -1,0 +1,8 @@
+one:
+  content: "Bonjour, est-ce que la voiture est encore disponible ?"
+  sender_id: <%= ActiveRecord::FixtureSet.identify(:two) %>    # Bob (buyer)
+  recipient_id: <%= ActiveRecord::FixtureSet.identify(:one) %> # Alice (seller)
+  conversation: one
+  read: false
+  created_at: <%= Time.current %>
+  updated_at: <%= Time.current %>
