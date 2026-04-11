@@ -1,19 +1,15 @@
 import { Controller } from "@hotwired/stimulus"
 
-// Wizard parent controller — tracks current step value and scrolls smoothly
-// when the turbo-frame is replaced.
+// Wizard parent controller — scroll smoothly on step transition.
+// Skip scroll on the very first connect (initial page load) to avoid
+// surprising the user with an auto-scroll on navigation arrival.
 export default class extends Controller {
   static values = { step: Number }
 
   connect() {
-    if (typeof window !== "undefined") {
+    if (this._initialized) {
       this.element.scrollIntoView({ behavior: "smooth", block: "start" })
     }
-  }
-
-  stepValueChanged(newValue, oldValue) {
-    if (typeof oldValue !== "undefined" && newValue !== oldValue) {
-      console.debug(`[wizard] step ${oldValue} → ${newValue}`)
-    }
+    this._initialized = true
   }
 }

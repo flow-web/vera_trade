@@ -12,18 +12,36 @@ class Listing < ApplicationRecord
   has_one :originality_score, dependent: :destroy
   has_many :listing_questions, dependent: :destroy
 
+  # Constantes M8 — une seule source de vérité pour le nombre d'étapes.
+  WIZARD_STEP_COUNT = 7
+  PHOTO_MAX_COUNT = 10
+  PHOTO_MAX_BYTES = 5.megabytes
+  PHOTO_ALLOWED_TYPES = %w[image/jpeg image/jpg image/webp image/png].freeze
+  VEHICLE_STUB_STRING = "À définir".freeze
+
   validates :title, :description, :status, presence: true
   validates :slug, uniqueness: true, allow_nil: true
+
+  # M8 — Photos : content_type + size + count enforcés server-side.
+  validate :photos_content_type_and_size
+  validate :photos_count_within_limit
 
   enum :status, { active: "active", pending: "pending", sold: "sold", draft: "draft" }, default: "draft"
 
   # M8 — Helpers wizard
   def wizard_in_progress?
-    draft? && wizard_step < 7
+    draft? && wizard_step < WIZARD_STEP_COUNT
   end
 
+  # M8 — publishable? exige une vraie saisie utilisateur (pas les stubs du new).
   def publishable?
-    draft? && vehicle.present? && photos.any? && rust_map.present?
+    return false unless draft? && vehicle.present? && photos.any? && rust_map.present?
+
+    # Le draft_data doit contenir de vraies valeurs véhicule (pas les placeholders
+    # "À définir" posés par ListingWizardsController#new).
+    v = draft_data.is_a?(Hash) ? draft_data["vehicle"].to_h : {}
+    required_keys = %w[make model year price]
+    required_keys.all? { |k| v[k].present? && v[k].to_s.strip != VEHICLE_STUB_STRING }
   end
 
   before_validation :generate_slug, on: :create
@@ -73,6 +91,26 @@ class Listing < ApplicationRecord
   }
 
   private
+
+  def photos_content_type_and_size
+    return unless photos.attached?
+
+    photos.each do |photo|
+      unless PHOTO_ALLOWED_TYPES.include?(photo.content_type)
+        errors.add(:photos, "doit être au format JPG, PNG ou WEBP (reçu : #{photo.content_type})")
+      end
+      if photo.byte_size > PHOTO_MAX_BYTES
+        errors.add(:photos, "doit peser moins de #{PHOTO_MAX_BYTES / 1.megabyte} Mo")
+      end
+    end
+  end
+
+  def photos_count_within_limit
+    return unless photos.attached?
+    if photos.count > PHOTO_MAX_COUNT
+      errors.add(:photos, "ne peut pas dépasser #{PHOTO_MAX_COUNT} images")
+    end
+  end
 
   def generate_slug
     return if title.blank?
