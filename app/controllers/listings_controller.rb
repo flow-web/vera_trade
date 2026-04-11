@@ -1,4 +1,6 @@
 class ListingsController < ApplicationController
+  include Pagy::Backend
+
   before_action :authenticate_user!, except: [ :index, :show ]
   before_action :set_listing, only: [ :show, :edit, :destroy ]
   before_action :ensure_owner, only: [ :edit, :destroy ]
@@ -6,20 +8,19 @@ class ListingsController < ApplicationController
   PER_PAGE = 12
 
   def index
-    @listings = Listing.where(status: "active").includes(:vehicle, :user)
-    @listings = @listings.search_query(params[:query]) if params[:query].present?
-    @listings = @listings.by_make(params[:make])
-    @listings = @listings.by_fuel(params[:fuel_type])
-    @listings = @listings.by_transmission(params[:transmission])
-    @listings = @listings.by_price_range(params[:price_min], params[:price_max])
-    @listings = @listings.by_year_range(params[:year_min], params[:year_max])
-    @listings = @listings.by_km_max(params[:km_max])
-    @listings = @listings.sorted_by(params[:sort])
+    listings = Listing.where(status: "active").includes(:vehicle, :user)
+    listings = listings.search_query(params[:query]) if params[:query].present?
+    listings = listings.by_make(params[:make])
+    listings = listings.by_segment(params[:segment])
+    listings = listings.by_fuel(params[:fuel_type])
+    listings = listings.by_transmission(params[:transmission])
+    listings = listings.by_price_range(params[:price_min], params[:price_max])
+    listings = listings.by_year_range(params[:year_min], params[:year_max])
+    listings = listings.by_km_max(params[:km_max])
+    listings = listings.sorted_by(params[:sort])
 
-    @total_count = @listings.count
-    @page = [ params[:page].to_i, 1 ].max
-    @total_pages = (@total_count.to_f / PER_PAGE).ceil
-    @listings = @listings.offset((@page - 1) * PER_PAGE).limit(PER_PAGE)
+    @total_count = listings.count
+    @pagy, @listings = pagy(listings, limit: PER_PAGE)
   end
 
   def my_listings
