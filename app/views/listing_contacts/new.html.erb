@@ -35,9 +35,16 @@
         <%= @listing.title %>
       </h2>
 
+      <%# turbo: false → bypass Turbo entirely so the success redirect (302
+          → /conversations/:id) becomes a real top-level browser navigation.
+          The form is rendered inside a turbo_frame_tag for the lazy-load
+          path, and putting data-turbo-frame="_top" on the form is *not*
+          enough in turbo-rails 2.0.x: the parent frame still hijacks the
+          response. Disabling Turbo on this single form submission is the
+          most robust way to guarantee the navigation. %>
       <%= form_with model: @message,
                     url: listing_listing_contact_path(@listing),
-                    data: { turbo_frame: "_top" },
+                    data: { turbo: false },
                     class: "space-y-6" do |f| %>
 
         <% if @message.errors.any? %>

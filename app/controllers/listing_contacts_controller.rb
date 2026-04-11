@@ -29,7 +29,12 @@ class ListingContactsController < ApplicationController
       redirect_to conversation_path(@listing.user),
         notice: "Message envoyé au vendeur."
     else
-      render :new, status: :unprocessable_entity
+      # The form has turbo: false (see new.html.erb), so this is a classic
+      # full-page navigation. Render :new would show the modal view as a
+      # standalone page (no listing context). Redirecting back to the
+      # listing with the validation errors flashed gives a coherent UX.
+      redirect_to listing_path(@listing),
+        alert: @message.errors.full_messages.to_sentence
     end
   rescue ArgumentError => e
     redirect_to listing_path(@listing), alert: e.message
