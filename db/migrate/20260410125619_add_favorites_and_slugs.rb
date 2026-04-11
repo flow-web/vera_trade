@@ -6,7 +6,7 @@ class AddFavoritesAndSlugs < ActiveRecord::Migration[8.0]
       t.references :listing, null: false, foreign_key: true
       t.timestamps
     end
-    add_index :favorites, [:user_id, :listing_id], unique: true
+    add_index :favorites, [ :user_id, :listing_id ], unique: true
 
     # Slugs pour SEO
     add_column :listings, :slug, :string

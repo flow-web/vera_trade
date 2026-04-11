@@ -6,22 +6,22 @@ Rails.application.routes.draw do
   root "pages#home"
 
   resources :listings do
-    resource :favorite, only: [:create, :destroy]
+    resource :favorite, only: [ :create, :destroy ]
   end
 
   resources :vehicles, only: [] do
     collection { get :fetch_info }
   end
 
-  resources :messages, only: [:index, :create]
+  resources :messages, only: [ :index, :create ]
   get "conversations/:user_id", to: "messages#show", as: "conversation"
 
   resources :car_brands, only: [] do
     collection { get :search }
   end
 
-  resources :wallet_transactions, path: "transactions", only: [:index, :show]
-  resources :search_presets, only: [:index, :create, :show, :update, :destroy]
+  resources :wallet_transactions, path: "transactions", only: [ :index, :show ]
+  resources :search_presets, only: [ :index, :create, :show, :update, :destroy ]
 
   get "my_listings", to: "listings#my_listings"
   get "favorites", to: "favorites#index"

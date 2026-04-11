@@ -3,4 +3,4 @@ class CarBrandsController < ApplicationController
     brands = CarBrandsService.search(params[:query])
     render json: brands
   end
-end 
+end

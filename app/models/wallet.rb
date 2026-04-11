@@ -16,4 +16,4 @@ class Wallet < ApplicationRecord
       update!(balance: balance - amount)
     end
   end
-end 
+end

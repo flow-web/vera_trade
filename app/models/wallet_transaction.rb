@@ -6,12 +6,12 @@ class WalletTransaction < ApplicationRecord
   validates :transaction_type, presence: true
 
   enum :transaction_type, {
-    deposit: 'deposit',
-    withdrawal: 'withdrawal',
-    purchase: 'purchase',
-    sale: 'sale',
-    refund: 'refund'
-  }, default: 'deposit'
+    deposit: "deposit",
+    withdrawal: "withdrawal",
+    purchase: "purchase",
+    sale: "sale",
+    refund: "refund"
+  }, default: "deposit"
 
   before_create :set_description
 
@@ -19,16 +19,16 @@ class WalletTransaction < ApplicationRecord
 
   def set_description
     self.description ||= case transaction_type
-    when 'deposit'
-      'Dépôt de fonds'
-    when 'withdrawal'
-      'Retrait de fonds'
-    when 'purchase'
-      'Achat'
-    when 'sale'
-      'Vente'
-    when 'refund'
-      'Remboursement'
+    when "deposit"
+      "Dépôt de fonds"
+    when "withdrawal"
+      "Retrait de fonds"
+    when "purchase"
+      "Achat"
+    when "sale"
+      "Vente"
+    when "refund"
+      "Remboursement"
     end
   end
-end 
+end
