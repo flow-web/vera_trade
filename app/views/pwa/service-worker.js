@@ -1,127 +1,86 @@
-const CACHE_VERSION = "vt-v1";
-const STATIC_CACHE = `static-${CACHE_VERSION}`;
-const PAGES_CACHE = `pages-${CACHE_VERSION}`;
-const IMAGES_CACHE = `images-${CACHE_VERSION}`;
+// Kamikaze Service Worker — D1 / fix/sw-kamikaze
+//
+// WHY THIS EXISTS
+// ---------------
+// Before `veratrade.fr` was rewired to serve Vera Trade, the domain served
+// FlowMotor, which shipped a PWA Service Worker registered at scope "/".
+// That worker got cached in every visitor's browser and keeps intercepting
+// requests for `veratrade.fr`, so early testers can still land on a stale
+// FlowMotor page even though the backend now serves Vera Trade.
+//
+// This file replaces the previous cache-first worker with a minimal
+// "suicide" worker whose only job is to:
+//
+//   1. Delete every Cache Storage bucket created by any previous worker
+//      (FlowMotor-era or Vera Trade M1 cache-first versions).
+//   2. Unregister itself, which frees the "/" scope for the browser.
+//   3. Force every open client tab to reload so the user sees the real
+//      Vera Trade HTML served directly from the network — no SW in the way.
+//
+// The Rails controller (`PwaController#service_worker`) additionally sets
+// `Clear-Site-Data: "cache", "storage"` on this response, which instructs
+// modern browsers to wipe HTTP cache, Cache Storage, and Service Worker
+// registrations for the origin. Between the HTTP header and this script,
+// any visitor whose browser still talks to /service-worker.js will be
+// cleaned up on their next SW update check.
+//
+// IMPORTANT: the layout (`application.html.erb`) no longer calls
+// `navigator.serviceWorker.register(...)`. That means new tabs never
+// install this worker again. Combined with the kamikaze activate step,
+// the whole scope goes clean and stays clean.
+//
+// TO RE-ENABLE PWA LATER
+// ----------------------
+// When we actually want a PWA (offline fallback, installable shell, push
+// notifications), we will:
+//   - restore the `navigator.serviceWorker.register("/service-worker.js")`
+//     block in the layout
+//   - replace this kamikaze body with the real worker (network-first HTML,
+//     cache-first images, etc.)
+//   - drop the Clear-Site-Data header from PwaController#service_worker
+//
+// Until then, this file stays intentionally boring.
 
-const STATIC_ASSETS = [
-  "/offline",
-  "/icons/icon-192x192.png",
-  "/icons/icon-512x512.png"
-];
-
-// Install: pre-cache shell
-self.addEventListener("install", (event) => {
-  event.waitUntil(
-    caches.open(STATIC_CACHE).then((cache) => cache.addAll(STATIC_ASSETS))
-  );
+self.addEventListener("install", () => {
+  // Skip the standard "waiting" phase so the new worker takes control
+  // immediately instead of waiting for all existing tabs to close.
   self.skipWaiting();
 });
 
-// Activate: clean old caches
 self.addEventListener("activate", (event) => {
   event.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(
-        keys
-          .filter((k) => k !== STATIC_CACHE && k !== PAGES_CACHE && k !== IMAGES_CACHE)
-          .map((k) => caches.delete(k))
-      )
-    )
-  );
-  self.clients.claim();
-});
+    (async () => {
+      // 1. Nuke every Cache Storage bucket on this origin.
+      const cacheKeys = await caches.keys();
+      await Promise.all(cacheKeys.map((key) => caches.delete(key)));
 
-// Fetch strategy
-self.addEventListener("fetch", (event) => {
-  const { request } = event;
-  const url = new URL(request.url);
+      // 2. Unregister this worker. Once no client is controlled by us,
+      //    the scope "/" becomes SW-free.
+      await self.registration.unregister();
 
-  // Skip non-GET and cross-origin
-  if (request.method !== "GET" || url.origin !== self.location.origin) return;
-
-  // Skip Turbo Stream requests
-  if (request.headers.get("Accept")?.includes("text/vnd.turbo-stream.html")) return;
-
-  // Static assets (CSS, JS, fonts) — cache-first
-  if (isStaticAsset(url.pathname)) {
-    event.respondWith(cacheFirst(request, STATIC_CACHE));
-    return;
-  }
-
-  // Images — cache-first with 90-day expiry
-  if (isImage(url.pathname)) {
-    event.respondWith(cacheFirst(request, IMAGES_CACHE));
-    return;
-  }
-
-  // HTML pages — network-first with offline fallback
-  if (request.headers.get("Accept")?.includes("text/html")) {
-    event.respondWith(networkFirstWithOffline(request));
-    return;
-  }
-});
-
-// Cache-first: check cache, fallback to network (and update cache)
-async function cacheFirst(request, cacheName) {
-  const cached = await caches.match(request);
-  if (cached) return cached;
-
-  try {
-    const response = await fetch(request);
-    if (response.ok) {
-      const cache = await caches.open(cacheName);
-      cache.put(request, response.clone());
-    }
-    return response;
-  } catch {
-    return new Response("", { status: 503 });
-  }
-}
-
-// Network-first: try network, cache successful responses, fallback to cache then offline
-async function networkFirstWithOffline(request) {
-  try {
-    const response = await fetch(request);
-    if (response.ok) {
-      const cache = await caches.open(PAGES_CACHE);
-      cache.put(request, response.clone());
-    }
-    return response;
-  } catch {
-    const cached = await caches.match(request);
-    if (cached) return cached;
-    return caches.match("/offline");
-  }
-}
-
-function isStaticAsset(pathname) {
-  return /\.(css|js|woff2?|ttf|eot)(\?|$)/.test(pathname) ||
-         pathname.startsWith("/assets/");
-}
-
-function isImage(pathname) {
-  return /\.(png|jpg|jpeg|gif|webp|avif|svg|ico)(\?|$)/.test(pathname) ||
-         pathname.startsWith("/icons/");
-}
-
-// Push notifications (ready for future use)
-self.addEventListener("push", async (event) => {
-  const { title, options } = await event.data.json();
-  event.waitUntil(self.registration.showNotification(title, options));
-});
-
-self.addEventListener("notificationclick", (event) => {
-  event.notification.close();
-  event.waitUntil(
-    self.clients.matchAll({ type: "window" }).then((clientList) => {
-      for (const client of clientList) {
-        if (new URL(client.url).pathname === event.notification.data?.path && "focus" in client) {
-          return client.focus();
-        }
-      }
-      if (self.clients.openWindow) {
-        return self.clients.openWindow(event.notification.data?.path || "/");
-      }
-    })
+      // 3. Force every open tab/window on this origin to reload. Because
+      //    the registration is already marked for removal, the reload
+      //    fetches HTML straight from the network — no SW interception.
+      const windowClients = await self.clients.matchAll({
+        type: "window",
+        includeUncontrolled: true
+      });
+      await Promise.all(
+        windowClients.map((client) => {
+          try {
+            return client.navigate(client.url);
+          } catch (_err) {
+            // Some browsers throw on cross-origin or detached clients.
+            // Silently ignore — the next manual refresh will pick up
+            // the clean state.
+            return Promise.resolve();
+          }
+        })
+      );
+    })()
   );
 });
+
+// No `fetch` handler on purpose: with no fetch listener registered, the
+// browser routes every request directly to the network, which is exactly
+// what we want while the old FlowMotor ghost is being exorcised.

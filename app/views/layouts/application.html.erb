@@ -60,13 +60,25 @@
 
     <%= render "shared/bottom_nav" if user_signed_in? %>
 
-    <!-- Service Worker Registration -->
-    <script>
-      if ("serviceWorker" in navigator) {
-        navigator.serviceWorker.register("/service-worker.js", { scope: "/" })
-          .then((reg) => console.log("SW registered:", reg.scope))
-          .catch((err) => console.error("SW registration failed:", err));
-      }
-    </script>
+    <%#
+      Service Worker registration is intentionally DISABLED right now.
+
+      Why: veratrade.fr previously served FlowMotor, which registered a
+      cache-first PWA worker at scope "/". That ghost worker still lives
+      in early visitors' browsers and intercepts our pages. Re-running
+      `navigator.serviceWorker.register(...)` here would immediately
+      re-install the current kamikaze worker (app/views/pwa/service-worker.js)
+      which unregisters itself on activate — creating an install/kamikaze
+      loop on every navigation.
+
+      Strategy (D1 / fix/sw-kamikaze): rely on browsers' built-in 24h SW
+      update check. The browser will fetch /service-worker.js, install the
+      kamikaze, let it wipe caches + unregister, and then stay SW-free.
+      No `register(...)` call from our side is needed for the cleanup.
+
+      TO RE-ENABLE PWA LATER: restore the `navigator.serviceWorker.register`
+      block below AND replace the kamikaze body with a real worker. See
+      app/views/pwa/service-worker.js for the full rollback instructions.
+    %>
   </body>
 </html>
