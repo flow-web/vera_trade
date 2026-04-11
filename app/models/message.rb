@@ -1,10 +1,20 @@
 class Message < ApplicationRecord
   belongs_to :sender, class_name: "User"
   belongs_to :recipient, class_name: "User"
+  belongs_to :conversation, optional: true
 
   attr_accessor :current_user_id
 
+  OFFER_MAX_CENTS = 10_000_000_00 # 10 000 000 € sanity cap
+
   validates :content, presence: true
+  validates :offer_cents,
+    numericality: {
+      only_integer: true,
+      greater_than: 0,
+      less_than_or_equal_to: OFFER_MAX_CENTS
+    },
+    allow_nil: true
 
   scope :between, ->(sender_id, recipient_id) do
     where(sender_id: sender_id, recipient_id: recipient_id)
@@ -12,9 +22,21 @@ class Message < ApplicationRecord
     .order(created_at: :asc)
   end
 
-  scope :unread, -> { where(read: false) }
+  scope :unread,     -> { where(read: false) }
+  scope :with_offer, -> { where.not(offer_cents: nil) }
 
   after_create_commit :broadcast_to_users
+
+  def offer?
+    offer_cents.present?
+  end
+
+  # Returns the offer amount in euros as a Float (never rounded, the
+  # cents storage is the source of truth). Nil if no offer is attached.
+  def offer_euros
+    return nil unless offer?
+    offer_cents / 100.0
+  end
 
   def mark_as_read!
     update!(read: true) unless read?

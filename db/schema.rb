@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_04_11_120007) do
+ActiveRecord::Schema[8.0].define(version: 2026_04_11_130000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -59,6 +59,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_11_120007) do
     t.bigint "other_user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "listing_id"
+    t.index ["listing_id", "user_id"], name: "index_conversations_on_listing_and_buyer_unique", unique: true, where: "(listing_id IS NOT NULL)"
+    t.index ["listing_id"], name: "index_conversations_on_listing_id"
     t.index ["other_user_id"], name: "index_conversations_on_other_user_id"
     t.index ["user_id", "other_user_id"], name: "index_conversations_on_user_id_and_other_user_id", unique: true
     t.index ["user_id"], name: "index_conversations_on_user_id"
@@ -165,6 +168,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_11_120007) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "read", default: false, null: false
+    t.bigint "conversation_id"
+    t.integer "offer_cents"
+    t.index ["conversation_id"], name: "index_messages_on_conversation_id"
   end
 
   create_table "originality_scores", force: :cascade do |t|
@@ -370,6 +376,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_11_120007) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "categories", "categories", column: "parent_id"
+  add_foreign_key "conversations", "listings"
   add_foreign_key "conversations", "users"
   add_foreign_key "conversations", "users", column: "other_user_id"
   add_foreign_key "favorites", "listings"
@@ -385,6 +392,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_11_120007) do
   add_foreign_key "media_folders", "listings"
   add_foreign_key "media_items", "listings"
   add_foreign_key "media_items", "media_folders"
+  add_foreign_key "messages", "conversations"
   add_foreign_key "originality_scores", "listings"
   add_foreign_key "provenance_events", "listings"
   add_foreign_key "reports", "users"
