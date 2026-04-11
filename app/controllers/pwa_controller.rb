@@ -10,6 +10,13 @@ class PwaController < ApplicationController
     # Kamikaze rollout (D1 / fix/sw-kamikaze): wipe the legacy FlowMotor
     # PWA worker from every visitor's browser.
     #
+    # We intentionally read the file into memory and `render plain:` it
+    # instead of using `render file:`. In Rails 8, `render file:` with a
+    # path inside `app/views/` routes through the template resolver,
+    # which both (a) post-processes the content and (b) strips custom
+    # response headers like `Clear-Site-Data`. `render plain:` is the
+    # deterministic path: headers stick, bytes are sent verbatim.
+    #
     # - `Clear-Site-Data: "cache", "storage"` tells supporting browsers to
     #   clear HTTP cache, Cache Storage AND Service Worker registrations
     #   for this origin when they fetch this response. Cookies are
@@ -18,12 +25,13 @@ class PwaController < ApplicationController
     #   never cached, so rollback and re-issue stay instantaneous.
     # - `Service-Worker-Allowed: /` keeps the root scope reachable in case
     #   a later PR re-enables a real PWA worker.
-    response.set_header("Clear-Site-Data", '"cache", "storage"')
-    response.set_header("Cache-Control", "no-store, max-age=0")
-    response.set_header("Service-Worker-Allowed", "/")
+    sw_body = Rails.root.join("app/views/pwa/service-worker.js").read
 
-    render file: Rails.root.join("app/views/pwa/service-worker.js"),
-           content_type: "text/javascript"
+    headers["Clear-Site-Data"] = '"cache", "storage"'
+    headers["Cache-Control"] = "no-store, max-age=0"
+    headers["Service-Worker-Allowed"] = "/"
+
+    render plain: sw_body, content_type: "text/javascript"
   end
 
   def offline; end
