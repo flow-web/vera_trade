@@ -13,3 +13,9 @@ module ActiveSupport
     # Add more helper methods to be used by all tests here...
   end
 end
+
+# Devise test helpers for integration / controller / system tests
+class ActionDispatch::IntegrationTest
+  include Devise::Test::IntegrationHelpers
+end
+

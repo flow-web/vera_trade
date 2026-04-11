@@ -5,6 +5,13 @@ Rails.application.routes.draw do
 
   root "pages#home"
 
+  resources :listing_wizards, only: [:new, :create, :edit, :update] do
+    member do
+      patch :publish
+      patch :save_step
+    end
+  end
+
   resources :listings do
     resource :favorite, only: [:create, :destroy]
   end
