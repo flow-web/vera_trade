@@ -1,6 +1,27 @@
 class PwaController < ApplicationController
   skip_before_action :authenticate_user!
 
+  # PWA endpoints (`/service-worker.js`, `/manifest.webmanifest`) serve
+  # public content with zero sensitive data, and MUST be readable in a
+  # cross-origin context:
+  #
+  # - `/service-worker.js` is fetched by the browser's built-in Service
+  #   Worker update mechanism, not by user-facing JavaScript. That fetch
+  #   carries no `X-Requested-With: XMLHttpRequest` header and has no
+  #   session tied to the calling page. Rails' default
+  #   `protect_from_forgery` therefore treats it as a cross-origin JS
+  #   load and raises `ActionController::InvalidCrossOriginRequest`,
+  #   which the default handler maps to 422. That was the root cause of
+  #   CI failing 5 times on PR #49 before this fix.
+  # - `/manifest.webmanifest` is fetched by browsers, crawlers and OS
+  #   app stores with the same bare headers.
+  #
+  # Disabling forgery protection on this controller is safe because no
+  # action here performs any state-changing operation and no action
+  # returns anything user-specific. It is exactly the stance Rails
+  # recommends for publicly cacheable endpoints.
+  skip_forgery_protection
+
   # Kamikaze Service Worker body (D1 / fix/sw-kamikaze)
   #
   # Inlined as a frozen Ruby constant rather than served from
