@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_11_110412) do
+ActiveRecord::Schema[8.0].define(version: 2026_04_10_125619) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -64,6 +64,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_11_110412) do
     t.index ["user_id"], name: "index_conversations_on_user_id"
   end
 
+  create_table "favorites", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "listing_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["listing_id"], name: "index_favorites_on_listing_id"
+    t.index ["user_id", "listing_id"], name: "index_favorites_on_user_id_and_listing_id", unique: true
+    t.index ["user_id"], name: "index_favorites_on_user_id"
+  end
+
   create_table "guest_accounts", force: :cascade do |t|
     t.string "email"
     t.string "phone"
@@ -90,7 +100,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_11_110412) do
     t.text "moderation_reason"
     t.bigint "buyer_id"
     t.boolean "is_certified", default: false
+    t.string "slug"
+    t.integer "views_count", default: 0, null: false
     t.index ["buyer_id"], name: "index_listings_on_buyer_id"
+    t.index ["slug"], name: "index_listings_on_slug", unique: true
     t.index ["user_id"], name: "index_listings_on_user_id"
     t.index ["vehicle_id"], name: "index_listings_on_vehicle_id"
   end
@@ -282,6 +295,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_11_110412) do
   add_foreign_key "categories", "categories", column: "parent_id"
   add_foreign_key "conversations", "users"
   add_foreign_key "conversations", "users", column: "other_user_id"
+  add_foreign_key "favorites", "listings"
+  add_foreign_key "favorites", "users"
   add_foreign_key "guest_accounts", "users"
   add_foreign_key "listings", "users"
   add_foreign_key "listings", "users", column: "buyer_id"
