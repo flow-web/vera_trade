@@ -1,7 +1,7 @@
 class ListingsController < ApplicationController
-  before_action :authenticate_user!, except: [:index, :show]
-  before_action :set_listing, only: [:show, :edit, :destroy]
-  before_action :ensure_owner, only: [:edit, :destroy]
+  before_action :authenticate_user!, except: [ :index, :show ]
+  before_action :set_listing, only: [ :show, :edit, :destroy ]
+  before_action :ensure_owner, only: [ :edit, :destroy ]
 
   PER_PAGE = 12
 
@@ -17,7 +17,7 @@ class ListingsController < ApplicationController
     @listings = @listings.sorted_by(params[:sort])
 
     @total_count = @listings.count
-    @page = [params[:page].to_i, 1].max
+    @page = [ params[:page].to_i, 1 ].max
     @total_pages = (@total_count.to_f / PER_PAGE).ceil
     @listings = @listings.offset((@page - 1) * PER_PAGE).limit(PER_PAGE)
   end

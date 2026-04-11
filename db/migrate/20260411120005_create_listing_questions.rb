@@ -7,6 +7,6 @@ class CreateListingQuestions < ActiveRecord::Migration[8.0]
       t.boolean :published, default: false
       t.timestamps
     end
-    add_index :listing_questions, [:listing_id, :published]
+    add_index :listing_questions, [ :listing_id, :published ]
   end
 end

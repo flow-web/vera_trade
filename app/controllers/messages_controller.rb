@@ -1,6 +1,6 @@
 class MessagesController < ApplicationController
   before_action :authenticate_user!
-  
+
   def index
     @conversations = all_conversations
     @current_conversation = @conversations.first
@@ -35,7 +35,7 @@ class MessagesController < ApplicationController
     Conversation.where(user_id: current_user.id).or(Conversation.where(other_user_id: current_user.id))
                 .includes(:user, :other_user).order(updated_at: :desc)
   end
-  
+
   def message_params
     params.require(:message).permit(:content)
   end

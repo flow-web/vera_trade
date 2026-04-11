@@ -20,7 +20,7 @@ class User < ApplicationRecord
   after_create :create_wallet
 
   def display_name
-    [first_name, last_name].compact.join(" ").presence || email.split("@").first
+    [ first_name, last_name ].compact.join(" ").presence || email.split("@").first
   end
 
   private

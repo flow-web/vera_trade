@@ -61,7 +61,7 @@ class ListingWizardsControllerTest < ActionDispatch::IntegrationTest
     get new_listing_wizard_path
     listing = Listing.order(created_at: :desc).first
 
-    zones_json = [{ x: 42.5, y: 68.0, status: "surface", label: "Plancher", note: "" }].to_json
+    zones_json = [ { x: 42.5, y: 68.0, status: "surface", label: "Plancher", note: "" } ].to_json
     patch save_step_listing_wizard_path(listing), params: {
       step: 2,
       listing: { draft_data: { rust_map: { silhouette_variant: "coupe", zones: zones_json } } }

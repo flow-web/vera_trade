@@ -28,6 +28,6 @@ class ProvenanceEventTest < ActiveSupport::TestCase
     b = listing.provenance_events.create!(event_year: 1990, event_type: "purchase", label: "B", position: 0)
     c = listing.provenance_events.create!(event_year: 2000, event_type: "race", label: "C", position: 1)
 
-    assert_equal [b, a, c], listing.provenance_events.reload.to_a
+    assert_equal [ b, a, c ], listing.provenance_events.reload.to_a
   end
 end

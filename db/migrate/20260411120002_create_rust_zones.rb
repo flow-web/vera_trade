@@ -10,6 +10,6 @@ class CreateRustZones < ActiveRecord::Migration[8.0]
       t.integer :position, default: 0
       t.timestamps
     end
-    add_index :rust_zones, [:rust_map_id, :position]
+    add_index :rust_zones, [ :rust_map_id, :position ]
   end
 end

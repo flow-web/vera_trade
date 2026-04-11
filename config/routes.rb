@@ -5,7 +5,7 @@ Rails.application.routes.draw do
 
   root "pages#home"
 
-  resources :listing_wizards, only: [:new, :create, :edit, :update] do
+  resources :listing_wizards, only: [ :new, :create, :edit, :update ] do
     member do
       patch :publish
       patch :save_step
@@ -13,23 +13,23 @@ Rails.application.routes.draw do
   end
 
   # M8 — create/update retirés, remplacés par ListingWizardsController.
-  resources :listings, only: [:index, :show, :new, :edit, :destroy] do
-    resource :favorite, only: [:create, :destroy]
+  resources :listings, only: [ :index, :show, :new, :edit, :destroy ] do
+    resource :favorite, only: [ :create, :destroy ]
   end
 
   resources :vehicles, only: [] do
     collection { get :fetch_info }
   end
 
-  resources :messages, only: [:index, :create]
+  resources :messages, only: [ :index, :create ]
   get "conversations/:user_id", to: "messages#show", as: "conversation"
 
   resources :car_brands, only: [] do
     collection { get :search }
   end
 
-  resources :wallet_transactions, path: "transactions", only: [:index, :show]
-  resources :search_presets, only: [:index, :create, :show, :update, :destroy]
+  resources :wallet_transactions, path: "transactions", only: [ :index, :show ]
+  resources :search_presets, only: [ :index, :create, :show, :update, :destroy ]
 
   get "my_listings", to: "listings#my_listings"
   get "favorites", to: "favorites#index"

@@ -114,7 +114,7 @@ class Listing < ApplicationRecord
 
   def generate_slug
     return if title.blank?
-    base = [vehicle&.make, vehicle&.model, vehicle&.year, SecureRandom.hex(3)].compact.join("-")
+    base = [ vehicle&.make, vehicle&.model, vehicle&.year, SecureRandom.hex(3) ].compact.join("-")
     self.slug = base.parameterize
   end
 

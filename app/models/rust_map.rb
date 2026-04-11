@@ -16,6 +16,6 @@ class RustMap < ApplicationRecord
   # ok = 0pt, surface = -5pt, deep = -12pt, perforation = -25pt. Min 0.
   def recompute_score!
     penalty = zones.sum { |z| RustZone::SEVERITY.fetch(z.status, 0) }
-    update!(transparency_score: [100 - penalty, 0].max)
+    update!(transparency_score: [ 100 - penalty, 0 ].max)
   end
 end

@@ -25,7 +25,7 @@ module VeraTradeReal
 
     # Locale FR par défaut — Vera Trade est FR-first.
     config.i18n.default_locale = :fr
-    config.i18n.available_locales = [:fr, :en]
-    config.i18n.fallbacks = [:en]
+    config.i18n.available_locales = [ :fr, :en ]
+    config.i18n.fallbacks = [ :en ]
   end
 end

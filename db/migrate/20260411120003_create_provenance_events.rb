@@ -9,7 +9,7 @@ class CreateProvenanceEvents < ActiveRecord::Migration[8.0]
       t.integer :position, default: 0
       t.timestamps
     end
-    add_index :provenance_events, [:listing_id, :position]
+    add_index :provenance_events, [ :listing_id, :position ]
     add_index :provenance_events, :event_year
   end
 end

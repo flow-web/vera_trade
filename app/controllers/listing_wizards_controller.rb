@@ -1,6 +1,6 @@
 class ListingWizardsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_listing, only: [:edit, :update, :save_step, :publish]
+  before_action :set_listing, only: [ :edit, :update, :save_step, :publish ]
 
   STEPS = %w[vehicle photos rust_map mechanics history documents review].freeze
   MAX_DRAFTS_PER_USER = 5
@@ -161,7 +161,7 @@ class ListingWizardsController < ApplicationController
     when 1 # Photos — l'upload est multipart, draft_data est vide ici.
       ActionController::Parameters.new({}).permit!
     when 2 # Rust Map (zones est un JSON string sérialisé côté Stimulus)
-      raw.permit(rust_map: [:silhouette_variant, :zones])
+      raw.permit(rust_map: [ :silhouette_variant, :zones ])
     when 3 # Mechanics + Originality
       raw.permit(
         mechanics: %i[engine_type transmission recent_works],
@@ -273,7 +273,7 @@ class ListingWizardsController < ApplicationController
     score += 40 if os.matching_numbers
     score += 20 if os.original_interior
     score += (os.original_paint_pct.to_i * 0.4).round
-    [score, 100].min
+    [ score, 100 ].min
   end
 
   def sync_vehicle_from_draft!

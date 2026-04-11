@@ -55,11 +55,15 @@ development:
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
 # Do not set this db to the same as development or production.
+#
+# Test credentials are ENV-driven so CI (GitHub Actions) can override to
+# connect as the postgres superuser, while local dev falls back to the
+# default Postgres auth (OS user / peer).
 test:
   <<: *default
-  database: vera_trade_real_test
-  username: vera_trade_real
-  password: <%= ENV["VERA_TRADE_REAL_DATABASE_PASSWORD"] %>
+  database: <%= ENV.fetch("TEST_DATABASE_NAME") { "vera_trade_real_test" } %>
+  username: <%= ENV.fetch("TEST_DATABASE_USERNAME", nil) %>
+  password: <%= ENV.fetch("TEST_DATABASE_PASSWORD", nil) %>
 
 # As with config/credentials.yml, you never want to store sensitive information,
 # like your database password, in your source code. If your source code is
