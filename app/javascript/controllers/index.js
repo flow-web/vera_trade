@@ -18,3 +18,15 @@ application.register("direct-upload", DirectUploadController)
 
 import SearchController from "./search_controller"
 application.register("search", SearchController)
+
+import ListingWizardController from "./listing_wizard_controller"
+application.register("listing-wizard", ListingWizardController)
+
+import PhotoDropzoneController from "./photo_dropzone_controller"
+application.register("photo-dropzone", PhotoDropzoneController)
+
+import RustMapEditorController from "./rust_map_editor_controller"
+application.register("rust-map-editor", RustMapEditorController)
+
+import ProvenanceTimelineController from "./provenance_timeline_controller"
+application.register("provenance-timeline", ProvenanceTimelineController)

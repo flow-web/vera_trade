@@ -1,0 +1,30 @@
+<%#
+  Navigation prev / next / publish.
+  Locals : listing, form_id, current_step (0-indexed DB), is_last, can_go_back
+  Back nav = submit vers save_step avec target_step = current_step - 1.
+%>
+<div class="flex items-center justify-between gap-4 pt-10 border-t border-line mt-12">
+  <% if can_go_back %>
+    <%= button_to save_step_listing_wizard_path(listing),
+        method: :patch,
+        params: { step: current_step, target_step: current_step - 1 },
+        form: { data: { turbo_frame: "wizard_step" } },
+        class: "btn-vera-secondary cursor-pointer" do %>
+      ← Étape précédente
+    <% end %>
+  <% else %>
+    <span></span>
+  <% end %>
+
+  <% if is_last %>
+    <%= button_to publish_listing_wizard_path(listing),
+        method: :patch,
+        class: "btn-vera-primary cursor-pointer" do %>
+      Publier l'annonce
+    <% end %>
+  <% else %>
+    <button type="submit" form="<%= form_id %>" class="btn-vera-primary cursor-pointer">
+      Étape suivante →
+    </button>
+  <% end %>
+</div>

@@ -1,0 +1,47 @@
+<%# Étape 06 — Documents. Locals : listing %>
+<% draft = listing.draft_data.to_h.with_indifferent_access %>
+<% d = draft[:documents] || {} %>
+
+<div class="max-w-[900px]">
+  <div class="mb-10">
+    <h2 class="font-display text-[32px] playfair-italic text-text-primary">Étape 06 — Documents</h2>
+    <p class="font-body italic text-[15px] text-text-muted mt-2">Dernières pièces administratives. Le contrôle technique et les factures vous serviront de bouclier contre les litiges.</p>
+  </div>
+
+  <%= form_with url: save_step_listing_wizard_path(listing),
+        method: :patch,
+        data: { turbo_frame: "wizard_step" },
+        html: { id: "wizard-form-step-5", class: "space-y-8", novalidate: true } do |f| %>
+    <%= f.hidden_field :step, value: 5 %>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+      <div>
+        <label class="label-small block mb-3">Date du contrôle technique</label>
+        <input type="date" name="listing[draft_data][documents][ct_date]" value="<%= d[:ct_date] %>" class="input-vera input-mono" />
+      </div>
+      <div>
+        <label class="label-small block mb-3">Date d'expiration CT</label>
+        <input type="date" name="listing[draft_data][documents][ct_expiry]" value="<%= d[:ct_expiry] %>" class="input-vera input-mono" />
+      </div>
+      <div class="sm:col-span-2">
+        <label class="label-small block mb-3">Carnet d'entretien</label>
+        <select name="listing[draft_data][documents][service_book]" class="input-vera">
+          <% [["— Non précisé —", ""], ["Complet", "complete"], ["Partiel", "partial"], ["Absent", "none"]].each do |label, val| %>
+            <option value="<%= val %>" <%= 'selected' if d[:service_book] == val %>><%= label %></option>
+          <% end %>
+        </select>
+      </div>
+      <div class="sm:col-span-2">
+        <label class="label-small block mb-3">Notes sur les documents (optionnel)</label>
+        <textarea name="listing[draft_data][documents][notes]" rows="4" class="input-vera" placeholder="Carte grise au nom du vendeur, factures depuis 2015, etc."><%= d[:notes] %></textarea>
+      </div>
+    </div>
+
+    <%= render "listing_wizards/nav",
+          listing: listing,
+          form_id: "wizard-form-step-5",
+          current_step: 5,
+          is_last: false,
+          can_go_back: true %>
+  <% end %>
+</div>

@@ -53,6 +53,15 @@ module ListingsHelper
     end
   end
 
+  # Inline SVG d'une silhouette véhicule pour la Rust Map.
+  # Les fichiers sont stockés dans app/assets/images/silhouettes/*.svg.
+  def silhouette_svg(variant)
+    safe_variant = RustMap::VALID_VARIANTS.include?(variant.to_s) ? variant.to_s : "sedan"
+    path = Rails.root.join("app/assets/images/silhouettes/#{safe_variant}.svg")
+    return "".html_safe unless File.exist?(path)
+    File.read(path).html_safe
+  end
+
   private
 
   # Stub — à remplacer par un vrai flag user.professional? en Phase DB

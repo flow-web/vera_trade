@@ -1,0 +1,39 @@
+<%#
+  Indicateur de progression wizard — 7 étapes numérotées.
+  Locals : current_step (0-indexed)
+%>
+<nav aria-label="Étapes de publication" class="mb-16">
+  <% steps = [
+    { key: "vehicle",   label: "Véhicule" },
+    { key: "photos",    label: "Photos" },
+    { key: "rust_map",  label: "Rust Map" },
+    { key: "mechanics", label: "Mécanique" },
+    { key: "history",   label: "Historique" },
+    { key: "documents", label: "Documents" },
+    { key: "review",    label: "Revue" }
+  ] %>
+  <ol class="flex items-center gap-2 lg:gap-6 overflow-x-auto pb-2">
+    <% steps.each_with_index do |s, i| %>
+      <% state = if i < current_step then :done
+                 elsif i == current_step then :active
+                 else :pending end %>
+      <li class="flex items-center gap-2 lg:gap-4 shrink-0">
+        <span class="w-7 h-7 flex items-center justify-center font-mono text-[11px] border <%= case state
+            when :done then 'border-accent-red text-accent-red'
+            when :active then 'border-accent-red bg-accent-red text-text-primary'
+            else 'border-line text-text-muted' end %>">
+          <%= format('%02d', i + 1) %>
+        </span>
+        <span class="font-ui text-[10px] lg:text-[11px] uppercase tracking-[0.2em] hidden lg:inline <%= case state
+            when :done then 'text-text-secondary'
+            when :active then 'text-text-primary'
+            else 'text-text-muted' end %>">
+          <%= s[:label] %>
+        </span>
+        <% if i < steps.size - 1 %>
+          <span class="hidden lg:inline-block w-10 h-px bg-line" aria-hidden="true"></span>
+        <% end %>
+      </li>
+    <% end %>
+  </ol>
+</nav>
