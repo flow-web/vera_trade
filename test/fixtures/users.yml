@@ -1,11 +1,20 @@
-# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+# Test users with unique emails/phones and valid Devise encrypted_password.
+# Password for both: "password123" (bcrypt cost 4, precomputed to avoid loading bcrypt in fixture ERB context).
 
-# This model initially had no columns defined. If you add columns to the
-# model remove the "{}" from the fixture names and add the columns immediately
-# below each fixture, per the syntax in the comments below
-#
-one: {}
-# column: value
-#
-two: {}
-# column: value
+one:
+  email: alice@veratrade.test
+  encrypted_password: $2a$04$qNPscHc2Z3Duq0mii4E.qusUDTIMAkQdZUMixwZPlSoerVf.1KEl6
+  first_name: Alice
+  last_name: Laurent
+  phone: '0601020304'
+  created_at: <%= Time.current %>
+  updated_at: <%= Time.current %>
+
+two:
+  email: bob@veratrade.test
+  encrypted_password: $2a$04$qNPscHc2Z3Duq0mii4E.qusUDTIMAkQdZUMixwZPlSoerVf.1KEl6
+  first_name: Bob
+  last_name: Marchal
+  phone: '0605060708'
+  created_at: <%= Time.current %>
+  updated_at: <%= Time.current %>
