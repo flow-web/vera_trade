@@ -15,6 +15,12 @@ Rails.application.routes.draw do
   # M8 — create/update retirés, remplacés par ListingWizardsController.
   resources :listings, only: [ :index, :show, :new, :edit, :destroy ] do
     resource :favorite, only: [ :create, :destroy ]
+    # PR2 feat/listing-qa — Q&A publiques BaT-style.
+    # Les questions sont postées par tout acheteur connecté (pas le vendeur).
+    # Les réponses sont postées uniquement par le vendeur, sur la question.
+    resources :listing_questions, only: [ :create ], path: "questions" do
+      resource :listing_answer, only: [ :create ], path: "answer"
+    end
   end
 
   resources :vehicles, only: [] do
