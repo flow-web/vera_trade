@@ -1,65 +1,134 @@
-<div class="min-h-[80vh] flex items-center justify-center py-12 px-4">
-  <div class="max-w-md w-full">
-    <div class="text-center mb-8">
-      <h1 class="text-3xl font-bold mb-2">Créer un compte</h1>
-      <p class="text-base-content/60">
-        Déjà inscrit ?
-        <%= link_to "Se connecter", new_session_path(resource_name), class: "text-primary hover:underline" %>
-      </p>
-    </div>
+<%#
+  Inscription — Cinematic Archivist.
+  Layout 2 colonnes éditorial, cover wordmark V + manifeste, formulaire création profil.
+%>
+<% content_for :title, "Créer un profil — Vera Trade" %>
 
-    <div class="card-glass p-8">
-      <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { class: "space-y-5" }) do |f| %>
-        <%= render "devise/shared/error_messages", resource: resource %>
+<section class="relative bg-bg-primary">
+  <div class="max-w-[1600px] mx-auto lg:grid lg:grid-cols-12 lg:min-h-[calc(100vh-80px)]">
 
-        <div class="grid grid-cols-2 gap-4">
-          <div class="form-control">
-            <%= f.label :first_name, "Prénom", class: "label text-sm font-medium" %>
-            <%= f.text_field :first_name, autocomplete: "given-name",
-                class: "input input-bordered w-full bg-base-200/50 border-white/10 focus:border-primary",
-                placeholder: "Prénom" %>
-          </div>
-          <div class="form-control">
-            <%= f.label :last_name, "Nom", class: "label text-sm font-medium" %>
-            <%= f.text_field :last_name, autocomplete: "family-name",
-                class: "input input-bordered w-full bg-base-200/50 border-white/10 focus:border-primary",
-                placeholder: "Nom" %>
-          </div>
+    <!-- Cover éditorial gauche -->
+    <aside class="hidden lg:flex lg:col-span-5 relative border-r border-line px-10 py-20 flex-col justify-between overflow-hidden" aria-hidden="true">
+      <span class="wordmark-deco absolute -left-6 top-1/4 text-[22rem] leading-[0.7]">N°</span>
+
+      <div class="relative z-10">
+        <p class="eyebrow mb-8">Rejoignez le cercle</p>
+        <h2 class="font-display text-[56px] leading-[1.05] text-text-primary">
+          <span class="playfair-italic">Pour celles</span>
+          <br />et ceux qui
+          <br />préfèrent une <span class="playfair-italic text-accent-red">histoire</span>
+          <br />à un taux d'intérêt.
+        </h2>
+      </div>
+
+      <div class="relative z-10 border-t border-line pt-8 grid grid-cols-3 gap-6">
+        <div>
+          <p class="font-mono text-[22px] text-text-primary mb-1">412</p>
+          <p class="label-micro">Annonces vérifiées</p>
         </div>
-
-        <div class="form-control">
-          <%= f.label :email, "Email", class: "label text-sm font-medium" %>
-          <%= f.email_field :email, autofocus: true, autocomplete: "email",
-              class: "input input-bordered w-full bg-base-200/50 border-white/10 focus:border-primary",
-              placeholder: "votre@email.com" %>
+        <div>
+          <p class="font-mono text-[22px] text-text-primary mb-1">6 200</p>
+          <p class="label-micro">Collectionneurs</p>
         </div>
-
-        <div class="form-control">
-          <%= f.label :phone, "Téléphone", class: "label text-sm font-medium" %>
-          <%= f.telephone_field :phone, autocomplete: "tel",
-              class: "input input-bordered w-full bg-base-200/50 border-white/10 focus:border-primary",
-              placeholder: "06 12 34 56 78" %>
+        <div>
+          <p class="font-mono text-[22px] text-text-primary mb-1">0 %</p>
+          <p class="label-micro">Commission dépôt</p>
         </div>
+      </div>
+    </aside>
 
-        <div class="form-control">
-          <%= f.label :password, "Mot de passe", class: "label text-sm font-medium" %>
-          <% if @minimum_password_length %>
-            <span class="text-xs text-base-content/50"><%= @minimum_password_length %> caractères minimum</span>
+    <!-- Formulaire droite -->
+    <div class="lg:col-span-7 flex items-start lg:items-center justify-center px-5 lg:px-16 py-16 lg:py-24">
+      <div class="w-full max-w-[520px]">
+
+        <p class="eyebrow mb-5">Nouveau profil</p>
+        <h1 class="font-display text-[44px] lg:text-[56px] leading-[1.05] text-text-primary mb-3">
+          <span class="playfair-italic">Créez</span> votre
+          <br />profil collectionneur.
+        </h1>
+        <p class="font-body text-[15px] text-text-secondary mb-10">
+          Déjà membre ?
+          <%= link_to new_session_path(resource_name), class: "text-text-primary border-b border-accent-red hover:text-accent-red transition-colors duration-300" do %>
+            Se connecter
           <% end %>
-          <%= f.password_field :password, autocomplete: "new-password",
-              class: "input input-bordered w-full bg-base-200/50 border-white/10 focus:border-primary",
-              placeholder: "Mot de passe" %>
-        </div>
+        </p>
 
-        <div class="form-control">
-          <%= f.label :password_confirmation, "Confirmer", class: "label text-sm font-medium" %>
-          <%= f.password_field :password_confirmation, autocomplete: "new-password",
-              class: "input input-bordered w-full bg-base-200/50 border-white/10 focus:border-primary",
-              placeholder: "Confirmer le mot de passe" %>
-        </div>
+        <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { class: "space-y-7", novalidate: true }) do |f| %>
+          <%= render "devise/shared/error_messages", resource: resource %>
 
-        <%= f.submit "Créer mon compte", class: "btn btn-primary w-full cursor-pointer" %>
-      <% end %>
+          <!-- Identité -->
+          <div>
+            <p class="label-small text-accent-red mb-5">Identité</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <div>
+                <%= f.label :first_name, "Prénom", class: "label-small block mb-3" %>
+                <%= f.text_field :first_name, autocomplete: "given-name",
+                    class: "input-vera",
+                    placeholder: "Marcel" %>
+              </div>
+              <div>
+                <%= f.label :last_name, "Nom", class: "label-small block mb-3" %>
+                <%= f.text_field :last_name, autocomplete: "family-name",
+                    class: "input-vera",
+                    placeholder: "Dupré" %>
+              </div>
+            </div>
+          </div>
+
+          <!-- Contact -->
+          <div>
+            <p class="label-small text-accent-red mb-5">Contact</p>
+            <div class="space-y-5">
+              <div>
+                <%= f.label :email, "Adresse email", class: "label-small block mb-3" %>
+                <%= f.email_field :email, autofocus: true, autocomplete: "email",
+                    class: "input-vera",
+                    placeholder: "vous@domaine.fr" %>
+              </div>
+              <div>
+                <%= f.label :phone, "Téléphone", class: "label-small block mb-3" %>
+                <%= f.telephone_field :phone, autocomplete: "tel",
+                    class: "input-vera input-mono",
+                    placeholder: "06 12 34 56 78" %>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sécurité -->
+          <div>
+            <p class="label-small text-accent-red mb-5">Sécurité</p>
+            <div class="space-y-5">
+              <div>
+                <div class="flex items-baseline justify-between mb-3">
+                  <%= f.label :password, "Mot de passe", class: "label-small" %>
+                  <% if @minimum_password_length %>
+                    <span class="font-ui text-[10px] uppercase tracking-[0.15em] text-text-muted">
+                      <%= @minimum_password_length %> car. min.
+                    </span>
+                  <% end %>
+                </div>
+                <%= f.password_field :password, autocomplete: "new-password",
+                    class: "input-vera",
+                    placeholder: "••••••••" %>
+              </div>
+              <div>
+                <%= f.label :password_confirmation, "Confirmer le mot de passe", class: "label-small block mb-3" %>
+                <%= f.password_field :password_confirmation, autocomplete: "new-password",
+                    class: "input-vera",
+                    placeholder: "••••••••" %>
+              </div>
+            </div>
+          </div>
+
+          <%= f.submit "Créer mon profil", class: "btn-vera-primary w-full cursor-pointer" %>
+        <% end %>
+
+        <p class="mt-8 font-ui text-[10px] uppercase tracking-[0.15em] text-text-muted leading-relaxed">
+          En créant un profil, vous acceptez nos Conditions Générales
+          <br />et notre Politique de Confidentialité.
+        </p>
+
+      </div>
     </div>
   </div>
-</div>
+</section>

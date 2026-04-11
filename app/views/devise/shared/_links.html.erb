@@ -1,25 +1,53 @@
-<%- if controller_name != 'sessions' %>
-  <%= link_to "Log in", new_session_path(resource_name) %><br />
-<% end %>
-
-<%- if devise_mapping.registerable? && controller_name != 'registrations' %>
-  <%= link_to "Sign up", new_registration_path(resource_name) %><br />
-<% end %>
-
-<%- if devise_mapping.recoverable? && controller_name != 'passwords' && controller_name != 'registrations' %>
-  <%= link_to "Forgot your password?", new_password_path(resource_name) %><br />
-<% end %>
-
-<%- if devise_mapping.confirmable? && controller_name != 'confirmations' %>
-  <%= link_to "Didn't receive confirmation instructions?", new_confirmation_path(resource_name) %><br />
-<% end %>
-
-<%- if devise_mapping.lockable? && resource_class.unlock_strategy_enabled?(:email) && controller_name != 'unlocks' %>
-  <%= link_to "Didn't receive unlock instructions?", new_unlock_path(resource_name) %><br />
-<% end %>
-
-<%- if devise_mapping.omniauthable? %>
-  <%- resource_class.omniauth_providers.each do |provider| %>
-    <%= button_to "Sign in with #{OmniAuth::Utils.camelize(provider)}", omniauth_authorize_path(resource_name, provider), data: { turbo: false } %><br />
+<%#
+  Liens partagés Devise (confirmations, unlocks) — Cinematic Archivist.
+  Bas de page avec bordure de séparation, liens label-small.
+%>
+<div class="mt-12 pt-8 border-t border-line space-y-3">
+  <%- if controller_name != 'sessions' %>
+    <p>
+      <%= link_to new_session_path(resource_name),
+          class: "font-ui text-[10px] uppercase tracking-[0.15em] text-text-muted hover:text-text-secondary transition-colors inline-flex items-center gap-2" do %>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+        Retour à la connexion
+      <% end %>
+    </p>
   <% end %>
-<% end %>
+
+  <%- if devise_mapping.registerable? && controller_name != 'registrations' %>
+    <p>
+      <%= link_to new_registration_path(resource_name),
+          class: "font-ui text-[10px] uppercase tracking-[0.15em] text-text-muted hover:text-text-secondary transition-colors" do %>
+        Créer un profil collectionneur
+      <% end %>
+    </p>
+  <% end %>
+
+  <%- if devise_mapping.recoverable? && controller_name != 'passwords' && controller_name != 'registrations' %>
+    <p>
+      <%= link_to new_password_path(resource_name),
+          class: "font-ui text-[10px] uppercase tracking-[0.15em] text-text-muted hover:text-text-secondary transition-colors" do %>
+        Mot de passe oublié&nbsp;?
+      <% end %>
+    </p>
+  <% end %>
+
+  <%- if devise_mapping.confirmable? && controller_name != 'confirmations' %>
+    <p>
+      <%= link_to new_confirmation_path(resource_name),
+          class: "font-ui text-[10px] uppercase tracking-[0.15em] text-text-muted hover:text-text-secondary transition-colors" do %>
+        Email de confirmation non reçu&nbsp;?
+      <% end %>
+    </p>
+  <% end %>
+
+  <%- if devise_mapping.lockable? && resource_class.unlock_strategy_enabled?(:email) && controller_name != 'unlocks' %>
+    <p>
+      <%= link_to new_unlock_path(resource_name),
+          class: "font-ui text-[10px] uppercase tracking-[0.15em] text-text-muted hover:text-text-secondary transition-colors" do %>
+        Email de déverrouillage non reçu&nbsp;?
+      <% end %>
+    </p>
+  <% end %>
+</div>
