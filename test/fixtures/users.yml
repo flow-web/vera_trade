@@ -18,3 +18,12 @@ two:
   phone: '0605060708'
   created_at: <%= Time.current %>
   updated_at: <%= Time.current %>
+
+three:
+  email: claire@veratrade.test
+  encrypted_password: $2a$04$qNPscHc2Z3Duq0mii4E.qusUDTIMAkQdZUMixwZPlSoerVf.1KEl6
+  first_name: Claire
+  last_name: Delaunay
+  phone: '0609101112'
+  created_at: <%= Time.current %>
+  updated_at: <%= Time.current %>

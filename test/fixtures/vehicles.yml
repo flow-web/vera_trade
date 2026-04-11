@@ -23,3 +23,18 @@ two:
   location: Bordeaux (33)
   created_at: <%= Time.current %>
   updated_at: <%= Time.current %>
+
+# PR1 catalogue-search fixture — segment "Moderne" (2000-2015) ou "Récent" (2016+)
+# pour tester la distinction collector vs voiture récente dans les filtres.
+three:
+  make: Renault
+  model: Twingo III
+  year: 2020
+  description: Citadine récente, première main, carnet à jour
+  price: 8200.00
+  kilometers: 35000
+  fuel_type: Essence
+  transmission: Manuelle
+  location: Paris (75)
+  created_at: <%= Time.current %>
+  updated_at: <%= Time.current %>
