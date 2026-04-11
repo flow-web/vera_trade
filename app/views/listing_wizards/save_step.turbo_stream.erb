@@ -1,0 +1,5 @@
+<%= turbo_stream.replace "wizard_step" do %>
+  <%= turbo_frame_tag "wizard_step", data: { controller: "listing-wizard", listing_wizard_step_value: @current_step } do %>
+    <%= render "listing_wizards/step_#{format('%02d', @current_step)}_#{@step_key}", listing: @listing %>
+  <% end %>
+<% end %>

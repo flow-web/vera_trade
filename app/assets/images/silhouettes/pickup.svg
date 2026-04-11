@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 400" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Pickup : cabine courte + benne arrière ouverte -->
+  <path d="M60 285 L60 265 Q65 250 95 245 L170 235 Q200 155 290 150 L490 150 L510 235 L935 235 L935 295 L60 295 Z" />
+  <path d="M200 230 L290 150 L490 150 L510 235" />
+  <line x1="390" y1="150" x2="390" y2="230" />
+  <line x1="510" y1="235" x2="510" y2="195" />
+  <line x1="510" y1="195" x2="900" y2="195" />
+  <line x1="900" y1="195" x2="900" y2="235" />
+  <circle cx="215" cy="295" r="45" />
+  <circle cx="215" cy="295" r="22" />
+  <circle cx="785" cy="295" r="45" />
+  <circle cx="785" cy="295" r="22" />
+</svg>

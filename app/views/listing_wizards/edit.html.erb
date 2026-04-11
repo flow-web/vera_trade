@@ -1,0 +1,26 @@
+<%#
+  Wizard shell — Cinematic Archivist.
+  Progress indicator + Turbo Frame qui rafraîchit le step partial courant.
+%>
+<% content_for :title, "Publier une annonce — Vera Trade" %>
+
+<section class="relative bg-bg-primary min-h-screen">
+  <div class="max-w-[1200px] mx-auto px-5 lg:px-10 py-12 lg:py-16">
+
+    <header class="mb-12">
+      <p class="eyebrow mb-4">Publication — Dépôt guidé</p>
+      <h1 class="font-display text-[44px] lg:text-[64px] leading-[1.05] text-text-primary">
+        <span class="playfair-italic">Déposez</span> votre voiture.
+      </h1>
+      <p class="font-body italic text-[16px] text-text-secondary max-w-[560px] mt-4">
+        Sept étapes, une fiche irréprochable. Nous préférons une annonce honnête à une annonce flatteuse.
+      </p>
+    </header>
+
+    <%= render "progress", current_step: @current_step %>
+
+    <%= turbo_frame_tag "wizard_step", data: { controller: "listing-wizard", listing_wizard_step_value: @current_step } do %>
+      <%= render "listing_wizards/step_#{format('%02d', @current_step)}_#{@step_key}", listing: @listing %>
+    <% end %>
+  </div>
+</section>

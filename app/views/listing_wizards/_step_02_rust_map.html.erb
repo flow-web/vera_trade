@@ -1,0 +1,77 @@
+<%# Étape 03 — Rust Map. Locals : listing %>
+<% draft = listing.draft_data.to_h.with_indifferent_access %>
+<% rm_data = draft[:rust_map] || {} %>
+<% variant = rm_data[:silhouette_variant] || listing.rust_map&.silhouette_variant || "sedan" %>
+<% existing_zones = begin
+     raw = rm_data[:zones]
+     if raw.present?
+       raw.is_a?(String) ? JSON.parse(raw) : raw
+     elsif listing.rust_map&.zones&.any?
+       listing.rust_map.zones.map { |z| { id: "z#{z.id}", x: z.x_pct.to_f, y: z.y_pct.to_f, status: z.status, label: z.label, note: z.note } }
+     else
+       []
+     end
+   rescue JSON::ParserError
+     []
+   end %>
+
+<div class="max-w-[1100px]" tabindex="0" data-controller="rust-map-editor" data-rust-map-editor-zones-value="<%= existing_zones.to_json %>" data-action="keydown->rust-map-editor#onKeyDown">
+  <div class="mb-10">
+    <h2 class="font-display text-[32px] playfair-italic text-text-primary">Étape 03 — Rust Map</h2>
+    <p class="font-body italic text-[15px] text-text-muted mt-2">Notre signature. Cliquez sur la silhouette pour placer des zones et indiquer leur état. Ce geste prend deux minutes. Il en vaut la peine.</p>
+  </div>
+
+  <%= form_with url: save_step_listing_wizard_path(listing),
+        method: :patch,
+        data: { turbo_frame: "wizard_step" },
+        html: { id: "wizard-form-step-2", class: "space-y-8", novalidate: true } do |f| %>
+    <%= f.hidden_field :step, value: 2 %>
+    <%= hidden_field_tag "listing[draft_data][rust_map][zones]", existing_zones.to_json, data: { "rust-map-editor-target": "stateInput" } %>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div class="lg:col-span-2 space-y-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="label-small mb-1">Silhouette</p>
+            <select name="listing[draft_data][rust_map][silhouette_variant]" class="input-vera">
+              <% RustMap::VALID_VARIANTS.each do |opt| %>
+                <option value="<%= opt %>" <%= 'selected' if opt == variant %>><%= opt.capitalize %></option>
+              <% end %>
+            </select>
+          </div>
+          <div class="text-right">
+            <p class="label-micro">Score transparence</p>
+            <p class="font-mono text-[44px] text-accent-red" data-rust-map-editor-target="scoreOutput">100</p>
+          </div>
+        </div>
+
+        <div class="relative border border-line bg-bg-secondary aspect-[5/2] select-none cursor-crosshair"
+             data-rust-map-editor-target="canvas"
+             data-action="click->rust-map-editor#onCanvasClick mousemove->rust-map-editor#onCanvasMouseMove mouseup->rust-map-editor#onCanvasMouseUp mouseleave->rust-map-editor#onCanvasMouseUp">
+          <div data-role="bg" class="absolute inset-0 flex items-center justify-center text-text-muted pointer-events-none">
+            <div class="w-[90%] h-[85%]"><%= silhouette_svg(variant) %></div>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-6 text-[10px] font-ui uppercase tracking-[0.2em] text-text-muted">
+          <span class="flex items-center gap-2"><span class="w-2 h-2 rust-dot-ok"></span>Sain</span>
+          <span class="flex items-center gap-2"><span class="w-2 h-2 rust-dot-surface"></span>Surface</span>
+          <span class="flex items-center gap-2"><span class="w-2 h-2 rust-dot-deep"></span>Profonde</span>
+          <span class="flex items-center gap-2"><span class="w-2 h-2 rust-dot-perforation"></span>Perforation</span>
+        </div>
+        <p class="font-body italic text-[13px] text-text-muted">Raccourcis clavier : <kbd class="font-mono">1</kbd> sain, <kbd class="font-mono">2</kbd> surface, <kbd class="font-mono">3</kbd> profonde, <kbd class="font-mono">4</kbd> perforation, <kbd class="font-mono">Suppr</kbd> supprime la zone sélectionnée.</p>
+      </div>
+
+      <aside class="lg:col-span-1 card-vera p-6" data-rust-map-editor-target="summary">
+        <p class="font-body italic text-text-muted text-[14px]">Cliquez sur la silhouette pour ajouter une zone.</p>
+      </aside>
+    </div>
+
+    <%= render "listing_wizards/nav",
+          listing: listing,
+          form_id: "wizard-form-step-2",
+          current_step: 2,
+          is_last: false,
+          can_go_back: true %>
+  <% end %>
+</div>

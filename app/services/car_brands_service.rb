@@ -11,7 +11,7 @@ class CarBrandsService
 
   def self.search(query)
     return [] if query.blank?
-    
+
     query = query.downcase
     BRANDS.select { |brand| brand.downcase.include?(query) }
   end
@@ -19,4 +19,4 @@ class CarBrandsService
   def self.all
     BRANDS
   end
-end 
+end

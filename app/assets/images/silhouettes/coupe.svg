@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 400" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Coupé : pavillon bas, arrière fastback fluide -->
+  <path d="M60 295 L60 275 Q65 260 100 255 L180 245 Q225 160 330 150 L530 155 Q640 175 720 230 L880 240 Q935 248 935 285 L935 305 L60 305 Z" />
+  <path d="M210 245 L335 155 L525 158 L715 230" />
+  <line x1="420" y1="152" x2="420" y2="235" />
+  <circle cx="220" cy="302" r="42" />
+  <circle cx="220" cy="302" r="20" />
+  <circle cx="780" cy="302" r="42" />
+  <circle cx="780" cy="302" r="20" />
+</svg>

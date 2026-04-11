@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 400" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Wagon / break : toit horizontal jusqu'à l'arrière -->
+  <path d="M60 290 L60 270 Q60 255 90 250 L170 240 Q210 170 290 165 L780 165 Q860 175 900 225 L935 230 L935 300 L60 300 Z" />
+  <line x1="210" y1="235" x2="285" y2="165" />
+  <line x1="290" y1="165" x2="780" y2="165" />
+  <line x1="780" y1="165" x2="900" y2="225" />
+  <line x1="370" y1="165" x2="370" y2="230" />
+  <line x1="510" y1="165" x2="510" y2="230" />
+  <line x1="650" y1="165" x2="650" y2="230" />
+  <circle cx="220" cy="298" r="42" />
+  <circle cx="220" cy="298" r="20" />
+  <circle cx="780" cy="298" r="42" />
+  <circle cx="780" cy="298" r="20" />
+</svg>

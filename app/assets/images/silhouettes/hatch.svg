@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 400" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Hatchback : 5e porte, arrière court, toit incliné -->
+  <path d="M60 290 L60 270 Q65 258 100 252 L180 244 Q225 175 310 170 L580 170 Q680 180 780 235 L900 248 Q935 255 935 285 L935 300 L60 300 Z" />
+  <path d="M215 242 L310 170 L580 170 L780 235" />
+  <line x1="385" y1="170" x2="385" y2="230" />
+  <line x1="495" y1="170" x2="495" y2="230" />
+  <circle cx="220" cy="298" r="42" />
+  <circle cx="220" cy="298" r="20" />
+  <circle cx="780" cy="298" r="42" />
+  <circle cx="780" cy="298" r="20" />
+</svg>

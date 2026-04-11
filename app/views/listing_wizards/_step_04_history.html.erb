@@ -1,0 +1,59 @@
+<%# Étape 05 — Historique. Locals : listing %>
+<% draft = listing.draft_data.to_h.with_indifferent_access %>
+<% events = draft[:provenance_events].presence || listing.provenance_events.map { |e| { event_year: e.event_year, event_type: e.event_type, label: e.label, description: e.description } } %>
+
+<div class="max-w-[900px]" data-controller="provenance-timeline">
+  <div class="mb-10">
+    <h2 class="font-display text-[32px] playfair-italic text-text-primary">Étape 05 — Historique</h2>
+    <p class="font-body italic text-[15px] text-text-muted mt-2">Une bonne voiture a une histoire, et une histoire a des dates. Ajoutez les événements marquants du châssis.</p>
+  </div>
+
+  <%= form_with url: save_step_listing_wizard_path(listing),
+        method: :patch,
+        data: { turbo_frame: "wizard_step" },
+        html: { id: "wizard-form-step-4", class: "space-y-8", novalidate: true } do |f| %>
+    <%= f.hidden_field :step, value: 4 %>
+
+    <ol class="space-y-4" data-provenance-timeline-target="list">
+      <% Array(events).each do |e| %>
+        <% e = e.with_indifferent_access if e.is_a?(Hash) %>
+        <li data-provenance-row class="card-vera p-5 grid grid-cols-12 gap-3 items-end">
+          <div class="col-span-2"><label class="label-small block mb-2">Année</label><input type="number" name="listing[draft_data][provenance_events][][event_year]" value="<%= e[:event_year] %>" class="input-vera input-mono" /></div>
+          <div class="col-span-3"><label class="label-small block mb-2">Type</label>
+            <select name="listing[draft_data][provenance_events][][event_type]" class="input-vera">
+              <% ProvenanceEvent::VALID_TYPES.each do |t| %>
+                <option value="<%= t %>" <%= 'selected' if e[:event_type] == t %>><%= t.capitalize %></option>
+              <% end %>
+            </select>
+          </div>
+          <div class="col-span-6"><label class="label-small block mb-2">Libellé</label><input name="listing[draft_data][provenance_events][][label]" value="<%= e[:label] %>" class="input-vera" placeholder="Livraison neuve Citroën Lyon" /></div>
+          <div class="col-span-1 flex items-end"><button type="button" class="btn-vera-secondary !px-3 !py-2 !text-[18px] leading-none" data-action="click->provenance-timeline#remove" aria-label="Supprimer">×</button></div>
+          <div class="col-span-12"><label class="label-small block mb-2">Description (optionnel)</label><textarea name="listing[draft_data][provenance_events][][description]" rows="2" class="input-vera"><%= e[:description] %></textarea></div>
+        </li>
+      <% end %>
+    </ol>
+
+    <template data-provenance-timeline-target="template">
+      <li data-provenance-row class="card-vera p-5 grid grid-cols-12 gap-3 items-end">
+        <div class="col-span-2"><label class="label-small block mb-2">Année</label><input type="number" name="listing[draft_data][provenance_events][][event_year]" class="input-vera input-mono" /></div>
+        <div class="col-span-3"><label class="label-small block mb-2">Type</label>
+          <select name="listing[draft_data][provenance_events][][event_type]" class="input-vera">
+            <option value="service">Service</option><option value="purchase">Achat</option><option value="restoration">Restauration</option><option value="race">Course</option><option value="award">Récompense</option><option value="exhibition">Exposition</option><option value="registration">Immatriculation</option>
+          </select>
+        </div>
+        <div class="col-span-6"><label class="label-small block mb-2">Libellé</label><input name="listing[draft_data][provenance_events][][label]" class="input-vera" /></div>
+        <div class="col-span-1 flex items-end"><button type="button" class="btn-vera-secondary !px-3 !py-2 !text-[18px] leading-none" data-action="click->provenance-timeline#remove">×</button></div>
+        <div class="col-span-12"><label class="label-small block mb-2">Description (optionnel)</label><textarea name="listing[draft_data][provenance_events][][description]" rows="2" class="input-vera"></textarea></div>
+      </li>
+    </template>
+
+    <button type="button" data-action="click->provenance-timeline#add" class="btn-vera-secondary">+ Ajouter un événement</button>
+
+    <%= render "listing_wizards/nav",
+          listing: listing,
+          form_id: "wizard-form-step-4",
+          current_step: 4,
+          is_last: false,
+          can_go_back: true %>
+  <% end %>
+</div>

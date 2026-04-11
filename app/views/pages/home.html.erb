@@ -61,7 +61,7 @@
           Nos archivistes réunissent en ce moment la première sélection de youngtimers et véhicules de collection. Revenez dans quelques jours, ou publiez vous-même la première annonce.
         </p>
         <% if user_signed_in? %>
-          <%= link_to "Publier une annonce", new_listing_path, class: "btn-vera-primary" %>
+          <%= link_to "Publier une annonce", new_listing_wizard_path, class: "btn-vera-primary" %>
         <% else %>
           <%= link_to "Créer un compte vendeur", new_user_registration_path, class: "btn-vera-primary" %>
         <% end %>
@@ -243,7 +243,7 @@
         </p>
         <div class="flex flex-wrap items-center gap-4">
           <%= link_to (user_signed_in? ? "Publier une annonce" : "Créer un compte vendeur"),
-                (user_signed_in? ? new_listing_path : new_user_registration_path),
+                (user_signed_in? ? new_listing_wizard_path : new_user_registration_path),
                 class: "btn-vera-primary" %>
           <%= link_to "Parcourir le catalogue", listings_path, class: "btn-vera-secondary" %>
         </div>

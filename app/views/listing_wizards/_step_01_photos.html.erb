@@ -1,0 +1,49 @@
+<%# Étape 02 — Photos. Locals : listing %>
+<div class="max-w-[900px]">
+  <div class="mb-10">
+    <h2 class="font-display text-[32px] playfair-italic text-text-primary">Étape 02 — Photos</h2>
+    <p class="font-body italic text-[15px] text-text-muted mt-2">Dix photos maximum. La première sera la couverture. Privilégiez la lumière naturelle.</p>
+  </div>
+
+  <%= form_with url: save_step_listing_wizard_path(listing),
+        method: :patch,
+        multipart: true,
+        data: { turbo_frame: "wizard_step" },
+        html: { id: "wizard-form-step-1", class: "space-y-8", novalidate: true } do |f| %>
+    <%= f.hidden_field :step, value: 1 %>
+
+    <div class="border border-line border-dashed p-10 text-center transition-colors"
+         data-controller="photo-dropzone"
+         data-action="drop->photo-dropzone#onDrop dragover->photo-dropzone#onDragOver dragleave->photo-dropzone#onDragLeave click->photo-dropzone#browse">
+      <svg class="mx-auto w-10 h-10 text-text-muted mb-4" fill="none" stroke="currentColor" stroke-width="1.2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v12m0 0l-4-4m4 4l4-4M4 20h16"/>
+      </svg>
+      <p class="font-ui text-[11px] uppercase tracking-[0.2em] text-text-primary mb-2">Déposer ou cliquer pour ajouter</p>
+      <p class="font-body italic text-[13px] text-text-muted">Formats JPG/WEBP — 5 Mo max par image — 10 images max</p>
+      <input type="file" name="listing[photos][]" accept="image/*" multiple class="sr-only"
+             data-photo-dropzone-target="input" data-action="change->photo-dropzone#onChange" />
+
+      <ul class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 mt-8" data-photo-dropzone-target="list"></ul>
+    </div>
+
+    <% if listing.photos.any? %>
+      <div>
+        <p class="label-small text-accent-red mb-4">Photos déjà enregistrées (<%= listing.photos.count %>)</p>
+        <ul class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+          <% listing.photos.each do |p| %>
+            <li class="relative border border-line aspect-[4/3] overflow-hidden">
+              <%= image_tag p, class: "w-full h-full object-cover" %>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <%= render "listing_wizards/nav",
+          listing: listing,
+          form_id: "wizard-form-step-1",
+          current_step: 1,
+          is_last: false,
+          can_go_back: true %>
+  <% end %>
+</div>

@@ -1,15 +1,21 @@
-# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
-
 one:
-  title: MyString
-  description: MyText
+  title: Citroën BX GTi 16V de 1989
+  description: Youngtimer français culte, seconde main, historique complet
   user: one
   vehicle: one
-  status: MyString
+  status: active
+  slug: citroen-bx-gti-16v-1989-one
+  views_count: 0
+  created_at: <%= Time.current %>
+  updated_at: <%= Time.current %>
 
 two:
-  title: MyString
-  description: MyText
+  title: Peugeot 205 GTI 1.9 de 1991
+  description: État exceptionnel, peinture d'origine, matching numbers
   user: two
   vehicle: two
-  status: MyString
+  status: active
+  slug: peugeot-205-gti-1-9-1991-two
+  views_count: 0
+  created_at: <%= Time.current %>
+  updated_at: <%= Time.current %>

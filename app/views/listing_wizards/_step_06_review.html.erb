@@ -1,0 +1,65 @@
+<%# Étape 07 — Revue & publication. Locals : listing %>
+<% draft = listing.draft_data.to_h.with_indifferent_access %>
+<% v = draft[:vehicle] || {} %>
+<% os = listing.originality_score %>
+<% rm = listing.rust_map %>
+
+<div class="max-w-[1000px]">
+  <div class="mb-10">
+    <h2 class="font-display text-[32px] playfair-italic text-text-primary">Étape 07 — Revue et publication</h2>
+    <p class="font-body italic text-[15px] text-text-muted mt-2">Un dernier regard avant que votre annonce ne parte dans le monde.</p>
+  </div>
+
+  <div class="card-vera p-8 mb-8">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div>
+        <p class="eyebrow mb-3">Véhicule</p>
+        <h3 class="font-display text-[28px] playfair-italic text-text-primary mb-4">
+          <%= v[:make].presence || "—" %> <%= v[:model].presence || "—" %>
+        </h3>
+        <dl class="space-y-2">
+          <div class="flex justify-between font-mono text-[12px]"><dt class="text-text-muted">Année</dt><dd class="text-text-primary"><%= v[:year] || "—" %></dd></div>
+          <div class="flex justify-between font-mono text-[12px]"><dt class="text-text-muted">Kilométrage</dt><dd class="text-text-primary"><%= v[:kilometers].present? ? "#{number_with_delimiter(v[:kilometers].to_i, delimiter: ' ')} km" : '—' %></dd></div>
+          <div class="flex justify-between font-mono text-[12px]"><dt class="text-text-muted">Prix</dt><dd class="text-text-primary"><%= v[:price].present? ? "#{number_with_delimiter(v[:price].to_i, delimiter: ' ')} €" : '—' %></dd></div>
+          <div class="flex justify-between font-mono text-[12px]"><dt class="text-text-muted">Localisation</dt><dd class="text-text-primary"><%= v[:location] || "—" %></dd></div>
+        </dl>
+      </div>
+      <div class="grid grid-cols-2 gap-6">
+        <div>
+          <p class="label-micro mb-2">Photos</p>
+          <p class="font-mono text-[32px] text-text-primary"><%= listing.photos.count %></p>
+        </div>
+        <div>
+          <p class="label-micro mb-2">Provenance</p>
+          <p class="font-mono text-[32px] text-text-primary"><%= listing.provenance_events.count %></p>
+        </div>
+        <div>
+          <p class="label-micro mb-2">Score Rust Map</p>
+          <p class="font-mono text-[32px] text-accent-red"><%= rm&.transparency_score || "—" %></p>
+        </div>
+        <div>
+          <p class="label-micro mb-2">Originalité</p>
+          <p class="font-mono text-[32px] text-accent-red"><%= os&.overall_score || "—" %></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <% unless listing.publishable? %>
+    <div class="border-l-2 border-l-accent-red bg-bg-secondary p-5 mb-8">
+      <p class="label-small text-accent-red mb-2">Publication bloquée</p>
+      <ul class="space-y-1 font-body text-[14px] text-text-secondary">
+        <% if listing.vehicle.blank? %><li>— Véhicule manquant</li><% end %>
+        <% if listing.photos.none? %><li>— Aucune photo n'a encore été uploadée</li><% end %>
+        <% if listing.rust_map.blank? %><li>— Rust Map non initialisée</li><% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <%= render "listing_wizards/nav",
+        listing: listing,
+        form_id: "wizard-form-step-6",
+        current_step: 6,
+        is_last: true,
+        can_go_back: true %>
+</div>

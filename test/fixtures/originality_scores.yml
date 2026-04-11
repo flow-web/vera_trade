@@ -1,0 +1,9 @@
+one:
+  listing: one
+  overall_score: 94
+  matching_numbers: true
+  original_paint_pct: 85
+  original_interior: true
+  notes: "Numéros d'origine, peinture 85% d'origine, intérieur 100% matching"
+  created_at: <%= Time.current %>
+  updated_at: <%= Time.current %>

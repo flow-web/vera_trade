@@ -1,0 +1,59 @@
+<%# Étape 01 — Véhicule. Locals : listing %>
+<% draft = listing.draft_data.to_h.with_indifferent_access %>
+<% v = draft[:vehicle] || {} %>
+
+<div class="max-w-[720px]">
+  <div class="mb-10">
+    <h2 class="font-display text-[32px] playfair-italic text-text-primary">Étape 01 — Véhicule</h2>
+    <p class="font-body italic text-[15px] text-text-muted mt-2">Les fondamentaux. Marque, modèle, année, prix — tout ce qui permet d'identifier la voiture en un coup d'œil.</p>
+  </div>
+
+  <%= form_with url: save_step_listing_wizard_path(listing),
+        method: :patch,
+        data: { turbo_frame: "wizard_step" },
+        html: { id: "wizard-form-step-0", class: "space-y-8", novalidate: true } do |f| %>
+    <%= f.hidden_field :step, value: 0 %>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+      <div>
+        <label class="label-small block mb-3" for="vehicle_make">Marque</label>
+        <input id="vehicle_make" name="listing[draft_data][vehicle][make]" value="<%= v[:make] %>" class="input-vera" placeholder="Citroën" />
+      </div>
+      <div>
+        <label class="label-small block mb-3" for="vehicle_model">Modèle</label>
+        <input id="vehicle_model" name="listing[draft_data][vehicle][model]" value="<%= v[:model] %>" class="input-vera" placeholder="BX GTi 16V" />
+      </div>
+      <div>
+        <label class="label-small block mb-3" for="vehicle_year">Année</label>
+        <input id="vehicle_year" type="number" name="listing[draft_data][vehicle][year]" value="<%= v[:year] %>" class="input-vera input-mono" placeholder="1989" min="1900" max="<%= Date.current.year %>" />
+      </div>
+      <div>
+        <label class="label-small block mb-3" for="vehicle_km">Kilométrage</label>
+        <input id="vehicle_km" type="number" name="listing[draft_data][vehicle][kilometers]" value="<%= v[:kilometers] %>" class="input-vera input-mono" placeholder="142500" min="0" />
+      </div>
+      <div class="sm:col-span-2">
+        <label class="label-small block mb-3" for="vehicle_price">Prix demandé (€)</label>
+        <input id="vehicle_price" type="number" name="listing[draft_data][vehicle][price]" value="<%= v[:price] %>" class="input-vera input-mono" placeholder="18500" min="0" />
+      </div>
+      <div class="sm:col-span-2">
+        <label class="label-small block mb-3" for="vehicle_location">Localisation</label>
+        <input id="vehicle_location" name="listing[draft_data][vehicle][location]" value="<%= v[:location] %>" class="input-vera" placeholder="Lyon (69)" />
+      </div>
+      <div>
+        <label class="label-small block mb-3" for="vehicle_vin">VIN (optionnel)</label>
+        <input id="vehicle_vin" name="listing[draft_data][vehicle][vin]" value="<%= v[:vin] %>" class="input-vera input-mono uppercase" maxlength="17" placeholder="VF7XXXXXXXXXXXXXX" />
+      </div>
+      <div>
+        <label class="label-small block mb-3" for="vehicle_plate">Immatriculation</label>
+        <input id="vehicle_plate" name="listing[draft_data][vehicle][license_plate]" value="<%= v[:license_plate] %>" class="input-vera input-mono uppercase" placeholder="AB-123-CD" />
+      </div>
+    </div>
+
+    <%= render "listing_wizards/nav",
+          listing: listing,
+          form_id: "wizard-form-step-0",
+          current_step: 0,
+          is_last: false,
+          can_go_back: false %>
+  <% end %>
+</div>

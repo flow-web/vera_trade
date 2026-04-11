@@ -1,0 +1,7 @@
+one:
+  listing: one
+  user: two
+  body: "Est-ce que la peinture est d'origine sur la totalité de la caisse ?"
+  published: true
+  created_at: <%= Time.current %>
+  updated_at: <%= Time.current %>

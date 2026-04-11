@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 400" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Sedan / berline 3 volumes : toit long, coffre distinct -->
+  <path d="M60 290 L60 270 Q60 255 90 250 L170 240 Q210 180 290 172 L520 168 Q600 172 670 215 L870 232 Q930 240 935 280 L935 300 L60 300 Z" />
+  <path d="M195 235 L290 172 L520 168 L605 218" />
+  <line x1="370" y1="170" x2="370" y2="225" />
+  <line x1="465" y1="169" x2="465" y2="225" />
+  <circle cx="220" cy="298" r="42" />
+  <circle cx="220" cy="298" r="20" />
+  <circle cx="780" cy="298" r="42" />
+  <circle cx="780" cy="298" r="20" />
+</svg>

@@ -1,0 +1,20 @@
+one:
+  rust_map: one
+  x_pct: 42.50
+  y_pct: 68.00
+  status: surface
+  label: "Plancher arrière droit"
+  note: "Oxydation superficielle, pas de perforation"
+  position: 0
+  created_at: <%= Time.current %>
+  updated_at: <%= Time.current %>
+
+two:
+  rust_map: one
+  x_pct: 55.10
+  y_pct: 71.20
+  status: ok
+  label: "Longeron droit"
+  position: 1
+  created_at: <%= Time.current %>
+  updated_at: <%= Time.current %>

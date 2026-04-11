@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # Vera Trade — Production-ready seed data
 # Idempotent: safe to run multiple times
 
@@ -9,9 +10,9 @@ puts "🌱 Seeding Vera Trade..."
 if Category.count.zero?
   categories = {
     'Voitures' => { icon: 'car', subs: %w[Berline SUV Coupé Break Citadine Cabriolet Pick-up Compacte] },
-    'Motos' => { icon: 'motorcycle', subs: ['Sportive', 'Routière', 'Custom', 'Trail', 'Scooter', 'Café Racer'] },
-    'Utilitaires' => { icon: 'truck', subs: ['Fourgon', 'Camionnette', 'Plateau', 'Benne', 'Frigorifique'] },
-    'Camping-cars' => { icon: 'caravan', subs: ['Profilé', 'Capucine', 'Intégral', 'Van aménagé', 'Fourgon aménagé'] }
+    'Motos' => { icon: 'motorcycle', subs: [ 'Sportive', 'Routière', 'Custom', 'Trail', 'Scooter', 'Café Racer' ] },
+    'Utilitaires' => { icon: 'truck', subs: [ 'Fourgon', 'Camionnette', 'Plateau', 'Benne', 'Frigorifique' ] },
+    'Camping-cars' => { icon: 'caravan', subs: [ 'Profilé', 'Capucine', 'Intégral', 'Van aménagé', 'Fourgon aménagé' ] }
   }
   categories.each do |name, data|
     parent = Category.create!(name: name, icon: data[:icon], description: "#{name} d'occasion")
@@ -31,7 +32,7 @@ users_data = [
   { email: 'marie.leclerc@gmail.com', first_name: 'Marie', last_name: 'Leclerc', phone: '0644556677', role: 0 },
   { email: 'lucas.petit@hotmail.com', first_name: 'Lucas', last_name: 'Petit', phone: '0655667788', role: 0 },
   { email: 'julie.moreau@gmail.com', first_name: 'Julie', last_name: 'Moreau', phone: '0666778899', role: 0 },
-  { email: 'thomas.garcia@pro.fr', first_name: 'Thomas', last_name: 'Garcia', phone: '0677889900', role: 0 },
+  { email: 'thomas.garcia@pro.fr', first_name: 'Thomas', last_name: 'Garcia', phone: '0677889900', role: 0 }
 ]
 
 users = users_data.map do |data|
@@ -227,19 +228,19 @@ convos = [
     { from: lucas, text: "Super. Quel serait votre meilleur prix pour un achat comptant ?" },
     { from: sophie, text: "Pour un achat cash je peux descendre à 135 000€. Elle est vraiment impeccable." },
     { from: lucas, text: "Je réfléchis et je reviens vers vous rapidement. Merci !" }
-  ]},
+  ] },
   { from: marie, to: karim, messages: [
     { from: marie, text: "Bonjour, la Panigale V4 S m'intéresse beaucoup. Historique d'entretien complet ?" },
     { from: karim, text: "Oui, entretien exclusivement chez Ducati Nice. Carnet tamponné. Je peux envoyer les factures." },
     { from: marie, text: "Parfait. Possible d'organiser un essai ce week-end ?" },
     { from: karim, text: "Samedi matin ça vous irait ? Je suis dispo à partir de 10h." }
-  ]},
+  ] },
   { from: thomas, to: julie, messages: [
     { from: thomas, text: "La Tesla Model 3 Performance, vous avez le Full Self-Driving ?" },
     { from: julie, text: "Non c'est l'Autopilot de base. Le FSD n'est pas transférable de toute façon." },
     { from: thomas, text: "OK merci pour la précision. Autonomie réelle en hiver ?" },
     { from: julie, text: "Comptez 350-380km sur autoroute en hiver, 450+ en ville/mixte." }
-  ]}
+  ] }
 ]
 
 convos_created = 0
@@ -261,3 +262,40 @@ end
 puts "  ✓ #{convos_created} conversations (#{Message.count} messages)"
 
 puts "✅ Seed terminé — #{User.count} users, #{Listing.count} annonces, #{Message.count} messages"
+
+# -----------------------------------------------------------------------------
+# M8 — Annonce éditoriale complète avec wizard data (Rust Map + provenance +
+# originality). Utilise la première annonce disponible du premier vendeur.
+# -----------------------------------------------------------------------------
+example_listing = Listing.where(status: "active").includes(:vehicle).order(:id).first
+if example_listing
+  rm = example_listing.rust_map || example_listing.create_rust_map!(silhouette_variant: "sedan")
+  if rm.zones.empty?
+    [
+      { x_pct: 42.5, y_pct: 68.0, status: "surface", label: "Plancher arrière droit" },
+      { x_pct: 55.1, y_pct: 71.2, status: "ok",      label: "Longeron droit" },
+      { x_pct: 68.4, y_pct: 72.9, status: "deep",    label: "Bas de caisse arrière" }
+    ].each_with_index { |z, i| rm.zones.create!(z.merge(position: i)) }
+    rm.recompute_score!
+  end
+
+  unless example_listing.originality_score
+    example_listing.create_originality_score!(
+      overall_score: 94,
+      matching_numbers: true,
+      original_interior: true,
+      original_paint_pct: 85,
+      notes: "Numéros d'origine, peinture 85% d'origine, intérieur 100% matching"
+    )
+  end
+
+  if example_listing.provenance_events.empty?
+    [
+      { event_year: example_listing.vehicle.year,      event_type: "purchase",    label: "Livraison neuve" },
+      { event_year: example_listing.vehicle.year + 23, event_type: "restoration", label: "Restauration cosmétique + peinture ailes" },
+      { event_year: 2025,                              event_type: "service",     label: "Révision complète + pneus neufs" }
+    ].each_with_index { |e, i| example_listing.provenance_events.create!(e.merge(position: i)) }
+  end
+
+  puts "  ✓ M8 wizard data attaché à listing ##{example_listing.id} (Rust Map score: #{rm.reload.transparency_score}, originalité: #{example_listing.originality_score.overall_score})"
+end

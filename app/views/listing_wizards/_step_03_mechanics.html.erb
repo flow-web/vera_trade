@@ -1,0 +1,82 @@
+<%# Étape 04 — Mécanique. Locals : listing %>
+<% draft = listing.draft_data.to_h.with_indifferent_access %>
+<% m = draft[:mechanics] || {} %>
+<% os = draft[:originality] || {} %>
+<% os_fallback = listing.originality_score %>
+<% paint_pct = (os[:original_paint_pct] || os_fallback&.original_paint_pct || 100).to_i %>
+
+<div class="max-w-[900px]">
+  <div class="mb-10">
+    <h2 class="font-display text-[32px] playfair-italic text-text-primary">Étape 04 — Mécanique</h2>
+    <p class="font-body italic text-[15px] text-text-muted mt-2">Originalité, finitions et état. Un collectionneur préférera toujours la vérité à l'enjolivement.</p>
+  </div>
+
+  <%= form_with url: save_step_listing_wizard_path(listing),
+        method: :patch,
+        data: { turbo_frame: "wizard_step" },
+        html: { id: "wizard-form-step-3", class: "space-y-10", novalidate: true } do |f| %>
+    <%= f.hidden_field :step, value: 3 %>
+
+    <div>
+      <p class="label-small text-accent-red mb-6">Originalité</p>
+      <div class="space-y-6">
+        <label class="flex items-center gap-3 cursor-pointer group">
+          <input type="hidden" name="listing[draft_data][originality][matching_numbers]" value="0" />
+          <input type="checkbox" name="listing[draft_data][originality][matching_numbers]" value="1" <%= 'checked' if (os[:matching_numbers].to_s == '1') || os_fallback&.matching_numbers %> class="peer sr-only" />
+          <span class="w-4 h-4 border border-line-strong flex items-center justify-center peer-checked:bg-accent-red peer-checked:border-accent-red">
+            <svg class="w-3 h-3 text-text-primary opacity-0 peer-checked:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+          </span>
+          <span class="font-ui text-[11px] uppercase tracking-[0.15em] text-text-secondary group-hover:text-text-primary">
+            Numéros matching (moteur / châssis / boîte)
+          </span>
+        </label>
+
+        <label class="flex items-center gap-3 cursor-pointer group">
+          <input type="hidden" name="listing[draft_data][originality][original_interior]" value="0" />
+          <input type="checkbox" name="listing[draft_data][originality][original_interior]" value="1" <%= 'checked' if (os[:original_interior].to_s == '1') || os_fallback&.original_interior %> class="peer sr-only" />
+          <span class="w-4 h-4 border border-line-strong flex items-center justify-center peer-checked:bg-accent-red peer-checked:border-accent-red">
+            <svg class="w-3 h-3 text-text-primary opacity-0 peer-checked:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+          </span>
+          <span class="font-ui text-[11px] uppercase tracking-[0.15em] text-text-secondary group-hover:text-text-primary">
+            Intérieur d'origine
+          </span>
+        </label>
+
+        <div>
+          <label class="label-small block mb-3" for="paint_pct">Peinture d'origine (%)</label>
+          <input id="paint_pct" type="range" min="0" max="100" step="5" name="listing[draft_data][originality][original_paint_pct]" value="<%= paint_pct %>" class="w-full accent-accent-red" />
+          <p class="font-mono text-[11px] text-text-muted mt-2"><%= paint_pct %>% d'origine</p>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <p class="label-small text-accent-red mb-6">Motorisation</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <div>
+          <label class="label-small block mb-3" for="engine_type">Motorisation</label>
+          <input id="engine_type" name="listing[draft_data][mechanics][engine_type]" value="<%= m[:engine_type] %>" class="input-vera" placeholder="1.6 16V 160ch" />
+        </div>
+        <div>
+          <label class="label-small block mb-3" for="transmission">Boîte</label>
+          <select id="transmission" name="listing[draft_data][mechanics][transmission]" class="input-vera">
+            <% %w[Manuelle Automatique Séquentielle DCT].each do |opt| %>
+              <option value="<%= opt %>" <%= 'selected' if m[:transmission] == opt %>><%= opt %></option>
+            <% end %>
+          </select>
+        </div>
+        <div class="sm:col-span-2">
+          <label class="label-small block mb-3" for="recent_works">Travaux récents</label>
+          <textarea id="recent_works" name="listing[draft_data][mechanics][recent_works]" rows="4" class="input-vera" placeholder="Révision complète 2025 — 1200€, pneus neufs Michelin…"><%= m[:recent_works] %></textarea>
+        </div>
+      </div>
+    </div>
+
+    <%= render "listing_wizards/nav",
+          listing: listing,
+          form_id: "wizard-form-step-3",
+          current_step: 3,
+          is_last: false,
+          can_go_back: true %>
+  <% end %>
+</div>

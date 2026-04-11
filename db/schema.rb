@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_11_110412) do
+ActiveRecord::Schema[8.0].define(version: 2026_04_11_120007) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -64,6 +64,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_11_110412) do
     t.index ["user_id"], name: "index_conversations_on_user_id"
   end
 
+  create_table "favorites", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "listing_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["listing_id"], name: "index_favorites_on_listing_id"
+    t.index ["user_id", "listing_id"], name: "index_favorites_on_user_id_and_listing_id", unique: true
+    t.index ["user_id"], name: "index_favorites_on_user_id"
+  end
+
   create_table "guest_accounts", force: :cascade do |t|
     t.string "email"
     t.string "phone"
@@ -78,6 +88,28 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_11_110412) do
     t.index ["user_id"], name: "index_guest_accounts_on_user_id"
   end
 
+  create_table "listing_answers", force: :cascade do |t|
+    t.bigint "listing_question_id", null: false
+    t.bigint "user_id", null: false
+    t.text "body", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["listing_question_id"], name: "index_listing_answers_on_listing_question_id", unique: true
+    t.index ["user_id"], name: "index_listing_answers_on_user_id"
+  end
+
+  create_table "listing_questions", force: :cascade do |t|
+    t.bigint "listing_id", null: false
+    t.bigint "user_id", null: false
+    t.text "body", null: false
+    t.boolean "published", default: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["listing_id", "published"], name: "index_listing_questions_on_listing_id_and_published"
+    t.index ["listing_id"], name: "index_listing_questions_on_listing_id"
+    t.index ["user_id"], name: "index_listing_questions_on_user_id"
+  end
+
   create_table "listings", force: :cascade do |t|
     t.string "title"
     t.text "description"
@@ -90,9 +122,17 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_11_110412) do
     t.text "moderation_reason"
     t.bigint "buyer_id"
     t.boolean "is_certified", default: false
+    t.string "slug"
+    t.integer "views_count", default: 0, null: false
+    t.jsonb "draft_data", default: {}, null: false
+    t.integer "wizard_step", default: 0, null: false
+    t.datetime "published_at"
     t.index ["buyer_id"], name: "index_listings_on_buyer_id"
+    t.index ["published_at"], name: "index_listings_on_published_at"
+    t.index ["slug"], name: "index_listings_on_slug", unique: true
     t.index ["user_id"], name: "index_listings_on_user_id"
     t.index ["vehicle_id"], name: "index_listings_on_vehicle_id"
+    t.index ["wizard_step"], name: "index_listings_on_wizard_step"
   end
 
   create_table "media_folders", force: :cascade do |t|
@@ -127,6 +167,32 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_11_110412) do
     t.boolean "read", default: false, null: false
   end
 
+  create_table "originality_scores", force: :cascade do |t|
+    t.bigint "listing_id", null: false
+    t.integer "overall_score", default: 100
+    t.boolean "matching_numbers", default: false
+    t.integer "original_paint_pct", default: 100
+    t.boolean "original_interior", default: false
+    t.text "notes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["listing_id"], name: "index_originality_scores_on_listing_id", unique: true
+  end
+
+  create_table "provenance_events", force: :cascade do |t|
+    t.bigint "listing_id", null: false
+    t.integer "event_year", null: false
+    t.string "event_type", default: "service", null: false
+    t.string "label", null: false
+    t.text "description"
+    t.integer "position", default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["event_year"], name: "index_provenance_events_on_event_year"
+    t.index ["listing_id", "position"], name: "index_provenance_events_on_listing_id_and_position"
+    t.index ["listing_id"], name: "index_provenance_events_on_listing_id"
+  end
+
   create_table "reports", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.text "reason"
@@ -137,6 +203,30 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_11_110412) do
     t.datetime "updated_at", null: false
     t.index ["reportable_type", "reportable_id"], name: "index_reports_on_reportable"
     t.index ["user_id"], name: "index_reports_on_user_id"
+  end
+
+  create_table "rust_maps", force: :cascade do |t|
+    t.bigint "listing_id", null: false
+    t.string "silhouette_variant", default: "sedan", null: false
+    t.integer "transparency_score", default: 100
+    t.text "notes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["listing_id"], name: "index_rust_maps_on_listing_id", unique: true
+  end
+
+  create_table "rust_zones", force: :cascade do |t|
+    t.bigint "rust_map_id", null: false
+    t.decimal "x_pct", precision: 5, scale: 2, null: false
+    t.decimal "y_pct", precision: 5, scale: 2, null: false
+    t.string "status", default: "ok", null: false
+    t.string "label"
+    t.text "note"
+    t.integer "position", default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["rust_map_id", "position"], name: "index_rust_zones_on_rust_map_id_and_position"
+    t.index ["rust_map_id"], name: "index_rust_zones_on_rust_map_id"
   end
 
   create_table "temporary_listings", force: :cascade do |t|
@@ -282,14 +372,24 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_11_110412) do
   add_foreign_key "categories", "categories", column: "parent_id"
   add_foreign_key "conversations", "users"
   add_foreign_key "conversations", "users", column: "other_user_id"
+  add_foreign_key "favorites", "listings"
+  add_foreign_key "favorites", "users"
   add_foreign_key "guest_accounts", "users"
+  add_foreign_key "listing_answers", "listing_questions"
+  add_foreign_key "listing_answers", "users"
+  add_foreign_key "listing_questions", "listings"
+  add_foreign_key "listing_questions", "users"
   add_foreign_key "listings", "users"
   add_foreign_key "listings", "users", column: "buyer_id"
   add_foreign_key "listings", "vehicles"
   add_foreign_key "media_folders", "listings"
   add_foreign_key "media_items", "listings"
   add_foreign_key "media_items", "media_folders"
+  add_foreign_key "originality_scores", "listings"
+  add_foreign_key "provenance_events", "listings"
   add_foreign_key "reports", "users"
+  add_foreign_key "rust_maps", "listings"
+  add_foreign_key "rust_zones", "rust_maps"
   add_foreign_key "temporary_listings", "guest_accounts"
   add_foreign_key "temporary_listings", "vehicles"
   add_foreign_key "vehicles", "categories"

@@ -53,6 +53,30 @@ module ListingsHelper
     end
   end
 
+  # Inline SVG d'une silhouette véhicule pour la Rust Map.
+  # Les fichiers sont stockés dans app/assets/images/silhouettes/*.svg.
+  # Défense en profondeur contre une compromission du dossier assets :
+  # la variant est allowlisted, le chemin est contenu sous app/assets/images/silhouettes,
+  # et on strippe activement les tags dangereux (script, foreignObject, iframe, use href)
+  # avant le html_safe.
+  SILHOUETTE_DIR = Rails.root.join("app/assets/images/silhouettes").freeze
+  DANGEROUS_SVG_TAGS = /<\/?(?:script|foreignObject|iframe|object|embed|link|handler)\b[^>]*>/i.freeze
+  DANGEROUS_SVG_ATTRS = /\s(?:on\w+|href|xlink:href|formaction|action)\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/i.freeze
+
+  def silhouette_svg(variant)
+    safe_variant = RustMap::VALID_VARIANTS.include?(variant.to_s) ? variant.to_s : "sedan"
+    path = SILHOUETTE_DIR.join("#{safe_variant}.svg").cleanpath
+    # Belt-and-braces : s'assurer que le chemin résolu reste sous SILHOUETTE_DIR
+    # (parade anti-symlink / path-traversal si un attaquant arrive à planter un
+    # fichier avec un nom exotique).
+    return "".html_safe unless path.to_s.start_with?(SILHOUETTE_DIR.to_s)
+    return "".html_safe unless File.exist?(path)
+
+    raw = File.read(path)
+    sanitized = raw.gsub(DANGEROUS_SVG_TAGS, "").gsub(DANGEROUS_SVG_ATTRS, "")
+    sanitized.html_safe
+  end
+
   private
 
   # Stub — à remplacer par un vrai flag user.professional? en Phase DB
