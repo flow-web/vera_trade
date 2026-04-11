@@ -30,3 +30,6 @@ application.register("rust-map-editor", RustMapEditorController)
 
 import ProvenanceTimelineController from "./provenance_timeline_controller"
 application.register("provenance-timeline", ProvenanceTimelineController)
+
+import ModalController from "./modal_controller"
+application.register("modal", ModalController)

@@ -82,10 +82,14 @@
 
     <div class="flex items-center gap-3">
       <% if user_signed_in? && @listing.user != current_user %>
-        <%= link_to conversation_path(@listing.user), class: "btn-vera-secondary text-[10px] px-6 py-3" do %>
+        <%# "Poser une question" anchor to the public Q&A section below (PR2) %>
+        <%= link_to "#listing_qa_section", class: "btn-vera-secondary text-[10px] px-6 py-3" do %>
           Poser une question
         <% end %>
-        <%= link_to conversation_path(@listing.user), class: "btn-vera-primary text-[10px] px-6 py-3" do %>
+        <%# PR3 — opens the listing contact modal via Turbo Frame lazy-load %>
+        <%= link_to new_listing_listing_contact_path(@listing),
+              data: { turbo_frame: "listing_contact_modal" },
+              class: "btn-vera-primary text-[10px] px-6 py-3" do %>
           Contacter le vendeur
         <% end %>
       <% elsif !user_signed_in? %>
@@ -628,3 +632,8 @@
     </section>
   <% end %>
 </main>
+
+<%# PR3 feat/buyer-contact — empty Turbo Frame container that lazy-loads
+    the contact modal (listing_contacts/new.html.erb) when the "Contacter
+    le vendeur" link in the hero is clicked. %>
+<%= turbo_frame_tag "listing_contact_modal" %>

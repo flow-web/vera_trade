@@ -60,11 +60,22 @@
         <% end %>
 
         <!-- Avatar + menu -->
+        <% unread_messages_count = current_user.received_messages.unread.count %>
         <div class="relative group">
-          <button type="button" class="flex items-center justify-center w-9 h-9 border border-line hover:border-line-strong transition-colors" aria-label="Compte">
+          <button type="button" class="relative flex items-center justify-center w-9 h-9 border border-line hover:border-line-strong transition-colors" aria-label="Compte<%= unread_messages_count > 0 ? " · #{unread_messages_count} message(s) non lu(s)" : "" %>">
             <span class="font-ui text-xs font-bold text-text-primary">
               <%= (current_user.respond_to?(:first_name) && current_user.first_name&.first&.upcase) || current_user.email.first.upcase %>
             </span>
+            <%# PR3 — Unread messages badge. Visible au premier coup d'œil,
+                Rosso Corsa, pas en nice-to-have : une offre non-vue est
+                une transaction morte. %>
+            <% if unread_messages_count > 0 %>
+              <span class="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1 bg-accent-red border border-bg-primary font-ui text-[9px] font-bold text-text-primary flex items-center justify-center leading-none"
+                    data-testid="nav-unread-badge"
+                    aria-hidden="true">
+                <%= unread_messages_count > 9 ? "9+" : unread_messages_count %>
+              </span>
+            <% end %>
           </button>
           <div class="absolute right-0 top-full mt-2 w-56 bg-bg-secondary border border-line opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity duration-200 z-[110]">
             <div class="px-5 py-4 border-b border-line">
@@ -81,8 +92,13 @@
               <%= link_to favorites_path, class: "block px-5 py-2.5 font-ui text-[11px] uppercase tracking-[0.15em] text-text-secondary hover:text-text-primary hover:bg-bg-tertiary transition-colors" do %>
                 Favoris
               <% end %>
-              <%= link_to messages_path, class: "block px-5 py-2.5 font-ui text-[11px] uppercase tracking-[0.15em] text-text-secondary hover:text-text-primary hover:bg-bg-tertiary transition-colors" do %>
-                Messagerie
+              <%= link_to messages_path, class: "flex items-center justify-between px-5 py-2.5 font-ui text-[11px] uppercase tracking-[0.15em] text-text-secondary hover:text-text-primary hover:bg-bg-tertiary transition-colors" do %>
+                <span>Messagerie</span>
+                <% if unread_messages_count > 0 %>
+                  <span class="bg-accent-red px-1.5 py-0.5 font-mono text-[9px] text-text-primary leading-none">
+                    <%= unread_messages_count %>
+                  </span>
+                <% end %>
               <% end %>
               <%= link_to edit_user_registration_path, class: "block px-5 py-2.5 font-ui text-[11px] uppercase tracking-[0.15em] text-text-secondary hover:text-text-primary hover:bg-bg-tertiary transition-colors" do %>
                 Paramètres

@@ -1,0 +1,99 @@
+<%#
+  PR3 feat/buyer-contact — modal content loaded into the empty
+  turbo_frame_tag "listing_contact_modal" that lives at the bottom
+  of listings/show.html.erb.
+
+  Structure :
+    - Fixed-position overlay with tonal backdrop (bg-bg-primary/90)
+    - Inner card (bg-bg-secondary + border-line) centered
+    - Stimulus modal controller for close-on-backdrop and close button
+    - Form breaks out of the frame (data-turbo-frame="_top") so the
+      success redirect navigates the whole page
+%>
+<%= turbo_frame_tag "listing_contact_modal" do %>
+  <div class="fixed inset-0 bg-bg-primary/90 z-[200] flex items-center justify-center p-5"
+       data-controller="modal"
+       data-action="click->modal#closeOnBackdrop keydown@window->modal#closeOnEscape"
+       role="dialog"
+       aria-modal="true"
+       aria-labelledby="listing_contact_title">
+
+    <div class="relative bg-bg-secondary border border-line max-w-xl w-full p-8 lg:p-10"
+         data-modal-target="content">
+
+      <button type="button"
+              data-action="modal#close"
+              aria-label="Fermer"
+              class="absolute top-4 right-4 w-8 h-8 flex items-center justify-center text-text-muted hover:text-accent-red transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
+        </svg>
+      </button>
+
+      <div class="eyebrow mb-3">Contacter le vendeur</div>
+      <h2 id="listing_contact_title" class="playfair-italic text-2xl md:text-3xl text-text-primary leading-tight mb-8">
+        <%= @listing.title %>
+      </h2>
+
+      <%# turbo: false → bypass Turbo entirely so the success redirect (302
+          → /conversations/:id) becomes a real top-level browser navigation.
+          The form is rendered inside a turbo_frame_tag for the lazy-load
+          path, and putting data-turbo-frame="_top" on the form is *not*
+          enough in turbo-rails 2.0.x: the parent frame still hijacks the
+          response. Disabling Turbo on this single form submission is the
+          most robust way to guarantee the navigation. %>
+      <%= form_with model: @message,
+                    url: listing_listing_contact_path(@listing),
+                    data: { turbo: false },
+                    class: "space-y-6" do |f| %>
+
+        <% if @message.errors.any? %>
+          <div class="font-ui text-[10px] uppercase tracking-[0.15em] text-accent-red">
+            <%= @message.errors.full_messages.to_sentence %>
+          </div>
+        <% end %>
+
+        <div>
+          <label for="message_content" class="block font-ui text-[10px] uppercase tracking-[0.2em] text-text-muted mb-3">
+            Votre message
+          </label>
+          <%= f.text_area :content,
+                id: "message_content",
+                rows: 5,
+                placeholder: "Bonjour, j'ai quelques questions sur votre annonce…",
+                required: true,
+                class: "input-vera w-full" %>
+        </div>
+
+        <div>
+          <label for="message_offer_euros" class="block font-ui text-[10px] uppercase tracking-[0.2em] text-text-muted mb-3">
+            Offre (optionnelle)
+          </label>
+          <div class="flex items-center gap-3">
+            <%= f.number_field :offer_euros,
+                  id: "message_offer_euros",
+                  step: 100,
+                  min: 100,
+                  max: 10_000_000,
+                  placeholder: "15000",
+                  class: "input-vera w-40 font-mono" %>
+            <span class="font-mono text-base text-text-muted">€</span>
+          </div>
+          <p class="font-ui text-[10px] uppercase tracking-[0.15em] text-text-muted mt-3">
+            Prix annonce · <%= number_to_currency(@listing.vehicle&.price || 0, unit: "€", precision: 0, separator: ",", delimiter: " ", format: "%n %u") %>
+          </p>
+        </div>
+
+        <div class="flex items-center justify-between gap-4 pt-4 border-t border-line">
+          <button type="button"
+                  data-action="modal#close"
+                  class="font-ui text-[10px] uppercase tracking-[0.15em] text-text-muted hover:text-accent-red transition-colors">
+            Annuler
+          </button>
+          <%= f.submit "Envoyer au vendeur",
+                class: "btn-vera-primary text-[10px] px-6 py-3" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>
