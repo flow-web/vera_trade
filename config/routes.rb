@@ -12,7 +12,8 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :listings do
+  # M8 — create/update retirés, remplacés par ListingWizardsController.
+  resources :listings, only: [:index, :show, :new, :edit, :destroy] do
     resource :favorite, only: [:create, :destroy]
   end
 

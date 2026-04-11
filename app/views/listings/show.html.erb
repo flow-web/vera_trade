@@ -190,7 +190,8 @@
         </div>
       </section>
 
-      <%# -------------------- RUST MAP (stubbé) -------------------- %>
+      <%# -------------------- RUST MAP (M8 — données réelles) -------------------- %>
+      <% rust_map = @listing.rust_map %>
       <section>
         <div class="flex items-end justify-between gap-8 pb-6 border-b border-line mb-10">
           <div>
@@ -201,66 +202,117 @@
           </div>
           <div class="hidden md:flex items-center gap-6">
             <div class="text-right">
-              <div class="playfair-italic text-5xl text-text-muted leading-none">— / 100</div>
-              <div class="label-micro mt-2">Score (bientôt)</div>
+              <div class="playfair-italic text-5xl <%= rust_map ? 'text-accent-red' : 'text-text-muted' %> leading-none">
+                <%= rust_map ? "#{rust_map.transparency_score}" : "—" %> / 100
+              </div>
+              <div class="label-micro mt-2">Score transparence</div>
             </div>
           </div>
         </div>
 
-        <div class="bg-bg-secondary border border-line p-8 lg:p-12">
-          <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+        <% if rust_map %>
+          <div class="bg-bg-secondary border border-line p-8 lg:p-12">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
 
-            <!-- SVG silhouette véhicule (générique) + dots stubbed -->
-            <div class="lg:col-span-8">
-              <div class="relative w-full aspect-[16/7] max-w-2xl mx-auto">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 300" class="w-full h-full fill-none stroke-line-strong stroke-2">
-                  <path d="M50 220 L120 220 C120 180 180 180 180 220 L620 220 C620 180 680 180 680 220 L750 220 L750 180 L700 140 L550 100 L300 100 L150 140 L50 180 Z"/>
-                  <circle cx="150" cy="220" r="35"/>
-                  <circle cx="650" cy="220" r="35"/>
-                  <path class="stroke-line" d="M150 140 L650 140 M300 100 L300 140 M550 100 L550 140"/>
-                </svg>
-                <!-- Dots placeholder grisés (pas de vraies données) -->
-                <div class="absolute inset-0 opacity-30">
-                  <div class="absolute top-[55%] left-[15%] w-3 h-3 rounded-full rust-dot-ok"></div>
-                  <div class="absolute top-[50%] left-[35%] w-3 h-3 rounded-full rust-dot-ok"></div>
-                  <div class="absolute top-[60%] left-[55%] w-3 h-3 rounded-full rust-dot-surface"></div>
-                  <div class="absolute top-[55%] left-[75%] w-3 h-3 rounded-full rust-dot-ok"></div>
+              <!-- Silhouette + dots -->
+              <div class="lg:col-span-8">
+                <div class="relative w-full aspect-[5/2] max-w-2xl mx-auto text-text-muted">
+                  <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                    <div class="w-[90%] h-[85%]"><%= silhouette_svg(rust_map.silhouette_variant) %></div>
+                  </div>
+                  <% rust_map.zones.each do |z| %>
+                    <span class="absolute w-3.5 h-3.5 -translate-x-1/2 -translate-y-1/2 rust-dot-<%= z.status %>"
+                          style="left: <%= z.x_pct %>%; top: <%= z.y_pct %>%"
+                          title="<%= z.label.presence || z.status.humanize %>"
+                          aria-label="Zone <%= z.label.presence || z.status %>"></span>
+                  <% end %>
+                </div>
+
+                <!-- Légende -->
+                <div class="mt-8 flex flex-wrap justify-center gap-8 pt-6 border-t border-line">
+                  <div class="flex items-center gap-2">
+                    <div class="w-2.5 h-2.5 rust-dot-ok"></div>
+                    <span class="font-ui text-[10px] uppercase tracking-[0.2em] text-text-muted">Sain</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <div class="w-2.5 h-2.5 rust-dot-surface"></div>
+                    <span class="font-ui text-[10px] uppercase tracking-[0.2em] text-text-muted">Surface</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <div class="w-2.5 h-2.5 rust-dot-deep"></div>
+                    <span class="font-ui text-[10px] uppercase tracking-[0.2em] text-text-muted">Profonde</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <div class="w-2.5 h-2.5 rust-dot-perforation"></div>
+                    <span class="font-ui text-[10px] uppercase tracking-[0.2em] text-text-muted">Perforation</span>
+                  </div>
                 </div>
               </div>
 
-              <!-- Légende -->
-              <div class="mt-8 flex flex-wrap justify-center gap-8 pt-6 border-t border-line">
-                <div class="flex items-center gap-2">
-                  <div class="w-2.5 h-2.5 rounded-full rust-dot-ok"></div>
-                  <span class="font-ui text-[10px] uppercase tracking-[0.2em] text-text-muted">Sain</span>
-                </div>
-                <div class="flex items-center gap-2">
-                  <div class="w-2.5 h-2.5 rounded-full rust-dot-surface"></div>
-                  <span class="font-ui text-[10px] uppercase tracking-[0.2em] text-text-muted">Surface</span>
-                </div>
-                <div class="flex items-center gap-2">
-                  <div class="w-2.5 h-2.5 rounded-full rust-dot-deep"></div>
-                  <span class="font-ui text-[10px] uppercase tracking-[0.2em] text-text-muted">Profonde</span>
-                </div>
-                <div class="flex items-center gap-2">
-                  <div class="w-2.5 h-2.5 rounded-full rust-dot-perforation"></div>
-                  <span class="font-ui text-[10px] uppercase tracking-[0.2em] text-text-muted">Perforation</span>
-                </div>
+              <!-- Liste détaillée des zones -->
+              <div class="lg:col-span-4">
+                <% if rust_map.zones.any? %>
+                  <div class="eyebrow mb-5">Zones identifiées (<%= rust_map.zones.count %>)</div>
+                  <ul class="space-y-3">
+                    <% rust_map.zones.each do |z| %>
+                      <li class="border-t border-line pt-3 first:border-t-0 first:pt-0">
+                        <div class="flex items-start justify-between gap-3">
+                          <div class="flex items-start gap-3 flex-1">
+                            <span class="w-2 h-2 rust-dot-<%= z.status %> mt-2 shrink-0"></span>
+                            <div class="flex-1 min-w-0">
+                              <p class="font-ui text-[11px] uppercase tracking-[0.15em] text-text-primary"><%= z.label.presence || z.status.humanize %></p>
+                              <% if z.note.present? %>
+                                <p class="font-body text-[13px] text-text-muted mt-1 leading-snug"><%= z.note %></p>
+                              <% end %>
+                            </div>
+                          </div>
+                          <span class="font-mono text-[9px] uppercase tracking-[0.15em] text-text-muted shrink-0"><%= z.status %></span>
+                        </div>
+                      </li>
+                    <% end %>
+                  </ul>
+                <% else %>
+                  <div class="eyebrow mb-4">Véhicule sain</div>
+                  <p class="font-body italic text-[14px] text-text-secondary leading-relaxed">
+                    Aucune zone de corrosion n'a été identifiée par le vendeur lors du dépôt. Score transparence&nbsp;: 100/100.
+                  </p>
+                <% end %>
               </div>
-            </div>
-
-            <!-- Message état stubbed -->
-            <div class="lg:col-span-4">
-              <div class="eyebrow mb-4">Bientôt disponible</div>
-              <p class="font-body italic text-base text-text-secondary leading-relaxed">
-                Le Rust Map est notre cartographie interactive de la corrosion zone par zone, assortie d'un score transparence sur 100. Cette annonce ne l'a pas encore. Les prochaines annonces publiées via le nouveau parcours vendeur l'intégreront systématiquement.
-              </p>
             </div>
           </div>
-        </div>
+        <% else %>
+          <div class="bg-bg-secondary border border-line p-8 lg:p-12">
+            <div class="eyebrow mb-4">Bientôt disponible</div>
+            <p class="font-body italic text-base text-text-secondary leading-relaxed max-w-2xl">
+              Le Rust Map est notre cartographie interactive de la corrosion zone par zone, assortie d'un score transparence sur 100. Cette annonce ne l'a pas encore. Les prochaines annonces publiées via le nouveau parcours vendeur l'intégreront systématiquement.
+            </p>
+          </div>
+        <% end %>
+
+        <% if @listing.originality_score %>
+          <% os = @listing.originality_score %>
+          <div class="mt-6 grid grid-cols-2 lg:grid-cols-4 gap-px bg-line">
+            <div class="bg-bg-primary px-6 py-5">
+              <p class="label-micro mb-2">Score originalité</p>
+              <p class="font-mono text-2xl text-accent-red"><%= os.overall_score %>/100</p>
+            </div>
+            <div class="bg-bg-primary px-6 py-5">
+              <p class="label-micro mb-2">Matching numbers</p>
+              <p class="font-mono text-2xl <%= os.matching_numbers ? 'text-text-primary' : 'text-text-muted' %>"><%= os.matching_numbers ? "Oui" : "Non" %></p>
+            </div>
+            <div class="bg-bg-primary px-6 py-5">
+              <p class="label-micro mb-2">Peinture d'origine</p>
+              <p class="font-mono text-2xl text-text-primary"><%= os.original_paint_pct %>%</p>
+            </div>
+            <div class="bg-bg-primary px-6 py-5">
+              <p class="label-micro mb-2">Intérieur d'origine</p>
+              <p class="font-mono text-2xl <%= os.original_interior ? 'text-text-primary' : 'text-text-muted' %>"><%= os.original_interior ? "Oui" : "Non" %></p>
+            </div>
+          </div>
+        <% end %>
       </section>
 
-      <%# -------------------- PROVENANCE (stubbed minimal) -------------------- %>
+      <%# -------------------- PROVENANCE (M8 — données réelles) -------------------- %>
       <section>
         <div class="flex items-end justify-between gap-8 pb-6 border-b border-line mb-10">
           <div>
@@ -272,41 +324,56 @@
         </div>
 
         <div class="space-y-0">
-          <% if @vehicle&.year %>
-            <div class="grid grid-cols-12 gap-6 border-t border-line py-8 px-4 hover:bg-bg-secondary transition-colors">
-              <div class="col-span-12 md:col-span-2 font-mono text-2xl text-accent-red"><%= @vehicle.year %></div>
-              <div class="col-span-12 md:col-span-3 font-ui text-[11px] uppercase tracking-[0.15em] text-text-muted pt-1">Mise en circulation</div>
-              <div class="col-span-12 md:col-span-7 font-body text-base text-text-primary leading-relaxed">
-                Première immatriculation <%= @vehicle.location.present? ? "— #{@vehicle.location}" : "" %>.
+          <% provenance_events = @listing.provenance_events %>
+
+          <% if provenance_events.any? %>
+            <% provenance_events.each do |event| %>
+              <div class="grid grid-cols-12 gap-6 border-t border-line py-8 px-4 hover:bg-bg-secondary transition-colors">
+                <div class="col-span-12 md:col-span-2 font-mono text-2xl text-accent-red"><%= event.event_year %></div>
+                <div class="col-span-12 md:col-span-3 font-ui text-[11px] uppercase tracking-[0.15em] text-text-muted pt-1"><%= event.event_type.humanize %></div>
+                <div class="col-span-12 md:col-span-7 font-body text-base text-text-primary leading-relaxed">
+                  <strong class="font-semibold"><%= event.label %></strong><% if event.description.present? %> — <%= event.description %><% end %>
+                </div>
               </div>
+            <% end %>
+            <div class="border-t border-line"></div>
+          <% else %>
+            <% if @vehicle&.year %>
+              <div class="grid grid-cols-12 gap-6 border-t border-line py-8 px-4 hover:bg-bg-secondary transition-colors">
+                <div class="col-span-12 md:col-span-2 font-mono text-2xl text-accent-red"><%= @vehicle.year %></div>
+                <div class="col-span-12 md:col-span-3 font-ui text-[11px] uppercase tracking-[0.15em] text-text-muted pt-1">Mise en circulation</div>
+                <div class="col-span-12 md:col-span-7 font-body text-base text-text-primary leading-relaxed">
+                  Première immatriculation <%= @vehicle.location.present? ? "— #{@vehicle.location}" : "" %>.
+                </div>
+              </div>
+            <% end %>
+
+            <% if @vehicle&.previous_owners && @vehicle.previous_owners > 0 %>
+              <div class="grid grid-cols-12 gap-6 border-t border-line py-8 px-4 hover:bg-bg-secondary transition-colors">
+                <div class="col-span-12 md:col-span-2 font-mono text-2xl text-accent-red"><%= @vehicle.previous_owners %></div>
+                <div class="col-span-12 md:col-span-3 font-ui text-[11px] uppercase tracking-[0.15em] text-text-muted pt-1">Propriétaires successifs</div>
+                <div class="col-span-12 md:col-span-7 font-body text-base text-text-primary leading-relaxed">
+                  <%= @vehicle.previous_owners %> propriétaire<%= @vehicle.previous_owners > 1 ? "s" : "" %> déclaré<%= @vehicle.previous_owners > 1 ? "s" : "" %>.
+                </div>
+              </div>
+            <% end %>
+
+            <% if @vehicle&.last_service_date %>
+              <div class="grid grid-cols-12 gap-6 border-t border-line py-8 px-4 hover:bg-bg-secondary transition-colors">
+                <div class="col-span-12 md:col-span-2 font-mono text-2xl text-accent-red"><%= @vehicle.last_service_date.year %></div>
+                <div class="col-span-12 md:col-span-3 font-ui text-[11px] uppercase tracking-[0.15em] text-text-muted pt-1">Dernière révision</div>
+                <div class="col-span-12 md:col-span-7 font-body text-base text-text-primary leading-relaxed">
+                  Entretien complet réalisé le <%= l(@vehicle.last_service_date, format: "%d %B %Y") rescue @vehicle.last_service_date.strftime("%d/%m/%Y") %>.
+                </div>
+              </div>
+            <% end %>
+
+            <div class="border-t border-b border-line py-8 px-4 text-center">
+              <p class="font-body italic text-sm text-text-muted">
+                Ce véhicule n'a pas encore de Provenance Ledger détaillé. Les prochaines annonces publiées l'intégreront via le parcours vendeur.
+              </p>
             </div>
           <% end %>
-
-          <% if @vehicle&.previous_owners && @vehicle.previous_owners > 0 %>
-            <div class="grid grid-cols-12 gap-6 border-t border-line py-8 px-4 hover:bg-bg-secondary transition-colors">
-              <div class="col-span-12 md:col-span-2 font-mono text-2xl text-accent-red"><%= @vehicle.previous_owners %></div>
-              <div class="col-span-12 md:col-span-3 font-ui text-[11px] uppercase tracking-[0.15em] text-text-muted pt-1">Propriétaires successifs</div>
-              <div class="col-span-12 md:col-span-7 font-body text-base text-text-primary leading-relaxed">
-                <%= @vehicle.previous_owners %> propriétaire<%= @vehicle.previous_owners > 1 ? "s" : "" %> déclaré<%= @vehicle.previous_owners > 1 ? "s" : "" %>.
-              </div>
-            </div>
-          <% end %>
-
-          <% if @vehicle&.last_service_date %>
-            <div class="grid grid-cols-12 gap-6 border-t border-line py-8 px-4 hover:bg-bg-secondary transition-colors">
-              <div class="col-span-12 md:col-span-2 font-mono text-2xl text-accent-red"><%= @vehicle.last_service_date.year %></div>
-              <div class="col-span-12 md:col-span-3 font-ui text-[11px] uppercase tracking-[0.15em] text-text-muted pt-1">Dernière révision</div>
-              <div class="col-span-12 md:col-span-7 font-body text-base text-text-primary leading-relaxed">
-                Entretien complet réalisé le <%= l(@vehicle.last_service_date, format: "%d %B %Y") rescue @vehicle.last_service_date.strftime("%d/%m/%Y") %>.
-              </div>
-            </div>
-          <% end %>
-
-          <div class="border-t border-b border-line py-8 px-4 text-center">
-            <p class="font-body italic text-sm text-text-muted">
-              Le Provenance Ledger complet (propriétaires, factures, événements) arrive avec le nouveau parcours d'annonce.
-            </p>
-          </div>
         </div>
       </section>
 

@@ -1,9 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 400" fill="none" stroke="currentColor" stroke-width="2.5">
-  <path d="M60 280 Q60 260 90 250 L170 240 Q210 180 280 170 L560 165 Q640 170 700 220 L880 235 Q940 245 940 285 L940 305 L60 305 Z" />
-  <circle cx="220" cy="305" r="45" />
-  <circle cx="220" cy="305" r="22" />
-  <circle cx="780" cy="305" r="45" />
-  <circle cx="780" cy="305" r="22" />
-  <path d="M220 240 L300 180 L540 175 L610 225" />
-  <line x1="410" y1="180" x2="410" y2="230" />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 400" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Convertible / cabriolet : pas de toit, pare-brise incliné, arrière tondu -->
+  <path d="M60 290 L60 270 Q65 258 100 252 L180 245 Q220 210 290 205 L700 205 Q800 215 870 240 L935 248 L935 300 L60 300 Z" />
+  <path d="M210 245 L290 205 L370 205" />
+  <line x1="370" y1="205" x2="700" y2="205" />
+  <line x1="520" y1="208" x2="520" y2="230" stroke-dasharray="4 3" />
+  <circle cx="220" cy="298" r="42" />
+  <circle cx="220" cy="298" r="20" />
+  <circle cx="780" cy="298" r="42" />
+  <circle cx="780" cy="298" r="20" />
 </svg>

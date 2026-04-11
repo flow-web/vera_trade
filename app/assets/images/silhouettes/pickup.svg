@@ -1,9 +1,13 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 400" fill="none" stroke="currentColor" stroke-width="2.5">
-  <path d="M60 280 Q60 260 90 250 L170 240 Q210 180 280 170 L560 165 Q640 170 700 220 L880 235 Q940 245 940 285 L940 305 L60 305 Z" />
-  <circle cx="220" cy="305" r="45" />
-  <circle cx="220" cy="305" r="22" />
-  <circle cx="780" cy="305" r="45" />
-  <circle cx="780" cy="305" r="22" />
-  <path d="M220 240 L300 180 L540 175 L610 225" />
-  <line x1="410" y1="180" x2="410" y2="230" />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 400" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Pickup : cabine courte + benne arrière ouverte -->
+  <path d="M60 285 L60 265 Q65 250 95 245 L170 235 Q200 155 290 150 L490 150 L510 235 L935 235 L935 295 L60 295 Z" />
+  <path d="M200 230 L290 150 L490 150 L510 235" />
+  <line x1="390" y1="150" x2="390" y2="230" />
+  <line x1="510" y1="235" x2="510" y2="195" />
+  <line x1="510" y1="195" x2="900" y2="195" />
+  <line x1="900" y1="195" x2="900" y2="235" />
+  <circle cx="215" cy="295" r="45" />
+  <circle cx="215" cy="295" r="22" />
+  <circle cx="785" cy="295" r="45" />
+  <circle cx="785" cy="295" r="22" />
 </svg>

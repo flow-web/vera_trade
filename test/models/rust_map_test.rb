@@ -21,7 +21,7 @@ class RustMapTest < ActiveSupport::TestCase
   test "transparency_score is clamped between 0 and 100" do
     rm = RustMap.new(listing: listings(:two), transparency_score: 120)
     refute rm.valid?
-    assert_includes rm.errors[:transparency_score], "must be less than or equal to 100"
+    assert rm.errors.of_kind?(:transparency_score, :less_than_or_equal_to)
   end
 
   test "valid silhouette variants" do

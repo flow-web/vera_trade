@@ -8,15 +8,15 @@ class RustZoneTest < ActiveSupport::TestCase
   test "coordinates are required" do
     z = RustZone.new(rust_map: rust_maps(:one), status: "ok")
     refute z.valid?
-    assert_includes z.errors[:x_pct], "can't be blank"
-    assert_includes z.errors[:y_pct], "can't be blank"
+    assert z.errors.of_kind?(:x_pct, :blank) || z.errors.of_kind?(:x_pct, :not_a_number)
+    assert z.errors.of_kind?(:y_pct, :blank) || z.errors.of_kind?(:y_pct, :not_a_number)
   end
 
   test "coordinates are clamped to 0..100" do
     z = RustZone.new(rust_map: rust_maps(:one), x_pct: 150, y_pct: -5, status: "ok")
     refute z.valid?
-    assert_includes z.errors[:x_pct], "must be less than or equal to 100"
-    assert_includes z.errors[:y_pct], "must be greater than or equal to 0"
+    assert z.errors.of_kind?(:x_pct, :less_than_or_equal_to)
+    assert z.errors.of_kind?(:y_pct, :greater_than_or_equal_to)
   end
 
   test "status must be in enum" do

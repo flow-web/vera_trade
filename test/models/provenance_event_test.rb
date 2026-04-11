@@ -8,7 +8,7 @@ class ProvenanceEventTest < ActiveSupport::TestCase
   test "event_year required" do
     e = ProvenanceEvent.new(listing: listings(:one), event_type: "purchase", label: "x")
     refute e.valid?
-    assert_includes e.errors[:event_year], "can't be blank"
+    assert e.errors.of_kind?(:event_year, :blank) || e.errors.of_kind?(:event_year, :not_a_number)
   end
 
   test "label required" do
