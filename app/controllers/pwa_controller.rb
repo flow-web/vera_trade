@@ -108,4 +108,82 @@ class PwaController < ApplicationController
   end
 
   def offline; end
+
+  # D1.5 / fix/pwa-reset-endpoint — user-triggered cache cleanup page.
+  #
+  # The kamikaze at /service-worker.js depends on the browser's
+  # background SW update check to fire. On Safari iOS and Chrome mobile
+  # that check is lazy (up to 24h, sometimes longer if the app is
+  # backgrounded), which leaves early testers stuck on the legacy
+  # FlowMotor SW. This route is the fast-path escape hatch.
+  #
+  # Flow:
+  #   1. The user visits /reset in the browser.
+  #   2. The URL is brand new, so even a cache-first legacy SW falls
+  #      through to the network (it has no /reset in its Cache Storage).
+  #   3. Rails responds with `Clear-Site-Data: "cache", "storage"` which
+  #      wipes HTTP cache, Cache Storage AND Service Worker registrations
+  #      for the origin. Cookies are deliberately preserved (no
+  #      `"cookies"` directive) so users stay signed in.
+  #   4. The response body is a minimal HTML page with a 2 second meta
+  #      refresh to `/`. By the time that refresh fires, the legacy SW
+  #      is gone and the browser fetches the real Vera Trade homepage
+  #      straight from the network.
+  #
+  # Unlike `#service_worker`, this action serves `text/html`, so the
+  # cross-origin JS forgery protection does not apply. The existing
+  # `skip_forgery_protection` in this controller keeps things simple
+  # regardless.
+  def reset
+    response.headers["Clear-Site-Data"] = '"cache", "storage"'
+    response.headers["Cache-Control"] = "no-store, max-age=0"
+
+    render html: RESET_PAGE_BODY.html_safe, layout: false, content_type: "text/html"
+  end
+
+  RESET_PAGE_BODY = <<~HTML.freeze
+    <!DOCTYPE html>
+    <html lang="fr">
+    <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta http-equiv="refresh" content="2; url=/">
+      <title>Vera Trade — Nettoyage du cache</title>
+      <style>
+        body {
+          margin: 0;
+          min-height: 100vh;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 1.5rem;
+          padding: 2rem;
+          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+          background: #0a0a0b;
+          color: #fafafa;
+          text-align: center;
+        }
+        h1 { font-size: 1.5rem; font-weight: 600; margin: 0; letter-spacing: 0.01em; }
+        p  { margin: 0; opacity: 0.7; font-size: 0.95rem; }
+        a  { color: #c52f24; text-decoration: none; font-weight: 500; }
+        a:hover { text-decoration: underline; }
+        .spinner {
+          width: 28px; height: 28px;
+          border: 2px solid rgba(255,255,255,0.15);
+          border-top-color: #c52f24;
+          border-radius: 50%;
+          animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+      </style>
+    </head>
+    <body>
+      <div class="spinner" aria-hidden="true"></div>
+      <h1>Nettoyage du cache en cours…</h1>
+      <p>Redirection automatique dans 2 secondes.</p>
+      <p><a href="/">Cliquer ici si rien ne se passe</a></p>
+    </body>
+    </html>
+  HTML
 end

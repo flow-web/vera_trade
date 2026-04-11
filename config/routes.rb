@@ -56,4 +56,7 @@ Rails.application.routes.draw do
   get "manifest.webmanifest", to: "pwa#manifest"
   get "service-worker.js", to: "pwa#service_worker"
   get "offline", to: "pwa#offline"
+  # User-triggered cleanup endpoint — wipes any legacy SW via Clear-Site-Data
+  # header then redirects to /. See PwaController#reset for the full rationale.
+  get "reset", to: "pwa#reset"
 end
