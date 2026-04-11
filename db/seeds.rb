@@ -261,3 +261,40 @@ end
 puts "  ✓ #{convos_created} conversations (#{Message.count} messages)"
 
 puts "✅ Seed terminé — #{User.count} users, #{Listing.count} annonces, #{Message.count} messages"
+
+# -----------------------------------------------------------------------------
+# M8 — Annonce éditoriale complète avec wizard data (Rust Map + provenance +
+# originality). Utilise la première annonce disponible du premier vendeur.
+# -----------------------------------------------------------------------------
+example_listing = Listing.where(status: "active").includes(:vehicle).order(:id).first
+if example_listing
+  rm = example_listing.rust_map || example_listing.create_rust_map!(silhouette_variant: "sedan")
+  if rm.zones.empty?
+    [
+      { x_pct: 42.5, y_pct: 68.0, status: "surface", label: "Plancher arrière droit" },
+      { x_pct: 55.1, y_pct: 71.2, status: "ok",      label: "Longeron droit" },
+      { x_pct: 68.4, y_pct: 72.9, status: "deep",    label: "Bas de caisse arrière" }
+    ].each_with_index { |z, i| rm.zones.create!(z.merge(position: i)) }
+    rm.recompute_score!
+  end
+
+  unless example_listing.originality_score
+    example_listing.create_originality_score!(
+      overall_score: 94,
+      matching_numbers: true,
+      original_interior: true,
+      original_paint_pct: 85,
+      notes: "Numéros d'origine, peinture 85% d'origine, intérieur 100% matching"
+    )
+  end
+
+  if example_listing.provenance_events.empty?
+    [
+      { event_year: example_listing.vehicle.year,      event_type: "purchase",    label: "Livraison neuve" },
+      { event_year: example_listing.vehicle.year + 23, event_type: "restoration", label: "Restauration cosmétique + peinture ailes" },
+      { event_year: 2025,                              event_type: "service",     label: "Révision complète + pneus neufs" }
+    ].each_with_index { |e, i| example_listing.provenance_events.create!(e.merge(position: i)) }
+  end
+
+  puts "  ✓ M8 wizard data attaché à listing ##{example_listing.id} (Rust Map score: #{rm.reload.transparency_score}, originalité: #{example_listing.originality_score.overall_score})"
+end
