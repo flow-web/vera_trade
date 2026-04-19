@@ -1,5 +1,11 @@
 module ApplicationHelper
-  # Pagy frontend helpers (pagy_nav, pagy_info, pagy_prev_link, pagy_next_link)
-  # are used in app/views/listings/index.html.erb for catalogue pagination.
   include Pagy::Frontend
+
+  def photo_url(attachment)
+    return nil unless attachment&.attached?
+    blob = attachment.is_a?(ActiveStorage::Attached) ? attachment.blob : attachment
+    blob.url
+  rescue
+    url_for(attachment)
+  end
 end

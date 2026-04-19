@@ -19,7 +19,7 @@
     <!-- Image 21:9 / 16:10 / square selon taille -->
     <div class="relative overflow-hidden bg-bg-tertiary <%= aspect %>">
       <% if listing.photos.attached? %>
-        <%= image_tag listing.photos.first,
+        <%= image_tag photo_url(listing.photos.first),
               class: "w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700 ease-out",
               loading: (lazy ? "lazy" : "eager"),
               alt: listing.title %>
