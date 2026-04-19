@@ -33,3 +33,6 @@ application.register("provenance-timeline", ProvenanceTimelineController)
 
 import ModalController from "./modal_controller"
 application.register("modal", ModalController)
+
+import PhotoLightboxController from "./photo_lightbox_controller"
+application.register("photo-lightbox", PhotoLightboxController)

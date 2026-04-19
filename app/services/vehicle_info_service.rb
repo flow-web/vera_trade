@@ -1,3 +1,5 @@
+require "cgi"
+
 class VehicleInfoService
   TIMEOUT = 10
 
@@ -14,16 +16,20 @@ class VehicleInfoService
   def fetch_by_license_plate(license_plate)
     return nil unless @configured
     return nil if license_plate.blank?
+    plate = license_plate.to_s.strip.upcase.gsub(/[^A-Z0-9\-]/, "")
+    return nil unless plate.match?(/\A[A-Z0-9\-]{5,10}\z/)
 
-    uri = URI("#{@api_base_url}/vehicle/plate/#{license_plate}")
+    uri = URI("#{@api_base_url}/vehicle/plate/#{CGI.escape(plate)}")
     parse_response(make_request(uri))
   end
 
   def fetch_by_vin(vin)
     return nil unless @configured
     return nil if vin.blank?
+    clean_vin = vin.to_s.strip.upcase.gsub(/[^A-Z0-9]/, "")
+    return nil unless clean_vin.match?(/\A[A-Z0-9]{17}\z/)
 
-    uri = URI("#{@api_base_url}/vehicle/vin/#{vin}")
+    uri = URI("#{@api_base_url}/vehicle/vin/#{CGI.escape(clean_vin)}")
     parse_response(make_request(uri))
   end
 

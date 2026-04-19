@@ -7,7 +7,7 @@ class Message < ApplicationRecord
 
   OFFER_MAX_CENTS = 10_000_000_00 # 10 000 000 € sanity cap
 
-  validates :content, presence: true
+  validates :content, presence: true, length: { maximum: 10_000 }
   validates :offer_cents,
     numericality: {
       only_integer: true,

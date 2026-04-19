@@ -19,6 +19,16 @@ class User < ApplicationRecord
 
   after_create :create_wallet
 
+  scope :with_active_listings, -> { joins(:listings).where(listings: { status: "active" }).distinct }
+
+  def active_listings_count
+    listings.where(status: "active").count
+  end
+
+  def unread_message_count
+    received_messages.unread.count
+  end
+
   def display_name
     [ first_name, last_name ].compact.join(" ").presence || email.split("@").first
   end

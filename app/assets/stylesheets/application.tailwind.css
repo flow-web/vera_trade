@@ -226,6 +226,7 @@
   .input-vera:focus {
     outline: none;
     border-color: var(--color-accent-red);
+    box-shadow: 0 0 0 3px rgba(196, 30, 58, 0.15);
   }
   .input-vera::placeholder {
     color: var(--color-text-muted);
@@ -272,6 +273,32 @@
   .rust-dot-surface     { background-color: var(--color-rust-surface);     box-shadow: 0 0 6px rgba(184, 134, 11, 0.6); }
   .rust-dot-deep        { background-color: var(--color-rust-deep);        box-shadow: 0 0 6px rgba(139, 105, 20, 0.6); }
   .rust-dot-perforation { background-color: var(--color-rust-perforation); box-shadow: 0 0 10px rgba(196, 30, 58, 0.8); }
+
+  /* ----- Windshield glass (glassmorphism dark) ------------------------- */
+  .windshield-glass {
+    background: rgba(10, 10, 10, 0.8);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+
+  /* ----- Badge variants ------------------------------------------------ */
+  .badge-vera-matching {
+    border-color: var(--color-rust-ok);
+    color: var(--color-rust-ok);
+  }
+  .badge-vera-certified {
+    background-color: var(--color-accent-red);
+    color: var(--color-text-primary);
+    border-color: var(--color-accent-red);
+    font-weight: 700;
+  }
+
+  /* ----- Button focus rings -------------------------------------------- */
+  .btn-vera-primary:focus-visible,
+  .btn-vera-secondary:focus-visible {
+    outline: 2px solid var(--color-accent-red);
+    outline-offset: 3px;
+  }
 
   /* ----- Hide bottom nav when native keyboard opens -------------------- */
   body.keyboard-open .bottom-nav-vera { display: none; }
