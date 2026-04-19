@@ -61,6 +61,9 @@ gem "pagy", "~> 9.3"
 # build a real search UX instead of string LIKEs. [https://github.com/Casecommons/pg_search]
 gem "pg_search", "~> 2.3"
 
+# Rate limiting and request throttling [https://github.com/rack/rack-attack]
+gem "rack-attack"
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
