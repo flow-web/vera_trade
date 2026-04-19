@@ -1,0 +1,128 @@
+<% content_for(:title) { "Vérification d'identité — Vera Trade" } %>
+
+<div class="max-w-3xl mx-auto px-5 lg:px-10 py-20">
+
+  <div class="eyebrow mb-3">Compte</div>
+  <h1 class="playfair-italic text-4xl md:text-5xl text-text-primary leading-tight mb-4">
+    Vérification d'identité.
+  </h1>
+  <p class="font-body text-lg text-text-secondary leading-relaxed mb-12 max-w-2xl">
+    Pour publier des annonces et participer aux enchères, nous avons besoin de vérifier votre identité. Envoyez les documents ci-dessous — la vérification est manuelle et prend généralement moins de 24h.
+  </p>
+
+  <%# STATUS BANNER %>
+  <% if current_user.kyc_verified? %>
+    <div class="border border-rust-ok bg-bg-secondary p-6 mb-12">
+      <div class="flex items-center gap-4">
+        <span class="font-mono text-2xl text-rust-ok">✓</span>
+        <div>
+          <div class="font-ui text-[11px] uppercase tracking-[0.15em] text-rust-ok font-bold">Identité vérifiée</div>
+          <p class="font-body text-sm text-text-muted mt-1">Votre compte est vérifié. Vous pouvez publier et enchérir.</p>
+        </div>
+      </div>
+    </div>
+  <% elsif current_user.kyc_pending? %>
+    <div class="border border-gold bg-bg-secondary p-6 mb-12">
+      <div class="flex items-center gap-4">
+        <span class="font-mono text-2xl text-gold">⏳</span>
+        <div>
+          <div class="font-ui text-[11px] uppercase tracking-[0.15em] text-gold font-bold">Vérification en cours</div>
+          <p class="font-body text-sm text-text-muted mt-1">Vos documents sont en cours d'examen. Délai habituel : moins de 24h.</p>
+        </div>
+      </div>
+    </div>
+  <% elsif current_user.kyc_status == "rejected" %>
+    <div class="border border-accent-red bg-bg-secondary p-6 mb-12">
+      <div class="flex items-center gap-4">
+        <span class="font-mono text-2xl text-accent-red">✕</span>
+        <div>
+          <div class="font-ui text-[11px] uppercase tracking-[0.15em] text-accent-red font-bold">Vérification refusée</div>
+          <p class="font-body text-sm text-text-muted mt-1">Un ou plusieurs documents ont été refusés. Consultez les détails ci-dessous et renvoyez-les.</p>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <%# UPLOADED DOCUMENTS %>
+  <% if @documents.any? %>
+    <div class="mb-12">
+      <h2 class="eyebrow mb-6 text-text-muted">Documents envoyés</h2>
+      <div class="space-y-4">
+        <% @documents.each do |doc| %>
+          <div class="border border-line bg-bg-secondary p-5 flex items-center justify-between gap-4">
+            <div class="flex items-center gap-4 min-w-0">
+              <div class="w-10 h-10 flex items-center justify-center border border-line shrink-0">
+                <span class="font-mono text-xs text-text-muted">
+                  <%= doc.document_type == "identity_card" ? "ID" : doc.document_type == "passport" ? "PP" : doc.document_type == "driver_license" ? "PC" : "AD" %>
+                </span>
+              </div>
+              <div class="min-w-0">
+                <div class="font-ui text-[11px] uppercase tracking-[0.15em] text-text-primary">
+                  <%= { "identity_card" => "Pièce d'identité", "passport" => "Passeport", "driver_license" => "Permis de conduire", "proof_of_address" => "Justificatif de domicile" }[doc.document_type] %>
+                </div>
+                <div class="font-mono text-[10px] text-text-muted mt-1">
+                  Envoyé <%= time_ago_in_words(doc.created_at) %>
+                </div>
+              </div>
+            </div>
+            <div>
+              <% if doc.approved? %>
+                <span class="badge-vera badge-vera-matching">Approuvé</span>
+              <% elsif doc.rejected? %>
+                <span class="badge-vera badge-vera-red" title="<%= doc.rejection_reason %>">Refusé</span>
+              <% else %>
+                <span class="badge-vera">En attente</span>
+              <% end %>
+            </div>
+          </div>
+          <% if doc.rejected? && doc.rejection_reason.present? %>
+            <div class="ml-14 font-body text-sm text-accent-red italic">
+              Motif : <%= doc.rejection_reason %>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <%# UPLOAD FORM %>
+  <% if @missing.any? %>
+    <div class="border border-line bg-bg-secondary p-8">
+      <h2 class="eyebrow mb-2">Ajouter un document</h2>
+      <p class="font-body text-sm text-text-muted mb-6">
+        Documents acceptés : JPG, PNG ou PDF · 10 Mo max
+      </p>
+
+      <% if @document&.errors&.any? %>
+        <div class="mb-4 font-ui text-[10px] uppercase tracking-[0.15em] text-accent-red">
+          <%= @document.errors.full_messages.to_sentence %>
+        </div>
+      <% end %>
+
+      <%= form_with model: KycDocument.new, url: kyc_path, class: "space-y-5" do |f| %>
+        <div>
+          <label class="label-micro mb-2 block">Type de document</label>
+          <%= f.select :document_type,
+                @missing.map { |t|
+                  label = { "identity_card" => "Pièce d'identité (CNI)", "passport" => "Passeport", "driver_license" => "Permis de conduire", "proof_of_address" => "Justificatif de domicile (< 3 mois)" }[t]
+                  [label, t]
+                },
+                {},
+                class: "input-vera" %>
+        </div>
+        <div>
+          <label class="label-micro mb-2 block">Fichier</label>
+          <%= f.file_field :file, accept: ".jpg,.jpeg,.png,.pdf", class: "input-vera", required: true %>
+        </div>
+        <%= f.submit "Envoyer le document", class: "btn-vera-primary" %>
+      <% end %>
+    </div>
+  <% elsif !current_user.kyc_verified? %>
+    <div class="border border-line bg-bg-secondary p-8 text-center">
+      <p class="font-body text-sm text-text-muted">
+        Tous les documents requis ont été envoyés. Vérification en cours.
+      </p>
+    </div>
+  <% end %>
+
+</div>

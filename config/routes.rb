@@ -57,6 +57,17 @@ Rails.application.routes.draw do
   get "favorites", to: "favorites#index"
   get "dashboard", to: "dashboard#index", as: :dashboard
 
+  resource :kyc, only: [:show, :create], controller: "kyc"
+
+  namespace :admin do
+    resources :kyc, only: [:index, :show] do
+      member do
+        patch :approve
+        patch :reject
+      end
+    end
+  end
+
   # SEO sitemap
   get "sitemap.xml", to: "pages#sitemap", defaults: { format: :xml }
 

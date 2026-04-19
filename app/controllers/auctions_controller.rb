@@ -11,6 +11,11 @@ class AuctionsController < ApplicationController
   end
 
   def place_bid
+    unless current_user.kyc_verified?
+      redirect_to kyc_path, alert: "Vérification d'identité requise avant d'enchérir."
+      return
+    end
+
     amount = params[:amount].to_f
 
     begin

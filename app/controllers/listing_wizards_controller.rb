@@ -95,6 +95,12 @@ class ListingWizardsController < ApplicationController
   end
 
   def publish
+    unless current_user.kyc_verified?
+      redirect_to kyc_path,
+                  alert: "Vérification d'identité requise avant de publier une annonce."
+      return
+    end
+
     unless @listing.publishable?
       redirect_to edit_listing_wizard_path(@listing),
                   alert: "Complétez les champs requis avant publication (véhicule renseigné, au moins une photo, Rust Map initialisée)."

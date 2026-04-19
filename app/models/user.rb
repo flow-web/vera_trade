@@ -20,10 +20,16 @@ class User < ApplicationRecord
   has_many :bids, foreign_key: :bidder_id, dependent: :destroy
 
   has_many :search_presets, dependent: :destroy
+  has_many :kyc_documents, dependent: :destroy
+
+  KYC_STATUSES = %w[none pending verified rejected].freeze
+  REQUIRED_KYC_DOCUMENTS = %w[identity_card proof_of_address].freeze
 
   after_create :create_wallet
 
   scope :with_active_listings, -> { joins(:listings).where(listings: { status: "active" }).distinct }
+  scope :kyc_verified, -> { where(kyc_status: "verified") }
+  scope :kyc_pending, -> { where(kyc_status: "pending") }
 
   def active_listings_count
     listings.where(status: "active").count
@@ -31,6 +37,36 @@ class User < ApplicationRecord
 
   def unread_message_count
     received_messages.unread.count
+  end
+
+  def kyc_verified?
+    kyc_status == "verified"
+  end
+
+  def kyc_pending?
+    kyc_status == "pending"
+  end
+
+  def kyc_submitted?
+    kyc_status.present? && kyc_status != "none"
+  end
+
+  def kyc_missing_documents
+    REQUIRED_KYC_DOCUMENTS - kyc_documents.approved.pluck(:document_type)
+  end
+
+  def update_kyc_status!
+    if REQUIRED_KYC_DOCUMENTS.all? { |type| kyc_documents.approved.exists?(document_type: type) }
+      update!(kyc_status: "verified")
+    elsif kyc_documents.rejected.any? && kyc_documents.pending.none?
+      update!(kyc_status: "rejected")
+    elsif kyc_documents.pending.any?
+      update!(kyc_status: "pending")
+    end
+  end
+
+  def admin?
+    role == 1
   end
 
   def display_name
