@@ -1,16 +1,4 @@
-<%#
-  Editorial listing card — appel :
-    <%%= render "components/listing_card", listing: l, size: :medium %>
-
-  Locals :
-    listing   — Listing (requis)
-    size      — :feature | :large | :medium | :small (défaut :medium)
-    lazy      — true/false (défaut true) — image lazy-loaded
-    show_desc — true/false (défaut false) — affiche une ligne de description italique
-
-  Le prix est TOUJOURS affiché (jamais POA). La card se décline par taille
-  via variables locales — ratio image, taille de titre, padding.
-%>
+<%# Editorial listing card — sizes: feature, large, medium, small %>
 
 <%
   size       ||= :medium

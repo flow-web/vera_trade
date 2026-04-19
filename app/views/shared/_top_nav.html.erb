@@ -16,21 +16,13 @@
     <ul class="hidden lg:flex items-center gap-10" role="menubar">
       <% nav_items = [
         { label: "Catalogue",  path: listings_path, current: request.path.start_with?("/listings") && !request.path.include?("/new") },
-        { label: "Le Journal", path: "#",           current: false, disabled: true },
-        { label: "Enchères",   path: "#",           current: false, disabled: true },
-        { label: "Expertises", path: "#",           current: false, disabled: true }
+        { label: "Enchères",   path: listings_path(segment: "youngtimer"), current: false },
+        { label: "Expertises", path: kyc_path,      current: request.path.start_with?("/kyc") }
       ] %>
       <% nav_items.each do |item| %>
         <li role="none">
-          <% if item[:disabled] %>
-            <span class="relative inline-flex items-center gap-2 font-ui text-[10px] font-medium uppercase tracking-[0.2em] text-text-muted cursor-not-allowed" role="menuitem" aria-disabled="true">
-              <%= item[:label] %>
-              <span class="font-ui text-[8px] text-text-muted/60 tracking-[0.15em] border border-line px-1.5 py-0.5">Bientôt</span>
-            </span>
-          <% else %>
-            <%= link_to item[:path], class: "font-ui text-[10px] font-medium uppercase tracking-[0.2em] transition-colors duration-300 #{item[:current] ? 'text-accent-red border-b border-accent-red pb-1' : 'text-text-secondary hover:text-text-primary'}", role: "menuitem", aria: { current: item[:current] ? "page" : nil } do %>
-              <%= item[:label] %>
-            <% end %>
+          <%= link_to item[:path], class: "font-ui text-[10px] font-medium uppercase tracking-[0.2em] transition-colors duration-300 #{item[:current] ? 'text-accent-red border-b border-accent-red pb-1' : 'text-text-secondary hover:text-text-primary'}", role: "menuitem", aria: { current: item[:current] ? "page" : nil } do %>
+            <%= item[:label] %>
           <% end %>
         </li>
       <% end %>
