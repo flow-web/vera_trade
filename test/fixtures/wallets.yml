@@ -1,0 +1,17 @@
+one:
+  user: one
+  balance: 5000.00
+  created_at: <%= Time.current %>
+  updated_at: <%= Time.current %>
+
+two:
+  user: two
+  balance: 3000.00
+  created_at: <%= Time.current %>
+  updated_at: <%= Time.current %>
+
+three:
+  user: three
+  balance: 0.00
+  created_at: <%= Time.current %>
+  updated_at: <%= Time.current %>

@@ -30,7 +30,7 @@
         </time>
       </div>
       <p class="font-body text-base text-text-primary leading-relaxed">
-        <%= simple_format(question.body, {}, wrapper_tag: "span") %>
+        <%= simple_format(sanitize(question.body, tags: %w[br strong em]), {}, wrapper_tag: "span") %>
       </p>
     </div>
   </div>
@@ -47,7 +47,7 @@
         </time>
       </div>
       <p class="font-body text-base text-text-secondary leading-relaxed italic">
-        <%= simple_format(question.answer.body, {}, wrapper_tag: "span") %>
+        <%= simple_format(sanitize(question.answer.body, tags: %w[br strong em]), {}, wrapper_tag: "span") %>
       </p>
     </div>
   <% elsif is_owner %>

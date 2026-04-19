@@ -1,4 +1,6 @@
 class VehiclesController < ApplicationController
+  before_action :authenticate_user!
+
   FETCH_RATE_LIMIT = 10 # max requests per minute per user
 
   def fetch_info

@@ -1,6 +1,7 @@
 class WalletTransaction < ApplicationRecord
   belongs_to :wallet
-  belongs_to :user
+
+  delegate :user, to: :wallet
 
   validates :amount, numericality: { other_than: 0 }
   validates :transaction_type, presence: true

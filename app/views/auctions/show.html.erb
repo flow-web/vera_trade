@@ -1,0 +1,176 @@
+<% content_for(:title) { "Enchère · #{@listing.title} — Vera Trade" } %>
+
+<% hero_photo = @listing.photos.attached? ? @listing.photos.first : nil %>
+
+<%# HERO %>
+<section class="relative">
+  <div class="relative w-full aspect-[21/9] min-h-[360px] lg:min-h-[480px] overflow-hidden bg-bg-secondary">
+    <% if hero_photo %>
+      <%= image_tag hero_photo,
+            class: "absolute inset-0 w-full h-full object-cover grayscale-[5%]",
+            alt: @listing.title, loading: "eager", fetchpriority: "high" %>
+    <% end %>
+    <div class="absolute inset-0 bg-gradient-to-t from-bg-primary via-bg-primary/30 to-transparent"></div>
+  </div>
+
+  <div class="max-w-[1600px] mx-auto px-5 lg:px-10 -mt-20 lg:-mt-28 relative z-10">
+    <div class="eyebrow mb-3">
+      Enchère Live · <%= @auction.duration_days %> jours
+      <% if @auction.active? %>
+        <span class="text-rust-ok"> · En cours</span>
+      <% elsif @auction.sold? %>
+        <span class="text-accent-red"> · Vendue</span>
+      <% end %>
+    </div>
+    <h1 class="playfair-italic text-4xl md:text-5xl lg:text-7xl text-text-primary leading-[0.95] max-w-4xl mb-6">
+      <%= @listing.title %>
+    </h1>
+  </div>
+</section>
+
+<%# AUCTION PANEL %>
+<div class="max-w-[1600px] mx-auto px-5 lg:px-10 py-12 lg:py-16">
+  <div class="grid grid-cols-12 gap-8 lg:gap-16">
+
+    <%# LEFT — Bid panel %>
+    <div class="col-span-12 lg:col-span-5">
+      <div class="bg-bg-secondary border border-line p-8 lg:p-10 sticky top-[100px]"
+           id="auction_panel"
+           data-controller="auction"
+           data-auction-id-value="<%= @auction.id %>"
+           data-auction-ends-at-value="<%= @auction.ends_at.iso8601 %>">
+
+        <%# Current price %>
+        <div class="mb-8">
+          <div class="label-micro mb-2">Enchère actuelle</div>
+          <div class="font-mono text-5xl lg:text-6xl text-accent-red leading-none" data-auction-target="currentPrice">
+            <%= number_to_currency(@auction.current_price || @auction.starting_price, unit: "€", separator: ",", delimiter: " ", format: "%n %u") %>
+          </div>
+        </div>
+
+        <%# Stats %>
+        <div class="grid grid-cols-3 gap-4 mb-8 pb-8 border-b border-line">
+          <div>
+            <div class="label-micro mb-1">Enchères</div>
+            <div class="font-mono text-xl text-text-primary" data-auction-target="bidsCount"><%= @auction.bids_count %></div>
+          </div>
+          <div>
+            <div class="label-micro mb-1">Suiveurs</div>
+            <div class="font-mono text-xl text-text-primary"><%= @auction.watchers_count %></div>
+          </div>
+          <div>
+            <div class="label-micro mb-1">Temps restant</div>
+            <div class="font-mono text-xl text-text-primary" data-auction-target="countdown">
+              <%= distance_of_time_in_words(Time.current, @auction.ends_at) %>
+            </div>
+          </div>
+        </div>
+
+        <% if @auction.reserve_price && !@auction.reserve_met? %>
+          <div class="mb-6 font-ui text-[10px] uppercase tracking-[0.2em] text-gold">
+            Prix de réserve non atteint
+          </div>
+        <% elsif @auction.reserve_price && @auction.reserve_met? %>
+          <div class="mb-6 font-ui text-[10px] uppercase tracking-[0.2em] text-rust-ok">
+            Prix de réserve atteint
+          </div>
+        <% end %>
+
+        <%# Bid form %>
+        <% if @auction.active? && user_signed_in? && current_user.id != @listing.user_id %>
+          <div id="bid_errors"></div>
+          <%= form_with url: place_bid_auction_path(@auction), method: :post, class: "space-y-4" do |f| %>
+            <div>
+              <label class="label-micro mb-2 block">Votre enchère (min. <%= number_to_currency(@auction.minimum_next_bid, unit: "€", separator: ",", delimiter: " ", format: "%n %u") %>)</label>
+              <div class="flex gap-3">
+                <%= number_field_tag :amount, @auction.minimum_next_bid,
+                      min: @auction.minimum_next_bid,
+                      step: 50,
+                      class: "input-vera input-mono flex-1",
+                      required: true %>
+                <%= submit_tag "Enchérir", class: "btn-vera-primary px-8" %>
+              </div>
+            </div>
+          <% end %>
+        <% elsif @auction.active? && !user_signed_in? %>
+          <div class="text-center py-4">
+            <%= link_to "Connectez-vous pour enchérir", new_user_session_path, class: "btn-vera-primary w-full justify-center" %>
+          </div>
+        <% elsif @auction.sold? %>
+          <div class="border border-accent-red p-6 text-center">
+            <div class="eyebrow mb-2 text-accent-red">Vendue</div>
+            <div class="font-mono text-2xl text-text-primary">
+              <%= number_to_currency(@auction.current_price, unit: "€", separator: ",", delimiter: " ", format: "%n %u") %>
+            </div>
+            <% if @auction.winner %>
+              <div class="label-micro mt-2">à <%= @auction.winner.display_name %></div>
+            <% end %>
+          </div>
+        <% end %>
+
+        <%# Watch %>
+        <% if user_signed_in? && current_user.id != @listing.user_id %>
+          <div class="mt-6">
+            <% if @is_watching %>
+              <%= button_to "Ne plus suivre", unwatch_auction_path(@auction), method: :delete, class: "btn-vera-secondary w-full justify-center" %>
+            <% else %>
+              <%= button_to "Suivre cette enchère", watch_auction_path(@auction), class: "btn-vera-secondary w-full justify-center" %>
+            <% end %>
+          </div>
+        <% end %>
+
+        <%# Fee info %>
+        <div class="mt-8 pt-6 border-t border-line">
+          <div class="label-micro mb-1">Commission</div>
+          <p class="font-body text-[13px] text-text-muted leading-relaxed">
+            <%= @auction.seller_fee_pct %>% vendeur · <%= @auction.buyer_fee_pct %>% acheteur
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <%# RIGHT — Bid history %>
+    <div class="col-span-12 lg:col-span-7">
+      <div class="eyebrow mb-3">Historique des enchères</div>
+      <h2 class="playfair-italic text-3xl text-text-primary leading-tight mb-10">
+        <%= @auction.bids_count %> enchère<%= @auction.bids_count > 1 ? "s" : "" %> placée<%= @auction.bids_count > 1 ? "s" : "" %>.
+      </h2>
+
+      <div id="bids_list">
+        <% if @bids.any? %>
+          <% @bids.each_with_index do |bid, i| %>
+            <div class="grid grid-cols-12 gap-4 border-t border-line py-5 <%= i == 0 ? 'bg-bg-secondary px-4 -mx-4 border-accent-red' : '' %>">
+              <div class="col-span-5 md:col-span-4">
+                <div class="font-mono text-xl <%= i == 0 ? 'text-accent-red' : 'text-text-primary' %>">
+                  <%= number_to_currency(bid.amount, unit: "€", separator: ",", delimiter: " ", format: "%n %u") %>
+                </div>
+              </div>
+              <div class="col-span-4 md:col-span-4 font-ui text-[11px] uppercase tracking-[0.15em] text-text-muted pt-1">
+                <%= bid.bidder.display_name %>
+              </div>
+              <div class="col-span-3 md:col-span-4 text-right">
+                <time class="font-mono text-[10px] text-text-muted" datetime="<%= bid.created_at.iso8601 %>">
+                  <%= time_ago_in_words(bid.created_at) %>
+                </time>
+              </div>
+            </div>
+          <% end %>
+          <div class="border-t border-line"></div>
+        <% else %>
+          <div class="border border-line bg-bg-secondary p-8 text-center">
+            <p class="font-body italic text-sm text-text-muted">
+              Aucune enchère pour l'instant. Soyez le premier à enchérir.
+            </p>
+          </div>
+        <% end %>
+      </div>
+
+      <%# Link back to listing %>
+      <div class="mt-12">
+        <%= link_to listing_path(@listing), class: "btn-vera-secondary" do %>
+          Voir la fiche complète
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

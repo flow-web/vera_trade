@@ -42,12 +42,31 @@ Rails.application.routes.draw do
     collection { get :search }
   end
 
+  resources :auctions, only: [:show] do
+    member do
+      post :place_bid
+      post :watch
+      delete :unwatch
+    end
+  end
+
   resources :wallet_transactions, path: "transactions", only: [ :index, :show ]
   resources :search_presets, only: [ :index, :create, :show, :update, :destroy ]
 
   get "my_listings", to: "listings#my_listings"
   get "favorites", to: "favorites#index"
   get "dashboard", to: "dashboard#index", as: :dashboard
+
+  resource :kyc, only: [:show, :create], controller: "kyc"
+
+  namespace :admin do
+    resources :kyc, only: [:index, :show] do
+      member do
+        patch :approve
+        patch :reject
+      end
+    end
+  end
 
   # SEO sitemap
   get "sitemap.xml", to: "pages#sitemap", defaults: { format: :xml }
