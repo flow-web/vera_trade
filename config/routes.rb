@@ -42,6 +42,14 @@ Rails.application.routes.draw do
     collection { get :search }
   end
 
+  resources :auctions, only: [:show] do
+    member do
+      post :place_bid
+      post :watch
+      delete :unwatch
+    end
+  end
+
   resources :wallet_transactions, path: "transactions", only: [ :index, :show ]
   resources :search_presets, only: [ :index, :create, :show, :update, :destroy ]
 

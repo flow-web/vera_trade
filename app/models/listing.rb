@@ -14,6 +14,7 @@ class Listing < ApplicationRecord
   has_one :originality_score, dependent: :destroy
   has_many :listing_questions, dependent: :destroy
   has_many :escrows, dependent: :restrict_with_error
+  has_one :auction, dependent: :destroy
 
   # Constantes M8 — une seule source de vérité pour le nombre d'étapes.
   WIZARD_STEP_COUNT = 7
