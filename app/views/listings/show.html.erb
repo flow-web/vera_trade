@@ -11,7 +11,7 @@
   <div class="relative w-full aspect-[21/9] min-h-[420px] lg:min-h-[560px] overflow-hidden bg-bg-secondary">
     <% if hero_photo %>
       <%= image_tag hero_photo,
-            class: "absolute inset-0 w-full h-full object-cover grayscale-[5%]",
+            class: "absolute inset-0 w-full h-full object-cover brightness-[0.95]",
             alt: @listing.title, loading: "eager", fetchpriority: "high" %>
     <% end %>
     <div class="absolute inset-0 bg-gradient-to-t from-bg-primary via-bg-primary/20 to-transparent"></div>
