@@ -1,0 +1,20 @@
+pending_escrow:
+  listing: one
+  buyer: two
+  seller: one
+  amount: 25000.00
+  currency: EUR
+  status: pending
+  created_at: <%= Time.current %>
+  updated_at: <%= Time.current %>
+
+paid_escrow:
+  listing: two
+  buyer: one
+  seller: two
+  amount: 18500.00
+  currency: EUR
+  status: paid
+  paid_at: <%= Time.current %>
+  created_at: <%= Time.current %>
+  updated_at: <%= Time.current %>

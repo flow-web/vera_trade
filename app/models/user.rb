@@ -15,6 +15,9 @@ class User < ApplicationRecord
   has_one :wallet, dependent: :destroy
   has_many :wallet_transactions, through: :wallet
 
+  has_many :escrows_as_buyer, class_name: "Escrow", foreign_key: :buyer_id, dependent: :restrict_with_error
+  has_many :escrows_as_seller, class_name: "Escrow", foreign_key: :seller_id, dependent: :restrict_with_error
+
   has_many :search_presets, dependent: :destroy
 
   after_create :create_wallet
