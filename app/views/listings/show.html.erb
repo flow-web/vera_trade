@@ -177,7 +177,7 @@
         <div class="md:col-span-8">
           <% if @listing.description.present? %>
             <div class="font-body text-lg lg:text-xl text-text-secondary leading-[1.65] drop-cap">
-              <%= simple_format(@listing.description) %>
+              <%= simple_format(sanitize(@listing.description, tags: %w[p br strong em b i])) %>
             </div>
           <% else %>
             <p class="font-body italic text-text-muted">Aucune description rédigée pour cette annonce.</p>

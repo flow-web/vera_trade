@@ -27,11 +27,10 @@ Rails.application.configure do
   # Assume all access to the app is happening through a SSL-terminating reverse proxy.
   # Gated on env var so we can run HTTP-only during initial deploy (before certbot).
   # Set ASSUME_SSL=true once the reverse proxy terminates TLS.
-  config.assume_ssl = ENV.fetch("ASSUME_SSL", "false") == "true"
+  config.assume_ssl = ENV.fetch("ASSUME_SSL", "true") == "true"
 
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
-  # Default OFF until HTTPS is wired up. Set FORCE_SSL=true after certbot issues the cert.
-  config.force_ssl = ENV.fetch("FORCE_SSL", "false") == "true"
+  config.force_ssl = ENV.fetch("FORCE_SSL", "true") == "true"
 
   # Skip http-to-https redirect for the default health check endpoint.
   # config.ssl_options = { redirect: { exclude: ->(request) { request.path == "/up" } } }
@@ -83,12 +82,10 @@ Rails.application.configure do
   # Only use :id for inspections in production.
   config.active_record.attributes_for_inspect = [ :id ]
 
-  # Enable DNS rebinding protection and other `Host` header attacks.
-  # config.hosts = [
-  #   "example.com",     # Allow requests from example.com
-  #   /.*\.example\.com/ # Allow requests from subdomains like `www.example.com`
-  # ]
-  #
-  # Skip DNS rebinding protection for the default health check endpoint.
-  # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
+  config.hosts = [
+    "veratrade.fr",
+    "www.veratrade.fr",
+    /.*\.veratrade\.fr/
+  ]
+  config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
 end
