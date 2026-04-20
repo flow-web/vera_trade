@@ -25,7 +25,7 @@
             <tr>
               <td style="width: 80px;">
                 <% if listing.photos.attached? %>
-                  <%= image_tag listing.photos.first, class: "img-thumbnail", style: "width: 70px; height: 50px; object-fit: cover;" %>
+                  <%= image_tag photo_url(listing.photos.first, width: 200), class: "img-thumbnail", style: "width: 70px; height: 50px; object-fit: cover;", width: 70, height: 50 %>
                 <% else %>
                   <div class="bg-light d-flex justify-content-center align-items-center" style="width: 70px; height: 50px;">
                     <i class="bi bi-camera text-muted" style="font-size: 1.2rem;"></i>

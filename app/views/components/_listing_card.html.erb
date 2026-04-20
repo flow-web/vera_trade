@@ -19,10 +19,17 @@
     <!-- Image 21:9 / 16:10 / square selon taille -->
     <div class="relative overflow-hidden bg-bg-tertiary <%= aspect %>">
       <% if listing.photos.attached? %>
-        <%= image_tag photo_url(listing.photos.first),
+        <%= image_tag photo_url(listing.photos.first, width: (size == :feature || size == :large) ? 1200 : 400),
               class: "w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700 ease-out",
               loading: (lazy ? "lazy" : "eager"),
-              alt: listing.title %>
+              alt: listing.title,
+              width: (size == :feature || size == :large) ? 1200 : 400,
+              height: case size
+                      when :feature then 514
+                      when :large then 750
+                      when :small then 400
+                      else 300
+                      end %>
       <% else %>
         <div class="w-full h-full flex items-center justify-center bg-bg-tertiary">
           <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.8" class="text-text-muted/40">

@@ -1,6 +1,41 @@
 <% content_for(:title) { "#{@listing.title} — Annonce #{listing_reference(@listing)} — Vera Trade" } %>
 <% content_for(:description) { "#{@vehicle&.make} #{@vehicle&.model} #{@vehicle&.year} — #{listing_price_fr(@vehicle)} — #{@vehicle&.location}" } %>
 
+<%# Schema.org Vehicle JSON-LD for SEO %>
+<% content_for :head do %>
+<%
+  json_ld = { "@context" => "https://schema.org", "@type" => "Vehicle" }
+  json_ld["name"] = @listing.title if @listing.title.present?
+  json_ld["description"] = @listing.description if @listing.description.present?
+  json_ld["brand"] = { "@type" => "Organization", "name" => @vehicle.make } if @vehicle&.make.present?
+  json_ld["model"] = @vehicle.model if @vehicle&.model.present?
+  json_ld["modelDate"] = @vehicle.year.to_s if @vehicle&.year.present?
+  if @vehicle&.kilometers.present?
+    json_ld["mileageFromOdometer"] = {
+      "@type" => "QuantitativeValue",
+      "value" => @vehicle.kilometers,
+      "unitCode" => "KMT"
+    }
+  end
+  json_ld["fuelType"] = @vehicle.fuel_type if @vehicle&.fuel_type.present?
+  json_ld["vehicleTransmission"] = @vehicle.transmission if @vehicle&.transmission.present?
+  json_ld["color"] = @vehicle.exterior_color if @vehicle&.exterior_color.present?
+  if @vehicle&.price.present?
+    availability = @listing.status == "sold" ? "https://schema.org/SoldOut" : "https://schema.org/InStock"
+    json_ld["offers"] = {
+      "@type" => "Offer",
+      "price" => @vehicle.price,
+      "priceCurrency" => "EUR",
+      "availability" => availability
+    }
+  end
+  hero = @listing.photos.attached? ? @listing.photos.first : nil
+  json_ld["image"] = photo_url(hero) if hero && photo_url(hero).present?
+  json_ld["url"] = listing_url(@listing)
+%>
+<script type="application/ld+json"><%= raw json_escape(json_ld.to_json) %></script>
+<% end %>
+
 <% photos = @listing.photos.attached? ? @listing.photos.to_a : [] %>
 <% hero_photo = photos.first %>
 
@@ -10,9 +45,10 @@
 <section class="relative">
   <div class="relative w-full aspect-[21/9] min-h-[420px] lg:min-h-[560px] overflow-hidden bg-bg-secondary">
     <% if hero_photo %>
-      <%= image_tag photo_url(hero_photo),
+      <%= image_tag photo_url(hero_photo, width: 1600),
             class: "absolute inset-0 w-full h-full object-cover",
-            alt: @listing.title, loading: "eager", fetchpriority: "high" %>
+            alt: @listing.title, loading: "eager", fetchpriority: "high",
+            width: 1600, height: 686 %>
     <% end %>
     <div class="absolute inset-0 bg-gradient-to-t from-bg-primary via-bg-primary/20 to-transparent"></div>
 
@@ -116,21 +152,21 @@
       <% if photos.count >= 4 %>
         <div class="grid grid-cols-12 gap-3 lg:gap-4">
           <div class="col-span-12 md:col-span-8 aspect-video overflow-hidden bg-bg-secondary cursor-pointer"
-               data-photo-url="<%= photo_url(photos[1]) %>" data-action="click->photo-lightbox#open">
-            <%= image_tag photo_url(photos[1]), class: "w-full h-full object-cover hover:scale-[1.02] transition-transform duration-500", alt: "#{@listing.title} — vue 2", loading: "lazy" %>
+               data-photo-url="<%= photo_url(photos[1], width: 800) %>" data-action="click->photo-lightbox#open">
+            <%= image_tag photo_url(photos[1], width: 800), class: "w-full h-full object-cover hover:scale-[1.02] transition-transform duration-500", alt: "#{@listing.title} — vue 2", loading: "lazy", width: 800, height: 450 %>
           </div>
           <div class="col-span-6 md:col-span-4 aspect-square overflow-hidden bg-bg-secondary cursor-pointer"
-               data-photo-url="<%= photo_url(photos[2]) %>" data-action="click->photo-lightbox#open">
-            <%= image_tag photo_url(photos[2]), class: "w-full h-full object-cover hover:scale-[1.02] transition-transform duration-500", alt: "#{@listing.title} — détail", loading: "lazy" %>
+               data-photo-url="<%= photo_url(photos[2], width: 400) %>" data-action="click->photo-lightbox#open">
+            <%= image_tag photo_url(photos[2], width: 400), class: "w-full h-full object-cover hover:scale-[1.02] transition-transform duration-500", alt: "#{@listing.title} — détail", loading: "lazy", width: 400, height: 400 %>
           </div>
           <div class="col-span-6 md:col-span-4 aspect-square overflow-hidden bg-bg-secondary cursor-pointer"
-               data-photo-url="<%= photo_url(photos[3]) %>" data-action="click->photo-lightbox#open">
-            <%= image_tag photo_url(photos[3]), class: "w-full h-full object-cover hover:scale-[1.02] transition-transform duration-500", alt: "#{@listing.title} — détail", loading: "lazy" %>
+               data-photo-url="<%= photo_url(photos[3], width: 400) %>" data-action="click->photo-lightbox#open">
+            <%= image_tag photo_url(photos[3], width: 400), class: "w-full h-full object-cover hover:scale-[1.02] transition-transform duration-500", alt: "#{@listing.title} — détail", loading: "lazy", width: 400, height: 400 %>
           </div>
           <% photos[4..].each_with_index do |photo, i| %>
             <div class="col-span-6 md:col-span-<%= i.even? ? 8 : 4 %> aspect-<%= i.even? ? '[16/9]' : 'square' %> overflow-hidden bg-bg-secondary cursor-pointer"
-                 data-photo-url="<%= photo_url(photo) %>" data-action="click->photo-lightbox#open">
-              <%= image_tag photo_url(photo), class: "w-full h-full object-cover hover:scale-[1.02] transition-transform duration-500", alt: "#{@listing.title} — vue #{i + 5}", loading: "lazy" %>
+                 data-photo-url="<%= photo_url(photo, width: 800) %>" data-action="click->photo-lightbox#open">
+              <%= image_tag photo_url(photo, width: 800), class: "w-full h-full object-cover hover:scale-[1.02] transition-transform duration-500", alt: "#{@listing.title} — vue #{i + 5}", loading: "lazy", width: 800, height: (i.even? ? 450 : 800) %>
             </div>
           <% end %>
         </div>
@@ -141,8 +177,8 @@
         <div class="grid grid-cols-2 md:grid-cols-<%= photos.count - 1 %> gap-3 lg:gap-4">
           <% photos[1..].each_with_index do |photo, i| %>
             <div class="aspect-square overflow-hidden bg-bg-secondary cursor-pointer"
-                 data-photo-url="<%= photo_url(photo) %>" data-action="click->photo-lightbox#open">
-              <%= image_tag photo_url(photo), class: "w-full h-full object-cover hover:scale-[1.02] transition-transform duration-500", alt: "#{@listing.title} — vue #{i + 2}", loading: "lazy" %>
+                 data-photo-url="<%= photo_url(photo, width: 400) %>" data-action="click->photo-lightbox#open">
+              <%= image_tag photo_url(photo, width: 400), class: "w-full h-full object-cover hover:scale-[1.02] transition-transform duration-500", alt: "#{@listing.title} — vue #{i + 2}", loading: "lazy", width: 400, height: 400 %>
             </div>
           <% end %>
         </div>

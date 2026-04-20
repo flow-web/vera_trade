@@ -6,9 +6,10 @@
 <section class="relative">
   <div class="relative w-full aspect-[21/9] min-h-[360px] lg:min-h-[480px] overflow-hidden bg-bg-secondary">
     <% if hero_photo %>
-      <%= image_tag hero_photo,
+      <%= image_tag photo_url(hero_photo, width: 1600),
             class: "absolute inset-0 w-full h-full object-cover grayscale-[5%]",
-            alt: @listing.title, loading: "eager", fetchpriority: "high" %>
+            alt: @listing.title, loading: "eager", fetchpriority: "high",
+            width: 1600, height: 686 %>
     <% end %>
     <div class="absolute inset-0 bg-gradient-to-t from-bg-primary via-bg-primary/30 to-transparent"></div>
   </div>

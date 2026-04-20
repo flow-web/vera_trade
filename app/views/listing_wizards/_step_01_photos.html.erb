@@ -32,7 +32,7 @@
         <ul class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
           <% listing.photos.each do |p| %>
             <li class="relative border border-line aspect-[4/3] overflow-hidden">
-              <%= image_tag p, class: "w-full h-full object-cover" %>
+              <%= image_tag photo_url(p, width: 400), class: "w-full h-full object-cover", width: 400, height: 300 %>
             </li>
           <% end %>
         </ul>

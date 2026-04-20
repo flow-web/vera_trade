@@ -9,9 +9,10 @@
     <% fv = @featured_listing.vehicle %>
     <div class="relative w-full aspect-[21/9] min-h-[520px] overflow-hidden bg-bg-secondary">
       <% if @featured_listing.photos.attached? %>
-        <%= image_tag @featured_listing.photos.first,
+        <%= image_tag photo_url(@featured_listing.photos.first, width: 1600),
               class: "absolute inset-0 w-full h-full object-cover grayscale-[10%]",
-              alt: @featured_listing.title, loading: "eager", fetchpriority: "high" %>
+              alt: @featured_listing.title, loading: "eager", fetchpriority: "high",
+              width: 1600, height: 686 %>
       <% end %>
       <!-- Gradient bas pour lisibilité -->
       <div class="absolute inset-0 bg-gradient-to-t from-bg-primary via-bg-primary/30 to-transparent"></div>

@@ -105,7 +105,7 @@
                   <div class="col-span-3 md:col-span-2">
                     <div class="aspect-square bg-bg-tertiary overflow-hidden">
                       <% if listing.photos.attached? %>
-                        <%= image_tag listing.photos.first, class: "w-full h-full object-cover", alt: listing.title, loading: "lazy" %>
+                        <%= image_tag photo_url(listing.photos.first, width: 200), class: "w-full h-full object-cover", alt: listing.title, loading: "lazy", width: 200, height: 200 %>
                       <% else %>
                         <div class="w-full h-full flex items-center justify-center">
                           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.8" class="text-text-muted/30">

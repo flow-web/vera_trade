@@ -53,7 +53,7 @@
           <% end %>
         </p>
 
-        <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { class: "space-y-7", novalidate: true }) do |f| %>
+        <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { class: "space-y-7" }) do |f| %>
           <%= render "devise/shared/error_messages", resource: resource %>
 
           <!-- Identité -->
@@ -64,13 +64,15 @@
                 <%= f.label :first_name, "Prénom", class: "label-small block mb-3" %>
                 <%= f.text_field :first_name, autocomplete: "given-name",
                     class: "input-vera",
-                    placeholder: "Marcel" %>
+                    placeholder: "Marcel",
+                    required: true %>
               </div>
               <div>
                 <%= f.label :last_name, "Nom", class: "label-small block mb-3" %>
                 <%= f.text_field :last_name, autocomplete: "family-name",
                     class: "input-vera",
-                    placeholder: "Dupré" %>
+                    placeholder: "Dupré",
+                    required: true %>
               </div>
             </div>
           </div>
@@ -83,13 +85,15 @@
                 <%= f.label :email, "Adresse email", class: "label-small block mb-3" %>
                 <%= f.email_field :email, autofocus: true, autocomplete: "email",
                     class: "input-vera",
-                    placeholder: "vous@domaine.fr" %>
+                    placeholder: "vous@domaine.fr",
+                    required: true %>
               </div>
               <div>
                 <%= f.label :phone, "Téléphone", class: "label-small block mb-3" %>
                 <%= f.telephone_field :phone, autocomplete: "tel",
                     class: "input-vera input-mono",
-                    placeholder: "06 12 34 56 78" %>
+                    placeholder: "06 12 34 56 78",
+                    required: true %>
               </div>
             </div>
           </div>
@@ -109,13 +113,17 @@
                 </div>
                 <%= f.password_field :password, autocomplete: "new-password",
                     class: "input-vera",
-                    placeholder: "••••••••" %>
+                    placeholder: "••••••••",
+                    required: true,
+                    minlength: 12 %>
               </div>
               <div>
                 <%= f.label :password_confirmation, "Confirmer le mot de passe", class: "label-small block mb-3" %>
                 <%= f.password_field :password_confirmation, autocomplete: "new-password",
                     class: "input-vera",
-                    placeholder: "••••••••" %>
+                    placeholder: "••••••••",
+                    required: true,
+                    minlength: 12 %>
               </div>
             </div>
           </div>
@@ -129,6 +137,10 @@
               et la <%= link_to "Politique de Confidentialité", confidentialite_path, target: "_blank", rel: "noopener", class: "text-text-primary border-b border-accent-red hover:text-accent-red transition-colors duration-300" %>
             <% end %>
           </div>
+
+          <!-- Cloudflare Turnstile anti-bot -->
+          <div class="cf-turnstile" data-sitekey="<%= ENV['TURNSTILE_SITE_KEY'] || '1x00000000000000000000AA' %>"></div>
+          <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 
           <%= f.submit "Créer mon profil", class: "btn-vera-primary w-full cursor-pointer" %>
         <% end %>
