@@ -1,0 +1,99 @@
+<% content_for :title, "Mentions Legales — Vera Trade" %>
+
+<section class="relative bg-bg-primary min-h-screen">
+  <div class="max-w-[900px] mx-auto px-5 lg:px-10 py-20 lg:py-32">
+
+    <p class="eyebrow text-accent-red mb-6">Informations legales</p>
+    <h1 class="font-display text-[40px] lg:text-[56px] leading-[1.05] text-text-primary mb-4">
+      Mentions
+      <br /><span class="playfair-italic">Legales</span>
+    </h1>
+    <p class="font-mono text-[11px] uppercase tracking-[0.15em] text-text-muted mb-16">
+      Conformement a la loi n&deg; 2004-575 du 21 juin 2004 (LCEN)
+    </p>
+
+    <div class="space-y-14 font-body text-[15px] text-text-secondary leading-[1.8]">
+
+      <%# --- Editeur --- %>
+      <article>
+        <h2 class="label-small text-accent-red mb-4">Editeur du site</h2>
+        <div class="space-y-2">
+          <p><span class="text-text-primary font-medium">Raison sociale :</span> Vera Trade [A COMPLETER : forme juridique]</p>
+          <p><span class="text-text-primary font-medium">Siege social :</span> [A COMPLETER : adresse], Lyon, France</p>
+          <p><span class="text-text-primary font-medium">SIRET :</span> [A COMPLETER]</p>
+          <p><span class="text-text-primary font-medium">RCS :</span> [A COMPLETER] — RCS Lyon</p>
+          <p><span class="text-text-primary font-medium">Capital social :</span> [A COMPLETER] &euro;</p>
+          <p><span class="text-text-primary font-medium">Numero de TVA :</span> [A COMPLETER]</p>
+          <p><span class="text-text-primary font-medium">Directeur de la publication :</span> [A COMPLETER]</p>
+          <p><span class="text-text-primary font-medium">Email :</span> <span class="font-mono">bonjour@veratrade.fr</span></p>
+        </div>
+      </article>
+
+      <%# --- Hebergeur --- %>
+      <article>
+        <h2 class="label-small text-accent-red mb-4">Hebergement</h2>
+        <div class="space-y-2">
+          <p><span class="text-text-primary font-medium">Hebergeur :</span> Vercel Inc.</p>
+          <p><span class="text-text-primary font-medium">Adresse :</span> 340 S Lemon Ave #4133, Walnut, CA 91789, USA</p>
+          <p><span class="text-text-primary font-medium">Site web :</span> <span class="font-mono">vercel.com</span></p>
+        </div>
+        <div class="space-y-2 mt-6">
+          <p><span class="text-text-primary font-medium">Base de donnees :</span> Supabase Inc.</p>
+          <p><span class="text-text-primary font-medium">Region :</span> EU (Francfort, Allemagne)</p>
+          <p><span class="text-text-primary font-medium">Site web :</span> <span class="font-mono">supabase.com</span></p>
+        </div>
+      </article>
+
+      <%# --- Activite --- %>
+      <article>
+        <h2 class="label-small text-accent-red mb-4">Activite</h2>
+        <p>
+          Vera Trade est une plateforme de mise en relation entre vendeurs et acheteurs
+          de vehicules de collection, youngtimers et vehicules de competition. La Plateforme
+          agit en qualite d'intermediaire technique et n'est pas partie aux transactions
+          conclues entre utilisateurs.
+        </p>
+      </article>
+
+      <%# --- Donnees personnelles --- %>
+      <article>
+        <h2 class="label-small text-accent-red mb-4">Donnees personnelles</h2>
+        <p>
+          Conformement au Reglement General sur la Protection des Donnees (RGPD) et a la
+          loi Informatique et Libertes, vous disposez d'un droit d'acces, de rectification,
+          de suppression et d'opposition sur vos donnees personnelles.
+        </p>
+        <p class="mt-4">
+          Pour exercer ces droits, contactez-nous a :
+          <span class="font-mono text-text-primary">bonjour@veratrade.fr</span>
+        </p>
+        <p class="mt-4">
+          Pour plus de details, consultez notre
+          <%= link_to "Politique de Confidentialite", confidentialite_path,
+              class: "text-text-primary border-b border-accent-red hover:text-accent-red transition-colors duration-300" %>.
+        </p>
+      </article>
+
+      <%# --- Cookies --- %>
+      <article>
+        <h2 class="label-small text-accent-red mb-4">Cookies</h2>
+        <p>
+          La Plateforme utilise des cookies strictement necessaires au fonctionnement du service
+          (session utilisateur, securite CSRF). Aucun cookie de tracage publicitaire n'est utilise.
+          [A COMPLETER : si analytics, detailler les cookies et le consentement]
+        </p>
+      </article>
+
+      <%# --- Credits --- %>
+      <article>
+        <h2 class="label-small text-accent-red mb-4">Credits</h2>
+        <p>
+          Conception et developpement : Vera Trade.<br />
+          Typographies : Playfair Display, JetBrains Mono (Google Fonts, licence OFL).<br />
+          [A COMPLETER : credits photos, illustrations]
+        </p>
+      </article>
+
+    </div>
+  </div>
+</section>
