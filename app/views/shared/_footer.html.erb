@@ -53,9 +53,9 @@
         Lyon · Paris · Bordeaux · Marseille
       </p>
       <ul class="space-y-3 pt-6 border-t border-line">
-        <li><span class="font-ui text-[10px] uppercase tracking-[0.15em] text-text-muted/60 cursor-not-allowed">Conditions Générales</span></li>
-        <li><span class="font-ui text-[10px] uppercase tracking-[0.15em] text-text-muted/60 cursor-not-allowed">Politique de Confidentialité</span></li>
-        <li><span class="font-ui text-[10px] uppercase tracking-[0.15em] text-text-muted/60 cursor-not-allowed">Mentions légales</span></li>
+        <li><%= link_to "Conditions Générales", cgu_path, class: "font-ui text-[10px] uppercase tracking-[0.15em] text-text-muted hover:text-text-primary transition-colors" %></li>
+        <li><%= link_to "Politique de Confidentialité", confidentialite_path, class: "font-ui text-[10px] uppercase tracking-[0.15em] text-text-muted hover:text-text-primary transition-colors" %></li>
+        <li><%= link_to "Mentions légales", mentions_legales_path, class: "font-ui text-[10px] uppercase tracking-[0.15em] text-text-muted hover:text-text-primary transition-colors" %></li>
       </ul>
     </div>
   </div>

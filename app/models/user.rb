@@ -22,6 +22,10 @@ class User < ApplicationRecord
   has_many :search_presets, dependent: :destroy
   has_many :kyc_documents, dependent: :destroy
 
+  # Virtual attribute — CGU acceptance on sign-up (not persisted)
+  attribute :terms_accepted, :boolean
+  validates :terms_accepted, acceptance: { accept: true, message: "Vous devez accepter les CGU" }, on: :create
+
   KYC_STATUSES = %w[none pending verified rejected].freeze
   REQUIRED_KYC_DOCUMENTS = %w[identity_card proof_of_address].freeze
 

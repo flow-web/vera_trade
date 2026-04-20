@@ -68,6 +68,11 @@ Rails.application.routes.draw do
     end
   end
 
+  # Legal pages
+  get "cgu", to: "pages#cgu"
+  get "mentions-legales", to: "pages#mentions_legales"
+  get "confidentialite", to: "pages#confidentialite"
+
   # SEO sitemap
   get "sitemap.xml", to: "pages#sitemap", defaults: { format: :xml }
 

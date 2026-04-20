@@ -15,9 +15,7 @@
     <!-- Menu desktop -->
     <ul class="hidden lg:flex items-center gap-10" role="menubar">
       <% nav_items = [
-        { label: "Catalogue",  path: listings_path, current: request.path.start_with?("/listings") && !request.path.include?("/new") },
-        { label: "Enchères",   path: listings_path(segment: "youngtimer"), current: false },
-        { label: "Expertises", path: kyc_path,      current: request.path.start_with?("/kyc") }
+        { label: "Catalogue",  path: listings_path, current: request.path.start_with?("/listings") && !request.path.include?("/new") }
       ] %>
       <% nav_items.each do |item| %>
         <li role="none">

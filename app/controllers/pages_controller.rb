@@ -11,6 +11,10 @@ class PagesController < ApplicationController
     @listings_count   = active.count
   end
 
+  def cgu; end
+  def mentions_legales; end
+  def confidentialite; end
+
   def sitemap
     @listings = Listing.where(status: "active").includes(:vehicle).order(updated_at: :desc)
     respond_to do |format|

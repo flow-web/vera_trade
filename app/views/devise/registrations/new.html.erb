@@ -120,13 +120,18 @@
             </div>
           </div>
 
+          <!-- CGU acceptance -->
+          <div class="flex items-start gap-3">
+            <%= f.check_box :terms_accepted, required: true,
+                class: "mt-1 h-4 w-4 rounded-sm border border-line bg-bg-secondary text-accent-red focus:ring-accent-red focus:ring-offset-0 cursor-pointer" %>
+            <%= f.label :terms_accepted, class: "font-ui text-[11px] uppercase tracking-[0.12em] text-text-muted leading-relaxed cursor-pointer" do %>
+              J'accepte les <%= link_to "Conditions Générales d'Utilisation", cgu_path, target: "_blank", rel: "noopener", class: "text-text-primary border-b border-accent-red hover:text-accent-red transition-colors duration-300" %>
+              et la <%= link_to "Politique de Confidentialité", confidentialite_path, target: "_blank", rel: "noopener", class: "text-text-primary border-b border-accent-red hover:text-accent-red transition-colors duration-300" %>
+            <% end %>
+          </div>
+
           <%= f.submit "Créer mon profil", class: "btn-vera-primary w-full cursor-pointer" %>
         <% end %>
-
-        <p class="mt-8 font-ui text-[10px] uppercase tracking-[0.15em] text-text-muted leading-relaxed">
-          En créant un profil, vous acceptez nos Conditions Générales
-          <br />et notre Politique de Confidentialité.
-        </p>
 
       </div>
     </div>
