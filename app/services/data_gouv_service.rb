@@ -83,8 +83,10 @@ class DataGouvService
   end
 
   def charging_stations(commune_code: nil, department_code: nil, page_size: 20)
-    params = { "page_size" => page_size.to_s }
+    clamped_size = [[page_size.to_i, 1].max, 100].min
+    params = { "page_size" => clamped_size.to_s }
     params["code_insee_commune__exact"] = commune_code if commune_code.present?
+    params["consolidated_code_postal__exact"] = department_code if department_code.present? && commune_code.blank?
 
     rows = fetch_tabular(RESOURCES[:irve_bornes], params)
     rows.map do |row|
@@ -108,7 +110,7 @@ class DataGouvService
     params["code_departement__exact"] = department_code if department_code.present?
 
     rows = fetch_tabular(RESOURCES[:prix_ct], params)
-    prices = rows.map { |r| r["prix_visite"] }.compact.select { |p| p > 0 }
+    prices = rows.map { |r| r["prix_visite"]&.to_f }.compact.select { |p| p > 0 }
     return nil if prices.empty?
 
     {
@@ -164,7 +166,7 @@ class DataGouvService
     return [] unless response
 
     data = JSON.parse(response)
-    Array(data)
+    data.is_a?(Hash) ? (data["data"] || []) : Array(data)
   rescue JSON::ParserError => e
     Rails.logger.error("DiDo JSON parse error: #{e.message}")
     []
@@ -199,7 +201,7 @@ class DataGouvService
     Rails.logger.error("DataGouv API timeout: #{e.message}")
     nil
   rescue StandardError => e
-    Rails.logger.error("DataGouv API error: #{e.message}")
+    Rails.logger.error("DataGouv API error [#{e.class}]: #{e.message}")
     nil
   end
 end
