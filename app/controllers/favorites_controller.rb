@@ -2,7 +2,7 @@ class FavoritesController < ApplicationController
   before_action :authenticate_user!
 
   def index
-    @listings = current_user.favorited_listings.includes(:vehicle).order("favorites.created_at DESC")
+    @listings = current_user.favorited_listings.includes(:vehicle).order("favorites.created_at DESC").limit(100)
   end
 
   def create

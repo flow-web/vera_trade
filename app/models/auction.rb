@@ -57,10 +57,13 @@ class Auction < ApplicationRecord
   def place_bid!(bidder, amount)
     raise "L'enchère n'est pas active" unless active?
     raise "Vous ne pouvez pas enchérir sur votre propre annonce" if bidder.id == listing.user_id
-    raise "L'enchère minimum est #{minimum_next_bid} €" if amount < minimum_next_bid
 
     bid = nil
     with_lock do
+      reload
+      raise "L'enchère n'est pas active" unless active?
+      raise "L'enchère minimum est #{minimum_next_bid} €" if amount < minimum_next_bid
+
       bid = bids.create!(bidder: bidder, amount: amount)
       update!(
         current_price: amount,
@@ -72,12 +75,15 @@ class Auction < ApplicationRecord
   end
 
   def finalize!
-    return unless active? && Time.current >= ends_at
+    with_lock do
+      reload
+      return unless active? && Time.current >= ends_at
 
-    if winning_bid && reserve_met?
-      update!(status: "sold")
-    else
-      update!(status: "ended")
+      if winning_bid && reserve_met?
+        update!(status: "sold")
+      else
+        update!(status: "ended")
+      end
     end
   end
 

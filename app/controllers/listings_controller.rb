@@ -29,7 +29,7 @@ class ListingsController < ApplicationController
   end
 
   def my_listings
-    @listings = current_user.listings.includes(:vehicle).order(created_at: :desc)
+    @pagy, @listings = pagy(current_user.listings.includes(:vehicle).order(created_at: :desc), limit: PER_PAGE)
   end
 
   def show

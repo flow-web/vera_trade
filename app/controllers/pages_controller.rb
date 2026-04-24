@@ -16,7 +16,7 @@ class PagesController < ApplicationController
   def confidentialite; end
 
   def sitemap
-    @listings = Listing.where(status: "active").includes(:vehicle).order(updated_at: :desc)
+    @listings = Listing.where(status: "active").includes(:vehicle).order(updated_at: :desc).limit(50_000)
     respond_to do |format|
       format.xml
     end

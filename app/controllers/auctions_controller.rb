@@ -5,7 +5,7 @@ class AuctionsController < ApplicationController
   def show
     @listing = @auction.listing
     @vehicle = @listing.vehicle
-    @bids = @auction.bids.ordered.limit(50)
+    @bids = @auction.bids.ordered.includes(:bidder).limit(50)
     @is_watching = user_signed_in? && @auction.auction_watchers.exists?(user: current_user)
     @seller = @listing.user
   end

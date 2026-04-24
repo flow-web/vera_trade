@@ -14,7 +14,7 @@ class MessagesController < ApplicationController
     return head :not_found unless @current_conversation
 
     @recipient = @current_conversation.user_id == current_user.id ? @current_conversation.other_user : @current_conversation.user
-    @messages = Message.between(current_user.id, @recipient.id)
+    @messages = Message.between(current_user.id, @recipient.id).order(created_at: :desc).limit(200).reverse
     @message = Message.new
     @current_user_id = current_user.id
 

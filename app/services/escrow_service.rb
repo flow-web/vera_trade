@@ -72,14 +72,14 @@ class EscrowService
     wallet.credit(@escrow.amount)
   end
 
-  def record_transaction!(type, user, description)
+  def record_transaction!(type, user, note)
     wallet = user.wallet
     wallet.wallet_transactions.create!(
       amount_cents: (@escrow.amount * 100).to_i,
       transaction_type: type,
       status: :completed,
       reference: "escrow_#{@escrow.id}",
-      description: description
+      notes: note
     )
   end
 end

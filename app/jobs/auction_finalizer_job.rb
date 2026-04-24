@@ -6,6 +6,7 @@ class AuctionFinalizerJob < ApplicationJob
       auction.finalize!
     rescue => e
       Rails.logger.error("[AuctionFinalizerJob] Failed to finalize auction ##{auction.id}: #{e.message}")
+      Sentry.capture_exception(e, extra: { auction_id: auction.id }) if defined?(Sentry)
     end
   end
 end

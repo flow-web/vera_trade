@@ -3,7 +3,7 @@ class SearchPresetsController < ApplicationController
   before_action :set_preset, only: [ :show, :edit, :update, :destroy ]
 
   def index
-    @presets = current_user.search_presets.order(created_at: :desc)
+    @presets = current_user.search_presets.order(created_at: :desc).limit(50)
   end
 
   def create

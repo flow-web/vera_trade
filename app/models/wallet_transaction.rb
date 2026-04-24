@@ -3,7 +3,7 @@ class WalletTransaction < ApplicationRecord
 
   delegate :user, to: :wallet
 
-  validates :amount, numericality: { other_than: 0 }
+  validates :amount_cents, numericality: { other_than: 0 }
   validates :transaction_type, presence: true
 
   enum :transaction_type, {
@@ -14,22 +14,17 @@ class WalletTransaction < ApplicationRecord
     refund: "refund"
   }, default: "deposit"
 
-  before_create :set_description
+  before_create :set_default_notes
 
   private
 
-  def set_description
-    self.description ||= case transaction_type
-    when "deposit"
-      "Dépôt de fonds"
-    when "withdrawal"
-      "Retrait de fonds"
-    when "purchase"
-      "Achat"
-    when "sale"
-      "Vente"
-    when "refund"
-      "Remboursement"
+  def set_default_notes
+    self.notes ||= case transaction_type
+    when "deposit"    then "Dépôt de fonds"
+    when "withdrawal" then "Retrait de fonds"
+    when "purchase"   then "Achat"
+    when "sale"       then "Vente"
+    when "refund"     then "Remboursement"
     end
   end
 end

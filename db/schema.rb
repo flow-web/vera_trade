@@ -10,9 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_04_11_130000) do
+ActiveRecord::Schema[8.0].define(version: 2026_04_24_190000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+  enable_extension "pg_trgm"
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -42,6 +43,49 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_11_130000) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
+  create_table "auction_watchers", force: :cascade do |t|
+    t.bigint "auction_id", null: false
+    t.bigint "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["auction_id", "user_id"], name: "index_auction_watchers_on_auction_id_and_user_id", unique: true
+    t.index ["auction_id"], name: "index_auction_watchers_on_auction_id"
+    t.index ["user_id"], name: "index_auction_watchers_on_user_id"
+  end
+
+  create_table "auctions", force: :cascade do |t|
+    t.bigint "listing_id", null: false
+    t.decimal "starting_price", precision: 10, scale: 2, null: false
+    t.decimal "reserve_price", precision: 10, scale: 2
+    t.decimal "current_price", precision: 10, scale: 2
+    t.string "status", default: "scheduled", null: false
+    t.integer "duration_days", default: 7, null: false
+    t.datetime "starts_at", null: false
+    t.datetime "ends_at", null: false
+    t.integer "bids_count", default: 0, null: false
+    t.integer "watchers_count", default: 0, null: false
+    t.decimal "seller_fee_pct", precision: 4, scale: 2, default: "5.0", null: false
+    t.decimal "buyer_fee_pct", precision: 4, scale: 2, default: "4.5", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["ends_at"], name: "index_auctions_on_ends_at"
+    t.index ["listing_id"], name: "index_auctions_on_listing_id", unique: true
+    t.index ["status"], name: "index_auctions_on_status"
+  end
+
+  create_table "bids", force: :cascade do |t|
+    t.bigint "auction_id", null: false
+    t.bigint "bidder_id", null: false
+    t.decimal "amount", precision: 10, scale: 2, null: false
+    t.boolean "proxy", default: false, null: false
+    t.decimal "max_proxy_amount", precision: 10, scale: 2
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["auction_id", "created_at"], name: "index_bids_on_auction_id_and_created_at"
+    t.index ["auction_id"], name: "index_bids_on_auction_id"
+    t.index ["bidder_id"], name: "index_bids_on_bidder_id"
+  end
+
   create_table "categories", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
@@ -63,8 +107,32 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_11_130000) do
     t.index ["listing_id", "user_id"], name: "index_conversations_on_listing_and_buyer_unique", unique: true, where: "(listing_id IS NOT NULL)"
     t.index ["listing_id"], name: "index_conversations_on_listing_id"
     t.index ["other_user_id"], name: "index_conversations_on_other_user_id"
+    t.index ["updated_at"], name: "index_conversations_on_updated_at"
     t.index ["user_id", "other_user_id"], name: "index_conversations_on_user_id_and_other_user_id", unique: true
     t.index ["user_id"], name: "index_conversations_on_user_id"
+  end
+
+  create_table "escrows", force: :cascade do |t|
+    t.bigint "listing_id", null: false
+    t.bigint "buyer_id", null: false
+    t.bigint "seller_id", null: false
+    t.decimal "amount", precision: 10, scale: 2, null: false
+    t.string "currency", default: "EUR", null: false
+    t.string "status", default: "pending", null: false
+    t.string "stripe_payment_intent_id"
+    t.string "stripe_transfer_id"
+    t.text "notes"
+    t.datetime "paid_at"
+    t.datetime "released_at"
+    t.datetime "disputed_at"
+    t.datetime "refunded_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["buyer_id"], name: "index_escrows_on_buyer_id"
+    t.index ["listing_id"], name: "index_escrows_on_listing_id"
+    t.index ["seller_id"], name: "index_escrows_on_seller_id"
+    t.index ["status"], name: "index_escrows_on_status"
+    t.index ["stripe_payment_intent_id"], name: "index_escrows_on_stripe_payment_intent_id", unique: true, where: "(stripe_payment_intent_id IS NOT NULL)"
   end
 
   create_table "favorites", force: :cascade do |t|
@@ -89,6 +157,20 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_11_130000) do
     t.index ["phone"], name: "index_guest_accounts_on_phone"
     t.index ["token"], name: "index_guest_accounts_on_token", unique: true
     t.index ["user_id"], name: "index_guest_accounts_on_user_id"
+  end
+
+  create_table "kyc_documents", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "document_type", null: false
+    t.string "status", default: "pending", null: false
+    t.text "rejection_reason"
+    t.datetime "reviewed_at"
+    t.bigint "reviewed_by_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["status"], name: "index_kyc_documents_on_status"
+    t.index ["user_id", "document_type"], name: "index_kyc_documents_on_user_id_and_document_type"
+    t.index ["user_id"], name: "index_kyc_documents_on_user_id"
   end
 
   create_table "listing_answers", force: :cascade do |t|
@@ -131,8 +213,11 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_11_130000) do
     t.integer "wizard_step", default: 0, null: false
     t.datetime "published_at"
     t.index ["buyer_id"], name: "index_listings_on_buyer_id"
+    t.index ["description"], name: "index_listings_on_description_gin", opclass: :gin_trgm_ops, using: :gin
     t.index ["published_at"], name: "index_listings_on_published_at"
     t.index ["slug"], name: "index_listings_on_slug", unique: true
+    t.index ["status"], name: "index_listings_on_status"
+    t.index ["title"], name: "index_listings_on_title_gin", opclass: :gin_trgm_ops, using: :gin
     t.index ["user_id"], name: "index_listings_on_user_id"
     t.index ["vehicle_id"], name: "index_listings_on_vehicle_id"
     t.index ["wizard_step"], name: "index_listings_on_wizard_step"
@@ -171,6 +256,9 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_11_130000) do
     t.bigint "conversation_id"
     t.integer "offer_cents"
     t.index ["conversation_id"], name: "index_messages_on_conversation_id"
+    t.index ["recipient_id", "read"], name: "index_messages_on_recipient_id_and_read"
+    t.index ["recipient_id"], name: "index_messages_on_recipient_id"
+    t.index ["sender_id"], name: "index_messages_on_sender_id"
   end
 
   create_table "originality_scores", force: :cascade do |t|
@@ -265,9 +353,19 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_11_130000) do
     t.string "last_name"
     t.string "phone"
     t.string "image"
+    t.string "confirmation_token"
+    t.datetime "confirmed_at"
+    t.datetime "confirmation_sent_at"
+    t.string "unconfirmed_email"
+    t.integer "failed_attempts", default: 0, null: false
+    t.string "unlock_token"
+    t.datetime "locked_at"
+    t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["kyc_status"], name: "index_users_on_kyc_status"
     t.index ["phone"], name: "index_users_on_phone", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+    t.index ["unlock_token"], name: "index_users_on_unlock_token", unique: true
   end
 
   create_table "vehicles", force: :cascade do |t|
@@ -344,8 +442,14 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_11_130000) do
     t.integer "co2_emissions"
     t.boolean "is_draft", default: false
     t.index ["category_id"], name: "index_vehicles_on_category_id"
+    t.index ["created_at"], name: "index_vehicles_on_created_at"
+    t.index ["fuel_type"], name: "index_vehicles_on_fuel_type"
     t.index ["license_plate"], name: "index_vehicles_on_license_plate", unique: true
+    t.index ["make"], name: "index_vehicles_on_make_gin", opclass: :gin_trgm_ops, using: :gin
+    t.index ["model"], name: "index_vehicles_on_model_gin", opclass: :gin_trgm_ops, using: :gin
+    t.index ["transmission"], name: "index_vehicles_on_transmission"
     t.index ["vin"], name: "index_vehicles_on_vin", unique: true
+    t.index ["year"], name: "index_vehicles_on_year"
   end
 
   create_table "wallet_transactions", force: :cascade do |t|
@@ -366,7 +470,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_11_130000) do
 
   create_table "wallets", force: :cascade do |t|
     t.bigint "user_id", null: false
-    t.integer "balance_cents", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.decimal "balance", precision: 10, scale: 2, default: "0.0", null: false
@@ -375,13 +478,23 @@ ActiveRecord::Schema[8.0].define(version: 2026_04_11_130000) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "auction_watchers", "auctions"
+  add_foreign_key "auction_watchers", "users"
+  add_foreign_key "auctions", "listings"
+  add_foreign_key "bids", "auctions"
+  add_foreign_key "bids", "users", column: "bidder_id"
   add_foreign_key "categories", "categories", column: "parent_id"
   add_foreign_key "conversations", "listings"
   add_foreign_key "conversations", "users"
   add_foreign_key "conversations", "users", column: "other_user_id"
+  add_foreign_key "escrows", "listings"
+  add_foreign_key "escrows", "users", column: "buyer_id"
+  add_foreign_key "escrows", "users", column: "seller_id"
   add_foreign_key "favorites", "listings"
   add_foreign_key "favorites", "users"
   add_foreign_key "guest_accounts", "users"
+  add_foreign_key "kyc_documents", "users"
+  add_foreign_key "kyc_documents", "users", column: "reviewed_by_id"
   add_foreign_key "listing_answers", "listing_questions"
   add_foreign_key "listing_answers", "users"
   add_foreign_key "listing_questions", "listings"
