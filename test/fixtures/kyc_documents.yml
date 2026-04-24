@@ -1,0 +1,13 @@
+pending_id:
+  user: two
+  document_type: identity_card
+  status: pending
+  created_at: <%= Time.current %>
+  updated_at: <%= Time.current %>
+
+pending_address:
+  user: two
+  document_type: proof_of_address
+  status: pending
+  created_at: <%= Time.current %>
+  updated_at: <%= Time.current %>

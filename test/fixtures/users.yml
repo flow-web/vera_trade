@@ -7,6 +7,7 @@ one:
   first_name: Alice
   last_name: Laurent
   phone: '0601020304'
+  confirmed_at: <%= Time.current %>
   created_at: <%= Time.current %>
   updated_at: <%= Time.current %>
 
@@ -16,6 +17,7 @@ two:
   first_name: Bob
   last_name: Marchal
   phone: '0605060708'
+  confirmed_at: <%= Time.current %>
   created_at: <%= Time.current %>
   updated_at: <%= Time.current %>
 
@@ -25,5 +27,17 @@ three:
   first_name: Claire
   last_name: Delaunay
   phone: '0609101112'
+  confirmed_at: <%= Time.current %>
+  created_at: <%= Time.current %>
+  updated_at: <%= Time.current %>
+
+admin:
+  email: admin@veratrade.test
+  encrypted_password: $2a$04$qNPscHc2Z3Duq0mii4E.qusUDTIMAkQdZUMixwZPlSoerVf.1KEl6
+  first_name: Admin
+  last_name: Vera
+  phone: '0600000001'
+  role: 1
+  confirmed_at: <%= Time.current %>
   created_at: <%= Time.current %>
   updated_at: <%= Time.current %>

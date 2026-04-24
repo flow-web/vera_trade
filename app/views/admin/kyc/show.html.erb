@@ -1,0 +1,27 @@
+<div class="max-w-3xl mx-auto px-5 py-10">
+  <h1 class="font-display text-2xl text-text-primary mb-6">Document KYC #<%= @document.id %></h1>
+
+  <dl class="space-y-4 text-sm">
+    <div>
+      <dt class="text-text-secondary uppercase tracking-wider text-[10px]">Utilisateur</dt>
+      <dd class="text-text-primary"><%= @document.user.display_name %></dd>
+    </div>
+    <div>
+      <dt class="text-text-secondary uppercase tracking-wider text-[10px]">Type</dt>
+      <dd class="text-text-primary"><%= @document.document_type.humanize %></dd>
+    </div>
+    <div>
+      <dt class="text-text-secondary uppercase tracking-wider text-[10px]">Statut</dt>
+      <dd class="text-text-primary"><%= @document.status %></dd>
+    </div>
+  </dl>
+
+  <% if @document.pending? %>
+    <div class="flex gap-4 mt-8">
+      <%= button_to "Approuver", approve_admin_kyc_path(@document), method: :patch, class: "btn-vera-primary px-6 py-2.5 text-[11px]" %>
+      <%= button_to "Refuser", reject_admin_kyc_path(@document), method: :patch, class: "btn-vera-secondary px-6 py-2.5 text-[11px]" %>
+    </div>
+  <% end %>
+
+  <%= link_to "← Retour", admin_kyc_index_path, class: "inline-block mt-6 text-text-secondary hover:text-text-primary text-sm" %>
+</div>
