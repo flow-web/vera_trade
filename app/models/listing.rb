@@ -167,8 +167,14 @@ class Listing < ApplicationRecord
     return unless photos.attached?
 
     photos.each do |photo|
-      unless PHOTO_ALLOWED_TYPES.include?(photo.content_type)
-        errors.add(:photos, "doit être au format JPG, PNG ou WEBP (reçu : #{photo.content_type})")
+      begin
+        data = photo.blob.download
+        detected = Marcel::MimeType.for(data, name: photo.filename.to_s)
+      rescue ActiveStorage::FileNotFoundError
+        detected = photo.content_type
+      end
+      unless PHOTO_ALLOWED_TYPES.include?(detected)
+        errors.add(:photos, "doit être au format JPG, PNG ou WEBP (détecté : #{detected})")
       end
       if photo.byte_size > PHOTO_MAX_BYTES
         errors.add(:photos, "doit peser moins de #{PHOTO_MAX_BYTES / 1.megabyte} Mo")
@@ -192,4 +198,9 @@ class Listing < ApplicationRecord
   def set_default_status
     self.status ||= "active"
   end
+
+  def destroy_orphan_vehicle
+    vehicle&.destroy if vehicle&.listings&.empty?
+  end
+  after_destroy :destroy_orphan_vehicle
 end

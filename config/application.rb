@@ -22,6 +22,7 @@ module VeraTradeReal
     # in config/environments, which are processed later.
     #
     config.time_zone = "Paris"
+    config.active_record.default_timezone = :utc
 
     # Locale FR par défaut — Vera Trade est FR-first.
     config.i18n.default_locale = :fr

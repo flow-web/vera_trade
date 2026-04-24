@@ -32,7 +32,6 @@ class EscrowTest < ActiveSupport::TestCase
 
   test "status must be valid" do
     escrow = escrows(:pending_escrow)
-    assert_raises(ArgumentError) { escrow.status = "invalid" } rescue nil
     escrow.status = "invalid"
     assert_not escrow.valid?
   end

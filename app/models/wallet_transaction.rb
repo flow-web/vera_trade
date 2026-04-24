@@ -7,12 +7,18 @@ class WalletTransaction < ApplicationRecord
   validates :transaction_type, presence: true
 
   enum :transaction_type, {
-    deposit: "deposit",
-    withdrawal: "withdrawal",
-    purchase: "purchase",
-    sale: "sale",
-    refund: "refund"
-  }, default: "deposit"
+    deposit: 0,
+    withdrawal: 1,
+    purchase: 2,
+    sale: 3,
+    refund: 4
+  }, default: :deposit
+
+  enum :status, {
+    pending: 0,
+    completed: 1,
+    failed: 2
+  }, default: :pending
 
   before_create :set_default_notes
 

@@ -3,6 +3,7 @@ require "test_helper"
 class ListingWizardsControllerTest < ActionDispatch::IntegrationTest
   setup do
     @user = users(:one)
+    @user.update!(kyc_status: "verified")
     sign_in @user
   end
 
