@@ -77,6 +77,14 @@ class User < ApplicationRecord
     [ first_name, last_name ].compact.join(" ").presence || email.split("@").first
   end
 
+  # Privacy-safe public name: "Sophie M." instead of "Sophie Martin"
+  def public_display_name
+    return "Vendeur" if first_name.blank? && last_name.blank?
+    first = first_name.presence || "Vendeur"
+    initial = last_name.present? ? " #{last_name[0].upcase}." : ""
+    "#{first}#{initial}"
+  end
+
   private
 
   def create_wallet

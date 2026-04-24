@@ -39,3 +39,6 @@ application.register("photo-lightbox", PhotoLightboxController)
 
 import AuctionController from "./auction_controller"
 application.register("auction", AuctionController)
+
+import MobileMenuController from "./mobile_menu_controller"
+application.register("mobile-menu", MobileMenuController)

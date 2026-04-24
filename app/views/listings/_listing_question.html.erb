@@ -17,13 +17,13 @@
   <div class="flex items-start gap-4">
     <div class="shrink-0 w-10 h-10 bg-bg-tertiary border border-line flex items-center justify-center">
       <span class="font-ui text-[10px] font-bold text-text-primary uppercase">
-        <%= question.user.display_name.first.upcase %>
+        <%= question.user.public_display_name.first.upcase %>
       </span>
     </div>
     <div class="flex-1 min-w-0">
       <div class="flex items-baseline justify-between gap-4 mb-2">
         <div class="font-ui text-[11px] uppercase tracking-[0.15em] text-text-primary">
-          <%= question.user.display_name %>
+          <%= question.user.public_display_name %>
         </div>
         <time class="font-mono text-[10px] text-text-muted" datetime="<%= question.created_at.iso8601 %>">
           <%= l(question.created_at.to_date, format: :long) rescue question.created_at.strftime("%d %B %Y") %>
