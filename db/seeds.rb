@@ -42,6 +42,7 @@ users = users_data.map do |data|
     u.last_name = data[:last_name]
     u.phone = data[:phone]
     u.role = data[:role]
+    u.confirmed_at = Time.current
   end
 end
 puts "  ✓ #{users.size} utilisateurs (#{User.count} total)"
