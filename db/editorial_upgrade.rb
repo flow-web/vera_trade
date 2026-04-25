@@ -30,7 +30,7 @@ EDITORIAL = [
       location: "Lyon, France"
     },
     rust_map: {
-      silhouette_variant: "hatchback",
+      silhouette_variant: "hatch",
       transparency_score: 82,
       notes: "Inspection réalisée le 12 avril 2026 par Expert Vera Trade. État général très satisfaisant pour un véhicule de 33 ans.",
       zones: [
@@ -203,7 +203,7 @@ EDITORIAL = [
       location: "Lyon, France"
     },
     rust_map: {
-      silhouette_variant: "hatchback",
+      silhouette_variant: "hatch",
       transparency_score: 68,
       notes: "Points sensibles 205 classiques inspectés. Carrosserie saine structurellement mais surveillance recommandée sur les zones habituelles.",
       zones: [
