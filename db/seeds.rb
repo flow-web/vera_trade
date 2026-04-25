@@ -50,16 +50,19 @@ ActiveRecord::Base.transaction do
   ]
 
   sellers = sellers_data.map do |data|
-    User.find_or_create_by!(email: data[:email]) do |u|
-      u.password = "VeraTrade2026!"
-      u.first_name = data[:first_name]
-      u.last_name = data[:last_name]
-      u.phone = data[:phone]
-      u.role = data[:role]
-      u.kyc_status = data[:kyc_status]
-      u.confirmed_at = Time.current
-      u.terms_accepted = true
+    user = User.find_or_initialize_by(email: data[:email])
+    if user.new_record?
+      user.password = "VeraTrade2026!"
+      user.first_name = data[:first_name]
+      user.last_name = data[:last_name]
+      user.phone = data[:phone] unless User.exists?(phone: data[:phone])
+      user.role = data[:role]
+      user.kyc_status = data[:kyc_status]
+      user.confirmed_at = Time.current
+      user.terms_accepted = true
+      user.save!
     end
+    user
   end
   jean_marc, sophie, philippe = sellers
   puts "  #{sellers.size} sellers created/found"
@@ -75,16 +78,19 @@ ActiveRecord::Base.transaction do
   ]
 
   bidders = bidders_data.map do |data|
-    User.find_or_create_by!(email: data[:email]) do |u|
-      u.password = "VeraTrade2026!"
-      u.first_name = data[:first_name]
-      u.last_name = data[:last_name]
-      u.phone = data[:phone]
-      u.role = data[:role]
-      u.kyc_status = data[:kyc_status]
-      u.confirmed_at = Time.current
-      u.terms_accepted = true
+    user = User.find_or_initialize_by(email: data[:email])
+    if user.new_record?
+      user.password = "VeraTrade2026!"
+      user.first_name = data[:first_name]
+      user.last_name = data[:last_name]
+      user.phone = data[:phone] unless User.exists?(phone: data[:phone])
+      user.role = data[:role]
+      user.kyc_status = data[:kyc_status]
+      user.confirmed_at = Time.current
+      user.terms_accepted = true
+      user.save!
     end
+    user
   end
   lucas, marie, karim = bidders
   puts "  #{bidders.size} bidders created/found"
