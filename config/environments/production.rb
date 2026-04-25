@@ -55,22 +55,25 @@ Rails.application.configure do
   config.active_job.queue_adapter = :solid_queue
   config.solid_queue.connects_to = { database: { writing: :queue } }
 
-  # Raise on delivery errors so Sentry captures failed sends.
-  config.action_mailer.raise_delivery_errors = true
-
   # All generated URLs in mailer templates point to the production domain.
   config.action_mailer.default_url_options = { host: "veratrade.fr", protocol: "https" }
 
-  # Resend SMTP relay — API key in ENV["RESEND_API_KEY"]
-  # See https://resend.com/docs/send-with-smtp
-  config.action_mailer.delivery_method = :smtp
-  config.action_mailer.smtp_settings = {
-    address:              "smtp.resend.com",
-    port:                 587,
-    authentication:       :plain,
-    user_name:            "resend",
-    password:             ENV.fetch("RESEND_API_KEY", "")
-  }
+  # SMTP delivery — only enabled when RESEND_API_KEY is present.
+  # Without a valid key, emails are logged to stdout instead of crashing.
+  if ENV["RESEND_API_KEY"].present?
+    config.action_mailer.raise_delivery_errors = true
+    config.action_mailer.delivery_method = :smtp
+    config.action_mailer.smtp_settings = {
+      address:              "smtp.resend.com",
+      port:                 587,
+      authentication:       :plain,
+      user_name:            "resend",
+      password:             ENV["RESEND_API_KEY"]
+    }
+  else
+    config.action_mailer.raise_delivery_errors = false
+    config.action_mailer.delivery_method = :log
+  end
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
   # the I18n.default_locale when a translation cannot be found).
