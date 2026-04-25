@@ -72,7 +72,7 @@ Rails.application.configure do
     }
   else
     config.action_mailer.raise_delivery_errors = false
-    config.action_mailer.delivery_method = :log
+    config.action_mailer.delivery_method = :test
   end
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
