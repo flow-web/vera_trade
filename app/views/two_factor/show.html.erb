@@ -1,0 +1,81 @@
+<div class="min-h-[80vh] flex items-center justify-center px-5 py-16">
+  <div class="w-full max-w-lg">
+    <%# Header — editorial chapter style %>
+    <div class="mb-10">
+      <div class="font-ui text-[11px] font-semibold uppercase tracking-[0.22em] text-rosso-bright mb-4">
+        Sécurité du compte
+      </div>
+      <h1 class="font-display text-[clamp(32px,5vw,48px)] font-medium text-text-primary leading-[0.96] tracking-[-0.015em] mb-3">
+        Authentification <span class="italic font-normal text-text-secondary">à deux facteurs</span>
+      </h1>
+      <p class="font-body text-[17px] leading-relaxed text-text-secondary">
+        Protégez votre compte avec une couche de sécurité supplémentaire via une application TOTP.
+      </p>
+    </div>
+
+    <div class="border border-line-strong bg-bg-secondary">
+      <%# Status header %>
+      <div class="px-6 py-5 border-b border-line flex items-center justify-between">
+        <div>
+          <div class="font-ui text-sm font-medium text-text-primary">Application TOTP</div>
+          <div class="font-ui text-xs text-text-muted mt-0.5">Google Authenticator, Authy, 1Password…</div>
+        </div>
+        <% if @enabled %>
+          <span class="inline-flex items-center gap-2 font-ui text-[10px] font-semibold uppercase tracking-[0.18em] text-patina bg-patina/10 px-3 py-1.5 border border-patina/25">
+            <span class="w-1.5 h-1.5 bg-patina rounded-full"></span>
+            Activé
+          </span>
+        <% else %>
+          <span class="inline-flex items-center gap-2 font-ui text-[10px] font-semibold uppercase tracking-[0.18em] text-text-muted bg-bg-primary px-3 py-1.5 border border-line-strong">
+            Désactivé
+          </span>
+        <% end %>
+      </div>
+
+      <%# Action area %>
+      <div class="px-6 py-6">
+        <% if @enabled %>
+          <%# Trust indicators %>
+          <div class="flex flex-col gap-3 mb-6 pb-6 border-b border-line">
+            <div class="flex items-center gap-3 font-ui text-xs text-text-secondary">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" class="text-patina shrink-0"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"/></svg>
+              Votre compte est protégé par la 2FA
+            </div>
+            <div class="flex items-center gap-3 font-ui text-xs text-text-secondary">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" class="text-patina shrink-0"><path d="m5 12 5 5 10-10"/></svg>
+              Code TOTP requis à chaque connexion
+            </div>
+          </div>
+
+          <%= form_with url: two_factor_path, method: :delete, class: "space-y-4" do |f| %>
+            <div>
+              <label class="block font-ui text-[11px] font-semibold uppercase tracking-[0.14em] text-text-muted mb-2">
+                Code actuel pour désactiver
+              </label>
+              <%= f.text_field :otp_code,
+                class: "w-full bg-bg-primary border border-line-strong text-text-primary px-4 py-3 font-mono text-lg tracking-[0.3em] text-center focus:border-accent-red focus:outline-none transition-[border-color] duration-300",
+                maxlength: 6, autocomplete: "one-time-code", inputmode: "numeric",
+                pattern: "[0-9]{6}", required: true, placeholder: "------" %>
+            </div>
+            <div class="flex items-center gap-3">
+              <%= f.submit "Désactiver la 2FA", class: "btn-vera-secondary text-[11px] px-6 py-3 cursor-pointer" %>
+              <%= link_to "Retour", dashboard_path, class: "font-ui text-xs text-text-muted hover:text-text-primary transition-colors" %>
+            </div>
+          <% end %>
+        <% else %>
+          <p class="font-body text-sm text-text-secondary mb-6">
+            L'authentification à deux facteurs ajoute une barrière supplémentaire lors de la connexion.
+            Un code temporaire sera demandé en plus de votre mot de passe.
+          </p>
+          <div class="flex items-center gap-4">
+            <%= link_to setup_two_factor_path, class: "btn-vera-primary text-[11px] px-6 py-3" do %>
+              Configurer la 2FA
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square"><path d="M5 12h14"/><path d="m13 5 7 7-7 7"/></svg>
+            <% end %>
+            <%= link_to "Retour", dashboard_path, class: "font-ui text-xs text-text-muted hover:text-text-primary transition-colors" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

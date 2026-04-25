@@ -1,0 +1,19 @@
+<div class="body">
+  <p class="greeting">Bonjour <%= @asker.display_name %>,</p>
+
+  <h1 class="headline">Le vendeur a répondu à votre question</h1>
+
+  <p class="meta">
+    <strong><%= @seller.display_name %></strong>
+    &middot; Annonce : <strong><%= @listing.title %></strong>
+  </p>
+
+  <div class="preview-box">
+    <p class="preview-text" style="color: #8a8a8a; font-size: 13px; margin-bottom: 12px;">Votre question : "<%= truncate(@question.body, length: 200) %>"</p>
+    <p class="preview-text">"<%= truncate(@answer.body, length: 400) %>"</p>
+  </div>
+
+  <div class="cta-wrap">
+    <a href="<%= @listing_url %>#listing_qa_section" class="cta">Voir la réponse</a>
+  </div>
+</div>

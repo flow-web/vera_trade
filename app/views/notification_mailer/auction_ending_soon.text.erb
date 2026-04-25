@@ -1,0 +1,14 @@
+Vera Trade — Enchère bientôt terminée
+=======================================
+
+Bonjour <%= @watcher.display_name %>,
+
+L'enchère sur "<%= @listing.title %>" se termine bientôt.
+
+Enchère actuelle : <%= number_to_currency(@auction.current_price || @auction.starting_price, unit: "€", format: "%n %u") %>
+Temps restant : <%= distance_of_time_in_words(@auction.time_remaining.seconds) %>
+
+Voir : <%= @auction_url %>
+
+---
+Vera Trade · veratrade.fr

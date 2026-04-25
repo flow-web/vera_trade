@@ -74,6 +74,10 @@ class User < ApplicationRecord
     role == 1
   end
 
+  def otp_required_for_login?
+    otp_required_for_login
+  end
+
   def display_name
     [ first_name, last_name ].compact.join(" ").presence || email.split("@").first
   end

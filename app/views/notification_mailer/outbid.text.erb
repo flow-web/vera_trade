@@ -1,0 +1,14 @@
+Vera Trade — Vous avez été surenchéri
+=======================================
+
+Bonjour <%= @outbid_user.display_name %>,
+
+Quelqu'un a surenchéri sur "<%= @listing.title %>".
+
+Nouvelle enchère haute : <%= number_to_currency(@bid.amount, unit: "€", format: "%n %u") %>
+Minimum pour reprendre la tête : <%= number_to_currency(@auction.minimum_next_bid, unit: "€", format: "%n %u") %>
+
+Surenchérir : <%= @auction_url %>
+
+---
+Vera Trade · veratrade.fr

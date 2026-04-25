@@ -1,0 +1,18 @@
+<div class="body">
+  <p class="greeting">Bonjour <%= @watcher.display_name %>,</p>
+
+  <h1 class="headline">Enchère bientôt terminée</h1>
+
+  <p class="meta">
+    Annonce : <strong><%= @listing.title %></strong>
+  </p>
+
+  <p class="highlight">
+    Enchère actuelle : <strong><%= number_to_currency(@auction.current_price || @auction.starting_price, unit: "€", format: "%n %u") %></strong>
+    &middot; Se termine dans <strong><%= distance_of_time_in_words(@auction.time_remaining.seconds) %></strong>
+  </p>
+
+  <div class="cta-wrap">
+    <a href="<%= @auction_url %>" class="cta">Voir l'enchère</a>
+  </div>
+</div>

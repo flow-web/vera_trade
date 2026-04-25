@@ -1,0 +1,18 @@
+<div class="body">
+  <p class="greeting">Bonjour <%= @seller.display_name %>,</p>
+
+  <h1 class="headline">Nouvelle question sur votre annonce</h1>
+
+  <p class="meta">
+    De <strong><%= @asker.display_name %></strong>
+    &middot; Annonce : <strong><%= @listing.title %></strong>
+  </p>
+
+  <div class="preview-box">
+    <p class="preview-text">"<%= truncate(@question.body, length: 400) %>"</p>
+  </div>
+
+  <div class="cta-wrap">
+    <a href="<%= @listing_url %>#listing_qa_section" class="cta">Répondre</a>
+  </div>
+</div>

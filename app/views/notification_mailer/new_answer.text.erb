@@ -1,0 +1,17 @@
+Vera Trade — Réponse à votre question
+=======================================
+
+Bonjour <%= @asker.display_name %>,
+
+<%= @seller.display_name %> a répondu à votre question sur "<%= @listing.title %>".
+
+Votre question :
+> <%= truncate(@question.body, length: 300) %>
+
+Réponse :
+> <%= truncate(@answer.body, length: 500) %>
+
+Voir : <%= @listing_url %>#listing_qa_section
+
+---
+Vera Trade · veratrade.fr

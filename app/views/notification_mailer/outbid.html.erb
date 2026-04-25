@@ -1,0 +1,21 @@
+<div class="body">
+  <p class="greeting">Bonjour <%= @outbid_user.display_name %>,</p>
+
+  <h1 class="headline">Vous avez été surenchéri</h1>
+
+  <p class="meta">
+    Annonce : <strong><%= @listing.title %></strong>
+  </p>
+
+  <p class="highlight">
+    Nouvelle enchère haute : <strong><%= number_to_currency(@bid.amount, unit: "€", format: "%n %u") %></strong>
+  </p>
+
+  <p class="highlight">
+    Enchère minimum pour reprendre la tête : <strong><%= number_to_currency(@auction.minimum_next_bid, unit: "€", format: "%n %u") %></strong>
+  </p>
+
+  <div class="cta-wrap">
+    <a href="<%= @auction_url %>" class="cta">Surenchérir</a>
+  </div>
+</div>

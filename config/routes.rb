@@ -1,5 +1,17 @@
 Rails.application.routes.draw do
-  devise_for :users, controllers: { registrations: "users/registrations" }
+  devise_for :users, controllers: {
+    registrations: "users/registrations",
+    sessions: "users/sessions"
+  }
+
+  resource :two_factor, only: [:show], controller: "two_factor" do
+    get :setup
+    post :enable
+    delete :disable
+  end
+
+  get "two_factor/verify", to: "two_factor_verification#show", as: :two_factor_verify
+  post "two_factor/verify", to: "two_factor_verification#verify"
 
   get "up", to: "health#show", as: :rails_health_check
 

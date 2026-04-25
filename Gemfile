@@ -64,6 +64,10 @@ gem "pg_search", "~> 2.3"
 # Rate limiting and request throttling [https://github.com/rack/rack-attack]
 gem "rack-attack"
 
+# 2FA TOTP — lightweight implementation with rotp + rqrcode (no C extensions)
+gem "rotp"
+gem "rqrcode"
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"

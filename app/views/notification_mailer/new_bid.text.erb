@@ -1,0 +1,14 @@
+Vera Trade — Nouvelle enchère
+==============================
+
+Bonjour <%= @seller.display_name %>,
+
+<%= @bidder.display_name %> a enchéri <%= number_to_currency(@bid.amount, unit: "€", format: "%n %u") %> sur "<%= @listing.title %>".
+
+Enchère actuelle : <%= number_to_currency(@auction.current_price, unit: "€", format: "%n %u") %>
+Nombre d'enchères : <%= @auction.bids_count %>
+
+Voir : <%= @auction_url %>
+
+---
+Vera Trade · veratrade.fr

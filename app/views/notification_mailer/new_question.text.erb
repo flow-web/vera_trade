@@ -1,0 +1,15 @@
+Vera Trade — Nouvelle question
+================================
+
+Bonjour <%= @seller.display_name %>,
+
+<%= @asker.display_name %> a posé une question sur votre annonce "<%= @listing.title %>".
+
+---
+<%= truncate(@question.body, length: 500) %>
+---
+
+Répondre : <%= @listing_url %>#listing_qa_section
+
+---
+Vera Trade · veratrade.fr

@@ -1,0 +1,23 @@
+<div class="body">
+  <p class="greeting">Bonjour <%= @seller.display_name %>,</p>
+
+  <h1 class="headline">Nouvelle enchère sur votre véhicule</h1>
+
+  <p class="meta">
+    Annonce : <strong><%= @listing.title %></strong>
+  </p>
+
+  <p class="highlight">
+    <strong><%= number_to_currency(@bid.amount, unit: "€", format: "%n %u") %></strong>
+    par <%= @bidder.display_name %>
+  </p>
+
+  <p class="highlight">
+    Enchère actuelle : <strong><%= number_to_currency(@auction.current_price, unit: "€", format: "%n %u") %></strong>
+    &middot; <%= @auction.bids_count %> enchère<%= @auction.bids_count > 1 ? "s" : "" %>
+  </p>
+
+  <div class="cta-wrap">
+    <a href="<%= @auction_url %>" class="cta">Voir l'enchère</a>
+  </div>
+</div>
