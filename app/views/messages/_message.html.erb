@@ -1,8 +1,8 @@
-<div id="message_<%= message.id %>" class="mb-4 <%= message.sender_id == current_user_id ? 'text-right' : 'text-left' %>">
-  <div class="inline-block max-w-xs sm:max-w-md px-4 py-2 rounded-lg <%= message.sender_id == current_user_id ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800' %>">
-    <p><%= message.content %></p>
-    <p class="text-xs mt-1 <%= message.sender_id == current_user_id ? 'text-blue-100' : 'text-gray-500' %>">
+<div id="message_<%= message.id %>" class="flex <%= message.sender_id == current_user_id ? 'justify-end' : 'justify-start' %>">
+  <div class="max-w-[70%] px-4 py-3 <%= message.sender_id == current_user_id ? 'bg-accent-red/15 border border-accent-red/20' : 'bg-bg-tertiary border border-line' %>">
+    <p class="font-body text-sm text-text-primary"><%= message.content %></p>
+    <p class="font-mono text-[10px] text-text-muted mt-1.5 tracking-wider">
       <%= message.created_at.strftime("%H:%M") %>
     </p>
   </div>
-</div> 
+</div>

@@ -1,24 +1,42 @@
 <%= turbo_stream_from ["user", current_user.id, "messages"] %>
 
-<div class="container mx-auto max-w-screen-lg py-8">
-  <div class="flex items-center mb-6">
-    <div class="flex-1">
-      <h1 class="text-2xl font-bold">Conversation avec <%= @recipient.email %></h1>
+<div class="max-w-3xl mx-auto px-5 py-8 md:py-14">
+  <%# Header %>
+  <div class="flex items-center justify-between mb-6 pb-5 border-b border-line">
+    <div class="flex items-center gap-4">
+      <div class="w-10 h-10 rounded-full bg-accent-red/20 flex items-center justify-center shrink-0">
+        <span class="font-ui text-[11px] font-bold text-accent-red uppercase">
+          <%= @recipient.public_display_name&.first(2)&.upcase || "??" %>
+        </span>
+      </div>
+      <div>
+        <h1 class="font-display text-xl text-text-primary font-medium">
+          <%= @recipient.public_display_name || @recipient.email %>
+        </h1>
+        <div class="font-ui text-[11px] text-text-muted uppercase tracking-[0.14em]">
+          Conversation directe
+        </div>
+      </div>
     </div>
-    <div>
-      <%= link_to "Retour", messages_path, class: "px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 transition duration-150" %>
-    </div>
+    <%= link_to messages_path, class: "btn-vera-secondary text-[10px] px-4 py-2" do %>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square"><path d="m15 6-6 6 6 6"/></svg>
+      Retour
+    <% end %>
   </div>
-  
-  <div class="bg-white rounded-lg shadow-md mb-6 h-96 overflow-y-auto p-4" id="messages" data-controller="chat-scroll">
+
+  <%# Messages %>
+  <div class="border border-line bg-bg-secondary min-h-[400px] max-h-[500px] overflow-y-auto p-5 mb-5 space-y-3" id="messages" data-controller="chat-scroll">
     <%= render partial: "messages/messages", locals: { messages: @messages, current_user_id: current_user.id } %>
   </div>
-  
+
+  <%# Input %>
   <%= turbo_frame_tag "new_message" do %>
     <%= form_with model: @message, url: messages_path(user_id: @recipient.id), data: { controller: "reset-form", action: "turbo:submit-end->reset-form#reset" } do |f| %>
-      <div class="flex">
-        <%= f.text_field :content, placeholder: "Votre message...", class: "flex-1 border border-gray-300 rounded-l-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500", autofocus: true, required: true %>
-        <%= f.submit "Envoyer", class: "bg-blue-500 text-white px-4 py-2 rounded-r-lg hover:bg-blue-600 transition duration-150" %>
+      <div class="flex gap-3">
+        <%= f.text_field :content,
+          class: "flex-1 bg-bg-primary border border-line-strong text-text-primary px-4 py-3 font-body text-sm focus:border-accent-red focus:outline-none transition-[border-color] duration-300",
+          placeholder: "Votre message…", autofocus: true, required: true %>
+        <%= f.submit "Envoyer", class: "btn-vera-primary text-[11px] px-6 py-3 cursor-pointer" %>
       </div>
     <% end %>
   <% end %>

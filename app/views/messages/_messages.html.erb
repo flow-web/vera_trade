@@ -1,16 +1,11 @@
-<div id="message-list">
+<div id="message-list" class="space-y-3">
   <% if messages.any? %>
     <% messages.each do |message| %>
-      <div class="mb-4 <%= message.sender_id == current_user.id ? 'text-right' : 'text-left' %>">
-        <div class="inline-block max-w-xs sm:max-w-md px-4 py-2 rounded-lg <%= message.sender_id == current_user.id ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800' %>">
-          <p><%= message.content %></p>
-          <p class="text-xs mt-1 <%= message.sender_id == current_user.id ? 'text-blue-100' : 'text-gray-500' %>">
-            <%= message.created_at.strftime("%H:%M") %>
-          </p>
-        </div>
-      </div>
+      <%= render partial: "messages/message", locals: { message: message, current_user_id: current_user.id } %>
     <% end %>
   <% else %>
-    <p class="text-center text-gray-500">Aucun message. Commencez la conversation!</p>
+    <p class="text-center font-body text-sm text-text-muted italic py-12">
+      Aucun message. Commencez la conversation.
+    </p>
   <% end %>
-</div> 
+</div>

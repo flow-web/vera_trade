@@ -1,62 +1,101 @@
-<div class="container mt-5">
-  <h1>Mes annonces</h1>
-  
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <p><%= pluralize(@listings.count, "annonce") %> trouvée(s)</p>
-    <%= link_to "Publier une nouvelle annonce", new_listing_path, class: "btn btn-primary" %>
+<div class="max-w-[1440px] mx-auto px-5 md:px-10 py-12 md:py-20">
+  <%# Header %>
+  <div class="mb-12 border-b border-line pb-8">
+    <div class="font-ui text-[11px] font-semibold uppercase tracking-[0.22em] text-accent-red mb-4">
+      Espace vendeur
+    </div>
+    <div class="flex items-end justify-between flex-wrap gap-6">
+      <div>
+        <h1 class="font-display playfair-italic text-4xl md:text-6xl text-text-primary leading-[0.96] tracking-[-0.015em]">
+          Mes annonces
+        </h1>
+        <p class="font-body italic text-text-secondary mt-3">
+          <%= pluralize(@listings.count, "annonce publiée", "annonces publiées") %>
+        </p>
+      </div>
+      <%= link_to new_listing_path, class: "btn-vera-primary text-[11px] px-5 py-2.5" do %>
+        Publier une annonce
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+      <% end %>
+    </div>
   </div>
-  
+
   <% if @listings.any? %>
-    <div class="table-responsive">
-      <table class="table table-striped align-middle">
-        <thead>
-          <tr>
-            <th>Photo</th>
-            <th>Titre</th>
-            <th>Véhicule</th>
-            <th>Prix</th>
-            <th>Statut</th>
-            <th>Date de création</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% @listings.each do |listing| %>
-            <tr>
-              <td style="width: 80px;">
-                <% if listing.photos.attached? %>
-                  <%= image_tag photo_url(listing.photos.first, width: 200), class: "img-thumbnail", style: "width: 70px; height: 50px; object-fit: cover;", width: 70, height: 50 %>
-                <% else %>
-                  <div class="bg-light d-flex justify-content-center align-items-center" style="width: 70px; height: 50px;">
-                    <i class="bi bi-camera text-muted" style="font-size: 1.2rem;"></i>
-                  </div>
-                <% end %>
-              </td>
-              <td><%= listing.title %></td>
-              <td><%= "#{listing.vehicle.make} #{listing.vehicle.model} (#{listing.vehicle.year})" %></td>
-              <td><%= number_to_currency(listing.vehicle.price, unit: "€", precision: 0) %></td>
-              <td>
-                <span class="badge <%= listing.status == 'active' ? 'bg-success' : (listing.status == 'pending' ? 'bg-warning' : 'bg-secondary') %>">
-                  <%= listing.status.humanize %>
-                </span>
-              </td>
-              <td><%= listing.created_at.strftime("%d/%m/%Y") %></td>
-              <td>
-                <div class="btn-group btn-group-sm" role="group">
-                  <%= link_to "Voir", listing_path(listing), class: "btn btn-outline-primary" %>
-                  <%= link_to "Modifier", edit_listing_path(listing), class: "btn btn-outline-secondary" %>
-                  <%= button_to "Supprimer", listing_path(listing), method: :delete, form: { data: { turbo_confirm: "Êtes-vous sûr de vouloir supprimer cette annonce?" } }, class: "btn btn-outline-danger" %>
-                </div>
-              </td>
-            </tr>
-          <% end %>
-        </tbody>
-      </table>
+    <div class="border border-line bg-bg-secondary">
+      <%# Table header %>
+      <div class="hidden md:grid grid-cols-[80px_1fr_140px_100px_100px_160px] gap-4 px-6 py-3 border-b border-line">
+        <% ["", "Véhicule", "Prix", "Statut", "Date", "Actions"].each do |col| %>
+          <div class="font-ui text-[10px] font-semibold uppercase tracking-[0.18em] text-text-muted"><%= col %></div>
+        <% end %>
+      </div>
+
+      <%# Rows %>
+      <% @listings.each do |listing| %>
+        <div class="grid grid-cols-1 md:grid-cols-[80px_1fr_140px_100px_100px_160px] gap-2 md:gap-4 items-center px-6 py-4 border-b border-line hover:bg-bg-tertiary transition-colors duration-150">
+          <%# Thumbnail %>
+          <div>
+            <% if listing.photos.attached? %>
+              <%= image_tag photo_url(listing.photos.first, width: 200), class: "w-[70px] h-[50px] object-cover border border-line", width: 70, height: 50, loading: "lazy" %>
+            <% else %>
+              <div class="w-[70px] h-[50px] bg-bg-tertiary border border-line flex items-center justify-center">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" class="text-text-faint"><rect x="3" y="7" width="18" height="12"/><circle cx="12" cy="13" r="3.5"/><path d="M8 7l1.5-2h5L16 7"/></svg>
+              </div>
+            <% end %>
+          </div>
+
+          <%# Title + details %>
+          <div>
+            <div class="font-display text-sm text-text-primary font-medium"><%= listing.title %></div>
+            <div class="font-ui text-[11px] text-text-muted mt-0.5">
+              <%= "#{listing.vehicle.make} #{listing.vehicle.model}" if listing.vehicle %>
+            </div>
+          </div>
+
+          <%# Price %>
+          <div class="font-mono text-sm text-text-primary">
+            <%= number_to_currency(listing.vehicle&.price, unit: "€", format: "%n %u", delimiter: " ", precision: 0) %>
+          </div>
+
+          <%# Status %>
+          <div>
+            <% status_classes = case listing.status
+              when "active"  then "text-patina border-patina/30"
+              when "pending" then "text-amber border-amber/30"
+              when "sold"    then "text-accent-red border-accent-red/30"
+              else "text-text-muted border-line-strong"
+            end %>
+            <span class="inline-flex font-ui text-[10px] font-semibold uppercase tracking-[0.14em] px-2 py-1 border <%= status_classes %>">
+              <%= listing.status&.humanize %>
+            </span>
+          </div>
+
+          <%# Date %>
+          <div class="font-mono text-xs text-text-muted tracking-wider">
+            <%= listing.created_at.strftime("%d/%m/%Y") %>
+          </div>
+
+          <%# Actions %>
+          <div class="flex items-center gap-2">
+            <%= link_to listing_path(listing), class: "btn-vera-secondary text-[10px] px-3 py-1.5" do %>Voir<% end %>
+            <%= link_to edit_listing_path(listing), class: "btn-vera-secondary text-[10px] px-3 py-1.5" do %>Modifier<% end %>
+            <%= button_to "Supprimer", listing_path(listing), method: :delete, form: { data: { turbo_confirm: "Êtes-vous sûr de vouloir supprimer cette annonce ?" } }, class: "font-ui text-[10px] font-semibold uppercase tracking-[0.14em] text-accent-red hover:text-rosso-bright transition-colors cursor-pointer bg-transparent border-0 p-0" %>
+          </div>
+        </div>
+      <% end %>
     </div>
   <% else %>
-    <div class="alert alert-info">
-      Vous n'avez pas encore publié d'annonces.
-      <%= link_to "Publiez votre première annonce", new_listing_path, class: "alert-link" %>.
+    <div class="text-center py-24 max-w-md mx-auto">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="square" class="mx-auto mb-6 text-text-faint">
+        <rect x="3" y="7" width="18" height="12"/><circle cx="12" cy="13" r="3.5"/><path d="M8 7l1.5-2h5L16 7"/>
+      </svg>
+      <h2 class="font-display playfair-italic text-2xl text-text-primary mb-3">Aucune annonce</h2>
+      <p class="font-body text-sm text-text-secondary mb-8 leading-relaxed">
+        Vous n'avez pas encore publié d'annonces. Commencez par créer votre première annonce.
+      </p>
+      <%= link_to new_listing_path, class: "btn-vera-primary text-[11px] px-6 py-3" do %>
+        Publier votre première annonce
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square"><path d="M5 12h14"/><path d="m13 5 7 7-7 7"/></svg>
+      <% end %>
     </div>
   <% end %>
-</div> 
+</div>

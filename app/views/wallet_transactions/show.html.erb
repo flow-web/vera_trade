@@ -1,2 +1,40 @@
-<h1>WalletTransactions#show</h1>
-<p>Find me in app/views/wallet_transactions/show.html.erb</p>
+<div class="max-w-xl mx-auto px-5 py-12 md:py-20">
+  <div class="mb-6">
+    <%= link_to wallet_transactions_path, class: "inline-flex items-center gap-2 font-ui text-xs text-text-muted hover:text-text-primary transition-colors uppercase tracking-[0.14em]" do %>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square"><path d="m15 6-6 6 6 6"/></svg>
+      Retour aux transactions
+    <% end %>
+  </div>
+
+  <div class="border border-line-strong bg-bg-secondary">
+    <div class="px-6 py-5 border-b border-line flex items-center justify-between">
+      <div class="font-ui text-[11px] font-semibold uppercase tracking-[0.22em] text-accent-red">
+        Transaction
+      </div>
+      <div class="font-mono text-[11px] text-text-muted tracking-[0.14em]">
+        #<%= @transaction.id %>
+      </div>
+    </div>
+
+    <div class="px-6 py-6 space-y-5">
+      <div class="text-center py-4">
+        <div class="font-mono text-4xl font-medium tracking-[-0.01em] <%= @transaction.amount.positive? ? 'text-patina' : 'text-accent-red' %>">
+          <%= @transaction.amount.positive? ? '+' : '' %><%= number_to_currency(@transaction.amount, unit: "€", format: "%n %u", delimiter: " ", precision: 2) %>
+        </div>
+      </div>
+
+      <div class="border-t border-line pt-5 space-y-4">
+        <% [
+          ["Date", l(@transaction.created_at, format: :long)],
+          ["Type", @transaction.transaction_type],
+          ["Description", @transaction.description],
+        ].each do |label, value| %>
+          <div class="flex justify-between items-baseline gap-4">
+            <span class="font-ui text-[11px] font-semibold uppercase tracking-[0.14em] text-text-muted"><%= label %></span>
+            <span class="font-body text-sm text-text-primary text-right"><%= value %></span>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

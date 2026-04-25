@@ -60,7 +60,7 @@
             ], params[:segment]),
             {},
             class: "bg-transparent border-0 font-ui text-[11px] uppercase tracking-[0.15em] text-text-primary focus:outline-none appearance-none pr-6 cursor-pointer",
-            style: "background-image: url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238A857A' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E\"); background-repeat: no-repeat; background-position: right center;" %>
+            style: "background-image: url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23A89E94' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E\"); background-repeat: no-repeat; background-position: right center;" %>
     </label>
 
     <% makes = Vehicle.distinct.pluck(:make).compact.sort %>
@@ -71,7 +71,7 @@
               options_for_select([ [ "Toutes", "" ] ] + makes.map { |m| [ m, m ] }, params[:make]),
               {},
               class: "bg-transparent border-0 font-ui text-[11px] uppercase tracking-[0.15em] text-text-primary focus:outline-none appearance-none pr-6 cursor-pointer",
-              style: "background-image: url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238A857A' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E\"); background-repeat: no-repeat; background-position: right center;" %>
+              style: "background-image: url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23A89E94' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E\"); background-repeat: no-repeat; background-position: right center;" %>
       </label>
     <% end %>
 
@@ -83,7 +83,7 @@
               options_for_select([["Tous", ""]] + fuels.map { |x| [x, x] }, params[:fuel_type]),
               {},
               class: "bg-transparent border-0 font-ui text-[11px] uppercase tracking-[0.15em] text-text-primary focus:outline-none appearance-none pr-6 cursor-pointer",
-              style: "background-image: url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238A857A' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E\"); background-repeat: no-repeat; background-position: right center;" %>
+              style: "background-image: url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23A89E94' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E\"); background-repeat: no-repeat; background-position: right center;" %>
       </label>
     <% end %>
 
@@ -95,7 +95,7 @@
               options_for_select([["Toutes", ""]] + transmissions.map { |x| [x, x] }, params[:transmission]),
               {},
               class: "bg-transparent border-0 font-ui text-[11px] uppercase tracking-[0.15em] text-text-primary focus:outline-none appearance-none pr-6 cursor-pointer",
-              style: "background-image: url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238A857A' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E\"); background-repeat: no-repeat; background-position: right center;" %>
+              style: "background-image: url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23A89E94' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E\"); background-repeat: no-repeat; background-position: right center;" %>
       </label>
     <% end %>
 
@@ -113,7 +113,7 @@
             ], params[:sort]),
             {},
             class: "bg-transparent border-0 font-ui text-[11px] uppercase tracking-[0.15em] text-text-primary focus:outline-none appearance-none pr-6 cursor-pointer",
-            style: "background-image: url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238A857A' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E\"); background-repeat: no-repeat; background-position: right center;",
+            style: "background-image: url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23A89E94' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E\"); background-repeat: no-repeat; background-position: right center;",
             onchange: "this.form.submit()" %>
     </label>
 

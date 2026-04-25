@@ -19,10 +19,16 @@
   --color-bg-secondary: #141414;
   --color-bg-tertiary:  #1C1C1C;
 
-  /* -- Texte -------------------------------------------------------------- */
+  /* -- Texte (WCAG AA corrected — audit 2026-04) -------------------------- */
   --color-text-primary:   #F5F1E8;
-  --color-text-secondary: #C9C4B8;
-  --color-text-muted:     #8A857A;
+  --color-text-secondary: #D9CFBF;
+  --color-text-muted:     #A89E94;
+  --color-text-faint:     #6B6560;
+
+  /* -- Signals ------------------------------------------------------------ */
+  --color-patina:         #6B8E7F;
+  --color-amber:          #C89B3C;
+  --color-rosso-bright:   #E8344F;
 
   /* -- Accents ------------------------------------------------------------ */
   --color-accent-red:      #C41E3A;

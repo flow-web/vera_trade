@@ -1,129 +1,102 @@
-<!-- Hero Section -->
-<div class="relative bg-gradient-to-r from-primary to-primary-focus text-primary-content py-16 mb-12">
-  <div class="absolute inset-0 bg-[url('/images/car-pattern.svg')] opacity-10"></div>
-  <div class="container mx-auto px-4 relative">
-    <h1 class="text-4xl md:text-5xl font-bold mb-4">Nos Services</h1>
-    <p class="text-lg opacity-90">Des solutions complètes pour votre véhicule</p>
+<div class="max-w-[1440px] mx-auto px-5 md:px-10 py-16 md:py-24">
+  <%# Header — editorial %>
+  <div class="mb-16 md:mb-24 max-w-3xl">
+    <div class="font-ui text-[11px] font-semibold uppercase tracking-[0.22em] text-accent-red mb-5">
+      Services
+    </div>
+    <h1 class="font-display playfair-italic text-5xl md:text-7xl text-text-primary leading-[0.96] tracking-[-0.015em] mb-5">
+      Nos engagements
+    </h1>
+    <p class="font-body italic text-lg text-text-secondary leading-relaxed max-w-xl">
+      Des solutions complètes pour sécuriser, financer et entretenir votre véhicule de collection.
+    </p>
+  </div>
+
+  <%# Services grid %>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-px bg-line">
+    <%# Service 1 — Inspection %>
+    <div class="bg-bg-primary p-8 md:p-10">
+      <div class="w-12 h-12 flex items-center justify-center border border-accent-red mb-8">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" class="text-accent-red">
+          <path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"/>
+        </svg>
+      </div>
+      <div class="font-ui text-[11px] font-semibold uppercase tracking-[0.22em] text-accent-red mb-3">01</div>
+      <h2 class="font-display playfair-italic text-2xl text-text-primary mb-4">Inspection complète</h2>
+      <p class="font-body text-sm text-text-secondary leading-relaxed mb-6">
+        Un examen approfondi de 148 points pour garantir la qualité et l'authenticité de votre véhicule.
+      </p>
+      <ul class="space-y-3">
+        <% ["Vérification mécanique", "Diagnostic électronique", "Rapport détaillé PDF"].each do |item| %>
+          <li class="flex items-center gap-3 font-ui text-xs text-text-secondary">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" class="text-patina shrink-0"><path d="m5 12 5 5 10-10"/></svg>
+            <%= item %>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+
+    <%# Service 2 — Financement %>
+    <div class="bg-bg-primary p-8 md:p-10">
+      <div class="w-12 h-12 flex items-center justify-center border border-accent-red mb-8">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" class="text-accent-red">
+          <circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>
+        </svg>
+      </div>
+      <div class="font-ui text-[11px] font-semibold uppercase tracking-[0.22em] text-accent-red mb-3">02</div>
+      <h2 class="font-display playfair-italic text-2xl text-text-primary mb-4">Paiement sécurisé</h2>
+      <p class="font-body text-sm text-text-secondary leading-relaxed mb-6">
+        Des solutions de paiement séquestre adaptées aux transactions de véhicules de collection.
+      </p>
+      <ul class="space-y-3">
+        <% ["Escrow sécurisé Stripe", "Paiement en plusieurs fois", "Simulation gratuite"].each do |item| %>
+          <li class="flex items-center gap-3 font-ui text-xs text-text-secondary">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" class="text-patina shrink-0"><path d="m5 12 5 5 10-10"/></svg>
+            <%= item %>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+
+    <%# Service 3 — Logistique %>
+    <div class="bg-bg-primary p-8 md:p-10">
+      <div class="w-12 h-12 flex items-center justify-center border border-accent-red mb-8">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" class="text-accent-red">
+          <path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v16M15 6v16"/>
+        </svg>
+      </div>
+      <div class="font-ui text-[11px] font-semibold uppercase tracking-[0.22em] text-accent-red mb-3">03</div>
+      <h2 class="font-display playfair-italic text-2xl text-text-primary mb-4">Logistique</h2>
+      <p class="font-body text-sm text-text-secondary leading-relaxed mb-6">
+        Transport sur plateau et livraison porte-à-porte dans toute l'Europe.
+      </p>
+      <ul class="space-y-3">
+        <% ["Transport sur plateau fermé", "Assurance tous risques", "Suivi en temps réel"].each do |item| %>
+          <li class="flex items-center gap-3 font-ui text-xs text-text-secondary">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" class="text-patina shrink-0"><path d="m5 12 5 5 10-10"/></svg>
+            <%= item %>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+
+  <%# CTA %>
+  <div class="mt-20 border border-line bg-bg-secondary p-10 md:p-16 text-center">
+    <div class="font-ui text-[11px] font-semibold uppercase tracking-[0.22em] text-accent-red mb-4">
+      Accompagnement
+    </div>
+    <h2 class="font-display playfair-italic text-3xl md:text-4xl text-text-primary mb-4">
+      Besoin de conseils ?
+    </h2>
+    <p class="font-body text-text-secondary max-w-md mx-auto mb-8">
+      Notre équipe d'experts est à votre disposition pour vous accompagner dans chaque étape de votre projet.
+    </p>
+    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+      <a href="mailto:contact@veratrade.fr" class="btn-vera-primary text-[11px] px-6 py-3">
+        Nous contacter
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square"><path d="M5 12h14"/><path d="m13 5 7 7-7 7"/></svg>
+      </a>
+    </div>
   </div>
 </div>
-
-<!-- Main Content -->
-<div class="container mx-auto px-4 pb-16">
-  <!-- Services Grid -->
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-    <!-- Service 1 -->
-    <div class="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow duration-300">
-      <figure class="px-6 pt-6">
-        <div class="w-16 h-16 bg-primary text-primary-content rounded-full flex items-center justify-center">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-          </svg>
-        </div>
-      </figure>
-      <div class="card-body">
-        <h2 class="card-title">Inspection Complète</h2>
-        <p>Un examen approfondi de 150 points pour garantir la qualité et la sécurité de votre véhicule.</p>
-        <ul class="mt-4 space-y-2">
-          <li class="flex items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-            </svg>
-            Vérification mécanique
-          </li>
-          <li class="flex items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-            </svg>
-            Diagnostic électronique
-          </li>
-          <li class="flex items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-            </svg>
-            Rapport détaillé
-          </li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- Service 2 -->
-    <div class="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow duration-300">
-      <figure class="px-6 pt-6">
-        <div class="w-16 h-16 bg-primary text-primary-content rounded-full flex items-center justify-center">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-        </div>
-      </figure>
-      <div class="card-body">
-        <h2 class="card-title">Financement</h2>
-        <p>Des solutions de financement flexibles adaptées à vos besoins et à votre budget.</p>
-        <ul class="mt-4 space-y-2">
-          <li class="flex items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-            </svg>
-            Prêt auto personnalisé
-          </li>
-          <li class="flex items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-            </svg>
-            Location longue durée
-          </li>
-          <li class="flex items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-            </svg>
-            Simulation gratuite
-          </li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- Service 3 -->
-    <div class="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow duration-300">
-      <figure class="px-6 pt-6">
-        <div class="w-16 h-16 bg-primary text-primary-content rounded-full flex items-center justify-center">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-          </svg>
-        </div>
-      </figure>
-      <div class="card-body">
-        <h2 class="card-title">Entretien</h2>
-        <p>Un service d'entretien professionnel pour maintenir votre véhicule en parfait état.</p>
-        <ul class="mt-4 space-y-2">
-          <li class="flex items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-            </svg>
-            Révision complète
-          </li>
-          <li class="flex items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-            </svg>
-            Réparation mécanique
-          </li>
-          <li class="flex items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-            </svg>
-            Service express
-          </li>
-        </ul>
-      </div>
-    </div>
-  </div>
-
-  <!-- Call to Action -->
-  <div class="mt-16 bg-base-200 rounded-lg p-8 text-center">
-    <h2 class="text-3xl font-bold mb-4">Besoin d'aide pour choisir un service ?</h2>
-    <p class="text-lg mb-6">Notre équipe est là pour vous guider et répondre à toutes vos questions.</p>
-    <div class="flex flex-col sm:flex-row gap-4 justify-center">
-      <button class="btn btn-primary">Prendre rendez-vous</button>
-      <button class="btn btn-outline">Nous contacter</button>
-    </div>
-  </div>
-</div> 

@@ -1,48 +1,66 @@
-<div class="container mx-auto px-4 py-8">
-  <div class="flex items-center justify-between mb-8">
-    <h1 class="text-3xl font-bold">Historique des transactions</h1>
-    <div class="text-right">
-      <p class="text-sm opacity-80">Solde actuel</p>
-      <p class="text-2xl font-bold"><%= number_to_currency(current_user.wallet.balance) %></p>
+<div class="max-w-[1440px] mx-auto px-5 md:px-10 py-12 md:py-20">
+  <%# Header %>
+  <div class="mb-12 border-b border-line pb-8">
+    <div class="font-ui text-[11px] font-semibold uppercase tracking-[0.22em] text-accent-red mb-4">
+      Portefeuille
     </div>
-  </div>
-
-  <div class="card bg-base-100 shadow-xl">
-    <div class="card-body">
-      <div class="overflow-x-auto">
-        <table class="table w-full">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Type</th>
-              <th>Description</th>
-              <th class="text-right">Montant</th>
-            </tr>
-          </thead>
-          <tbody>
-            <% @transactions.each do |transaction| %>
-              <div class="hover:bg-base-200">
-                <tr class="cursor-pointer" data-controller="turbo-frame" data-action="click->turbo-frame#visit" data-turbo-frame-target="<%= wallet_transaction_path(transaction) %>">
-                  <td><%= l transaction.created_at, format: :short %></td>
-                  <td>
-                    <span class="badge <%= transaction_type_badge_class(transaction) %>">
-                      <%= transaction.transaction_type %>
-                    </span>
-                  </td>
-                  <td><%= transaction.description %></td>
-                  <td class="text-right font-medium <%= transaction.amount.positive? ? 'text-success' : 'text-error' %>">
-                    <%= transaction.amount.positive? ? '+' : '' %><%= number_to_currency(transaction.amount) %>
-                  </td>
-                </tr>
-              </div>
-            <% end %>
-          </tbody>
-        </table>
+    <div class="flex items-end justify-between flex-wrap gap-6">
+      <div>
+        <h1 class="font-display playfair-italic text-4xl md:text-6xl text-text-primary leading-[0.96] tracking-[-0.015em]">
+          Historique des transactions
+        </h1>
       </div>
-
-      <div class="mt-4">
-        <%= paginate @transactions %>
+      <div class="text-right">
+        <div class="font-ui text-[11px] font-semibold uppercase tracking-[0.14em] text-text-muted mb-1">
+          Solde actuel
+        </div>
+        <div class="font-mono text-3xl text-text-primary font-medium tracking-[-0.01em]">
+          <%= number_to_currency(current_user.wallet.balance, unit: "€", format: "%n %u", delimiter: " ", precision: 2) %>
+        </div>
       </div>
     </div>
   </div>
+
+  <%# Table %>
+  <div class="border border-line bg-bg-secondary">
+    <%# Table header %>
+    <div class="hidden md:grid grid-cols-[120px_120px_1fr_140px] gap-4 px-6 py-3 border-b border-line">
+      <div class="font-ui text-[10px] font-semibold uppercase tracking-[0.18em] text-text-muted">Date</div>
+      <div class="font-ui text-[10px] font-semibold uppercase tracking-[0.18em] text-text-muted">Type</div>
+      <div class="font-ui text-[10px] font-semibold uppercase tracking-[0.18em] text-text-muted">Description</div>
+      <div class="font-ui text-[10px] font-semibold uppercase tracking-[0.18em] text-text-muted text-right">Montant</div>
+    </div>
+
+    <%# Rows %>
+    <% @transactions.each do |transaction| %>
+      <%= link_to wallet_transaction_path(transaction), class: "grid grid-cols-1 md:grid-cols-[120px_120px_1fr_140px] gap-2 md:gap-4 px-6 py-4 border-b border-line hover:bg-bg-tertiary transition-colors duration-150 no-underline" do %>
+        <div class="font-mono text-xs text-text-muted tracking-wider">
+          <%= l transaction.created_at, format: :short %>
+        </div>
+        <div>
+          <span class="inline-flex items-center font-ui text-[10px] font-semibold uppercase tracking-[0.14em] px-2 py-1 border <%= transaction_type_badge_class(transaction) %>">
+            <%= transaction.transaction_type %>
+          </span>
+        </div>
+        <div class="font-body text-sm text-text-secondary">
+          <%= transaction.description %>
+        </div>
+        <div class="font-mono text-sm font-medium text-right tracking-wider <%= transaction.amount.positive? ? 'text-patina' : 'text-accent-red' %>">
+          <%= transaction.amount.positive? ? '+' : '' %><%= number_to_currency(transaction.amount, unit: "€", format: "%n %u", delimiter: " ", precision: 2) %>
+        </div>
+      <% end %>
+    <% end %>
+
+    <% if @transactions.empty? %>
+      <div class="px-6 py-16 text-center">
+        <p class="font-body text-sm text-text-muted italic">Aucune transaction enregistrée.</p>
+      </div>
+    <% end %>
+  </div>
+
+  <% if @transactions.respond_to?(:total_pages) && @transactions.total_pages > 1 %>
+    <div class="mt-8 flex justify-center">
+      <%= paginate @transactions %>
+    </div>
+  <% end %>
 </div>
