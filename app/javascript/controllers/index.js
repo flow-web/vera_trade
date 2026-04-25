@@ -42,3 +42,6 @@ application.register("auction", AuctionController)
 
 import MobileMenuController from "./mobile_menu_controller"
 application.register("mobile-menu", MobileMenuController)
+
+import DropdownController from "./dropdown_controller"
+application.register("dropdown", DropdownController)

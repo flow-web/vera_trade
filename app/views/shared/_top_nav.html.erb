@@ -51,14 +51,11 @@
 
         <!-- Avatar + menu -->
         <% unread_messages_count = current_user.received_messages.unread.count %>
-        <div class="relative group">
-          <button type="button" class="relative flex items-center justify-center w-9 h-9 border border-line hover:border-line-strong transition-colors" aria-label="Compte<%= unread_messages_count > 0 ? " · #{unread_messages_count} message(s) non lu(s)" : "" %>">
+        <div class="relative" data-controller="dropdown">
+          <button type="button" data-action="click->dropdown#toggle" class="relative flex items-center justify-center w-9 h-9 border border-line hover:border-line-strong transition-colors" aria-label="Compte<%= unread_messages_count > 0 ? " · #{unread_messages_count} message(s) non lu(s)" : "" %>" aria-haspopup="menu" aria-expanded="false">
             <span class="font-ui text-xs font-bold text-text-primary">
               <%= (current_user.respond_to?(:first_name) && current_user.first_name&.first&.upcase) || current_user.email.first.upcase %>
             </span>
-            <%# PR3 — Unread messages badge. Visible au premier coup d'œil,
-                Rosso Corsa, pas en nice-to-have : une offre non-vue est
-                une transaction morte. %>
             <% if unread_messages_count > 0 %>
               <span class="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1 bg-accent-red border border-bg-primary font-ui text-[9px] font-bold text-text-primary flex items-center justify-center leading-none"
                     data-testid="nav-unread-badge"
@@ -67,7 +64,7 @@
               </span>
             <% end %>
           </button>
-          <div class="absolute right-0 top-full mt-2 w-56 bg-bg-secondary border border-line opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity duration-200 z-[110]">
+          <div data-dropdown-target="menu" class="hidden absolute right-0 top-full mt-2 w-56 bg-bg-secondary border border-line z-[110]" role="menu">
             <div class="px-5 py-4 border-b border-line">
               <p class="label-micro mb-1">Connecté</p>
               <p class="font-ui text-xs text-text-primary truncate"><%= current_user.email %></p>
