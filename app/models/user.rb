@@ -23,6 +23,8 @@ class User < ApplicationRecord
   has_many :search_presets, dependent: :destroy
   has_many :kyc_documents, dependent: :destroy
 
+  validates :phone, uniqueness: { message: "est déjà utilisé par un autre compte" }, allow_blank: true
+
   # Virtual attribute — CGU acceptance on sign-up (not persisted)
   attribute :terms_accepted, :boolean
   validates :terms_accepted, acceptance: { accept: true, message: "Vous devez accepter les CGU" }, on: :create
