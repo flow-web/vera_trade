@@ -1,0 +1,5 @@
+one:
+  user: two
+  listing: one
+  created_at: <%= Time.current %>
+  updated_at: <%= Time.current %>

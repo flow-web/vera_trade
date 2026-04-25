@@ -1,0 +1,19 @@
+deposit_one:
+  wallet: one
+  amount_cents: 500000
+  transaction_type: 0
+  status: 1
+  reference: "DEP-001"
+  notes: "Dépôt de fonds"
+  created_at: <%= Time.current %>
+  updated_at: <%= Time.current %>
+
+purchase_one:
+  wallet: two
+  amount_cents: -180000
+  transaction_type: 2
+  status: 1
+  reference: "PUR-001"
+  notes: "Achat"
+  created_at: <%= Time.current %>
+  updated_at: <%= Time.current %>
