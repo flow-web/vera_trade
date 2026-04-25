@@ -2,12 +2,12 @@ Rails.application.configure do
   config.content_security_policy do |policy|
     policy.default_src :self
     policy.font_src    :self, :data, "https://fonts.gstatic.com"
-    policy.img_src     :self, :data, "https://res.cloudinary.com"
+    policy.img_src     :self, :data, "https://*.cloudinary.com"
     policy.object_src  :none
-    policy.script_src  :self
+    policy.script_src  :self, "https://challenges.cloudflare.com"
     policy.style_src   :self, :unsafe_inline, "https://fonts.googleapis.com"
     policy.connect_src :self, "wss://veratrade.fr"
-    policy.frame_src   :none
+    policy.frame_src   "https://challenges.cloudflare.com"
     policy.base_uri    :self
   end
 
