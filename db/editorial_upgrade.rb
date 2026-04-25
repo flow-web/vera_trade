@@ -274,7 +274,7 @@ EDITORIAL.each_with_index do |ed, idx|
         q.user = bidder
         q.published = true
       end
-      unless question.listing_answers.any?
+      unless question.answer
         ListingAnswer.create!(
           listing_question: question,
           user: listing.user,
