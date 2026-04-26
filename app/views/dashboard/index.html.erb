@@ -19,9 +19,10 @@
   <div class="max-w-[1600px] mx-auto px-5 lg:px-10 pt-16 lg:pt-24 pb-12 lg:pb-20">
     <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-10">
       <div class="flex-1">
+        <span class="font-mono text-[11px] text-text-faint tracking-[0.1em] block mb-3">— Votre espace</span>
         <div class="eyebrow mb-4">Votre Garage · <%= l(Date.current, format: "%e %B %Y") rescue Date.current.strftime("%d/%m/%Y") %></div>
-        <h1 class="playfair-italic text-6xl md:text-7xl lg:text-[96px] text-text-primary leading-[0.9] tracking-[-0.02em]">
-          <%= greeting %>, <%= display %>.
+        <h1 class="playfair-italic text-5xl md:text-6xl lg:text-[80px] text-text-primary leading-[0.92] tracking-[-0.02em]">
+          <%= greeting %>, <span class="italic"><%= display %></span>.
         </h1>
       </div>
 
