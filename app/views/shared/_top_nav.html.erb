@@ -1,35 +1,56 @@
 <%#
-  Top navigation — Organic Brutalism, fond solide #0A0A0A, pas de backdrop-blur.
-  Border-bottom 1px, h-[72px] desktop / h-[64px] mobile. Menu français strict.
+  Top navigation — Cinematic Archivist v2 (racing green).
+  Wordmark éditorial italic + tagline mono + nav éditoriale 5 sections.
+  Desktop h-[80px], mobile h-[64px].
 %>
 <header class="fixed top-0 left-0 right-0 z-[100] h-[64px] lg:h-[80px] bg-bg-primary border-b border-line" data-controller="mobile-menu">
-  <nav class="h-full max-w-[1600px] mx-auto px-4 sm:px-5 lg:px-10 flex items-center justify-between" aria-label="Navigation principale">
+  <nav class="h-full max-w-[1680px] mx-auto px-4 sm:px-5 lg:px-10 grid grid-cols-[auto_1fr_auto] items-center gap-6 lg:gap-10" aria-label="Navigation principale">
 
-    <!-- Wordmark -->
-    <%= link_to root_path, class: "flex items-center gap-3 group", aria: { label: "Vera Trade — Accueil" } do %>
-      <span class="font-ui text-[15px] lg:text-[16px] font-black tracking-[0.18em] uppercase text-text-primary group-hover:text-accent-red transition-colors duration-300">
-        Vera Trade
+    <%# ─────────── Wordmark éditorial ─────────── %>
+    <%= link_to root_path, class: "flex items-baseline gap-2.5 group", aria: { label: "Vera Trade — Accueil" } do %>
+      <span class="playfair-italic text-[1.4rem] lg:text-[1.55rem] font-semibold tracking-[-0.02em] text-text-primary leading-none">
+        Vera<span class="text-racing-bright">&amp;</span>Trade
       </span>
+      <span class="hidden sm:inline font-mono text-[9px] tracking-[0.2em] uppercase text-text-faint">Est. 2026 · Fr</span>
     <% end %>
 
-    <!-- Menu desktop -->
-    <ul class="hidden lg:flex items-center gap-10" role="menubar">
-      <% nav_items = [
-        { label: "Catalogue",  path: listings_path, current: request.path.start_with?("/listings") && !request.path.include?("/new") }
-      ] %>
-      <% nav_items.each do |item| %>
-        <li role="none">
-          <%= link_to item[:path], class: "font-ui text-[10px] font-medium uppercase tracking-[0.2em] transition-colors duration-300 #{item[:current] ? 'text-accent-red border-b border-accent-red pb-1' : 'text-text-secondary hover:text-text-primary'}", role: "menuitem", aria: { current: item[:current] ? "page" : nil } do %>
-            <%= item[:label] %>
-          <% end %>
-        </li>
-      <% end %>
+    <%# ─────────── Menu desktop éditorial (centré) ─────────── %>
+    <ul class="hidden lg:flex items-center justify-center gap-8" role="menubar">
+      <% catalogue_active = request.path.start_with?("/listings") && !request.path.include?("/new") %>
+      <li role="none">
+        <%= link_to listings_path,
+              class: "font-ui text-[11px] font-medium uppercase tracking-[0.2em] transition-colors duration-300 #{catalogue_active ? 'text-racing-bright border-b border-racing-bright pb-1' : 'text-text-secondary hover:text-text-primary'}",
+              role: "menuitem",
+              aria: { current: catalogue_active ? "page" : nil } do %>
+          Catalogue
+        <% end %>
+      </li>
+      <li role="none">
+        <span class="font-ui text-[11px] font-medium uppercase tracking-[0.2em] text-text-faint cursor-not-allowed" title="Bientôt — format BaT 7 jours">
+          Enchères
+        </span>
+      </li>
+      <li role="none">
+        <span class="font-ui text-[11px] font-medium uppercase tracking-[0.2em] text-text-faint cursor-not-allowed" title="Bientôt — échange véhicule + soulte">
+          Échange
+        </span>
+      </li>
+      <li role="none">
+        <span class="font-ui text-[11px] font-medium uppercase tracking-[0.2em] text-text-faint cursor-not-allowed" title="Bientôt — guides éditoriaux">
+          Magazine
+        </span>
+      </li>
+      <li role="none">
+        <span class="font-ui text-[11px] font-medium uppercase tracking-[0.2em] text-text-faint cursor-not-allowed" title="Bientôt — réseau d'experts agréés">
+          Inspections
+        </span>
+      </li>
     </ul>
 
-    <!-- Actions droite -->
-    <div class="flex items-center gap-3 sm:gap-4 lg:gap-6">
+    <%# ─────────── Actions droite ─────────── %>
+    <div class="flex items-center gap-3 sm:gap-4">
 
-      <!-- Recherche mobile -->
+      <%# Recherche mobile %>
       <%= link_to listings_path, class: "lg:hidden text-text-secondary hover:text-text-primary transition-colors", aria: { label: "Rechercher" } do %>
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
@@ -37,34 +58,39 @@
       <% end %>
 
       <% if user_signed_in? %>
-        <!-- CTA Publier (desktop) -->
-        <%= link_to new_listing_wizard_path, class: "hidden lg:inline-flex btn-vera-primary text-[10px] px-6 py-2.5" do %>
-          Publier une annonce
+        <%# CTA Publier (desktop) %>
+        <%= link_to new_listing_wizard_path, class: "hidden lg:inline-flex btn-vera-racing text-[10px] px-5 py-2.5" do %>
+          Mettre en vente
         <% end %>
 
-        <!-- CTA Publier icône (mobile) -->
-        <%= link_to new_listing_wizard_path, class: "lg:hidden text-text-secondary hover:text-accent-red transition-colors", aria: { label: "Publier une annonce" } do %>
+        <%# CTA Publier icône (mobile) %>
+        <%= link_to new_listing_wizard_path, class: "lg:hidden text-text-secondary hover:text-racing-bright transition-colors", aria: { label: "Mettre en vente" } do %>
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
             <path d="M12 5v14M5 12h14"/>
           </svg>
         <% end %>
 
-        <!-- Avatar + menu -->
+        <%# Avatar + menu compte %>
         <% unread_messages_count = current_user.received_messages.unread.count %>
         <div class="relative" data-controller="dropdown">
-          <button type="button" data-action="click->dropdown#toggle" class="relative flex items-center justify-center w-9 h-9 border border-line hover:border-line-strong transition-colors" aria-label="Compte<%= unread_messages_count > 0 ? " · #{unread_messages_count} message(s) non lu(s)" : "" %>" aria-haspopup="menu" aria-expanded="false">
+          <button type="button"
+                  data-action="click->dropdown#toggle"
+                  class="relative flex items-center justify-center w-9 h-9 border border-line hover:border-line-strong transition-colors"
+                  aria-label="Compte<%= unread_messages_count > 0 ? " · #{unread_messages_count} message(s) non lu(s)" : "" %>"
+                  aria-haspopup="menu"
+                  aria-expanded="false">
             <span class="font-ui text-xs font-bold text-text-primary">
               <%= (current_user.respond_to?(:first_name) && current_user.first_name&.first&.upcase) || current_user.email.first.upcase %>
             </span>
             <% if unread_messages_count > 0 %>
-              <span class="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1 bg-accent-red border border-bg-primary font-ui text-[9px] font-bold text-text-primary flex items-center justify-center leading-none"
+              <span class="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1 bg-racing-deep border border-bg-primary font-ui text-[9px] font-bold text-text-primary flex items-center justify-center leading-none"
                     data-testid="nav-unread-badge"
                     aria-hidden="true">
                 <%= unread_messages_count > 9 ? "9+" : unread_messages_count %>
               </span>
             <% end %>
           </button>
-          <div data-dropdown-target="menu" class="hidden absolute right-0 top-full mt-2 w-56 bg-bg-secondary border border-line z-[110]" role="menu">
+          <div data-dropdown-target="menu" class="hidden absolute right-0 top-full mt-2 w-60 bg-bg-secondary border border-line z-[110]" role="menu">
             <div class="px-5 py-4 border-b border-line">
               <p class="label-micro mb-1">Connecté</p>
               <p class="font-ui text-xs text-text-primary truncate"><%= current_user.email %></p>
@@ -82,7 +108,7 @@
               <%= link_to messages_path, class: "flex items-center justify-between px-5 py-2.5 font-ui text-[11px] uppercase tracking-[0.15em] text-text-secondary hover:text-text-primary hover:bg-bg-tertiary transition-colors" do %>
                 <span>Messagerie</span>
                 <% if unread_messages_count > 0 %>
-                  <span class="bg-accent-red px-1.5 py-0.5 font-mono text-[9px] text-text-primary leading-none">
+                  <span class="bg-racing-deep px-1.5 py-0.5 font-mono text-[9px] text-text-primary leading-none">
                     <%= unread_messages_count %>
                   </span>
                 <% end %>
@@ -92,22 +118,22 @@
               <% end %>
             </nav>
             <div class="border-t border-line">
-              <%= button_to destroy_user_session_path, method: :delete, class: "block w-full text-left px-5 py-2.5 font-ui text-[11px] uppercase tracking-[0.15em] text-text-muted hover:text-accent-red transition-colors" do %>
+              <%= button_to destroy_user_session_path, method: :delete, class: "block w-full text-left px-5 py-2.5 font-ui text-[11px] uppercase tracking-[0.15em] text-text-muted hover:text-text-primary transition-colors" do %>
                 Déconnexion
               <% end %>
             </div>
           </div>
         </div>
       <% else %>
-        <%= link_to new_user_session_path, class: "hidden sm:inline-flex font-ui text-[10px] font-medium uppercase tracking-[0.2em] text-text-secondary hover:text-text-primary transition-colors" do %>
+        <%= link_to new_user_session_path, class: "hidden sm:inline-flex font-ui text-[11px] font-medium uppercase tracking-[0.2em] text-text-secondary hover:text-text-primary transition-colors" do %>
           Connexion
         <% end %>
-        <%= link_to new_user_registration_path, class: "hidden sm:inline-flex btn-vera-primary text-[10px] px-5 py-2.5" do %>
-          Publier une annonce
+        <%= link_to new_user_registration_path, class: "hidden sm:inline-flex btn-vera-racing text-[10px] px-5 py-2.5" do %>
+          Mettre en vente
         <% end %>
       <% end %>
 
-      <!-- Hamburger mobile -->
+      <%# Hamburger mobile %>
       <button type="button"
               class="lg:hidden flex items-center justify-center w-9 h-9 text-text-secondary hover:text-text-primary transition-colors"
               data-action="mobile-menu#toggle"
@@ -122,7 +148,7 @@
     </div>
   </nav>
 
-  <!-- Mobile slide-down panel -->
+  <%# ─────────── Mobile slide-down panel ─────────── %>
   <div data-mobile-menu-target="panel"
        class="hidden lg:hidden absolute top-[64px] left-0 right-0 bg-bg-primary border-b border-line z-[99] max-h-[calc(100dvh-64px)] overflow-y-auto">
     <nav class="px-5 py-6 space-y-1" aria-label="Menu mobile">
@@ -131,12 +157,22 @@
           data: { action: "click->mobile-menu#close" } do %>
         Catalogue
       <% end %>
+      <span class="block px-4 py-3 font-ui text-[11px] font-medium uppercase tracking-[0.18em] text-text-faint cursor-not-allowed">
+        Enchères <span class="ml-2 font-mono text-[9px] normal-case tracking-normal">bientôt</span>
+      </span>
+      <span class="block px-4 py-3 font-ui text-[11px] font-medium uppercase tracking-[0.18em] text-text-faint cursor-not-allowed">
+        Échange <span class="ml-2 font-mono text-[9px] normal-case tracking-normal">bientôt</span>
+      </span>
+      <span class="block px-4 py-3 font-ui text-[11px] font-medium uppercase tracking-[0.18em] text-text-faint cursor-not-allowed">
+        Magazine <span class="ml-2 font-mono text-[9px] normal-case tracking-normal">bientôt</span>
+      </span>
 
       <% if user_signed_in? %>
+        <div class="border-t border-line my-3"></div>
         <%= link_to new_listing_wizard_path,
-            class: "block px-4 py-3 font-ui text-[11px] font-medium uppercase tracking-[0.18em] text-accent-red hover:bg-bg-secondary transition-colors",
+            class: "block px-4 py-3 font-ui text-[11px] font-medium uppercase tracking-[0.18em] text-racing-bright hover:bg-bg-secondary transition-colors",
             data: { action: "click->mobile-menu#close" } do %>
-          Publier une annonce
+          Mettre en vente
         <% end %>
 
         <div class="border-t border-line my-3"></div>
@@ -170,19 +206,20 @@
         <div class="border-t border-line my-3"></div>
 
         <%= button_to destroy_user_session_path, method: :delete,
-            class: "block w-full text-left px-4 py-3 font-ui text-[11px] font-medium uppercase tracking-[0.18em] text-text-muted hover:text-accent-red transition-colors" do %>
+            class: "block w-full text-left px-4 py-3 font-ui text-[11px] font-medium uppercase tracking-[0.18em] text-text-muted hover:text-text-primary transition-colors" do %>
           Déconnexion
         <% end %>
       <% else %>
+        <div class="border-t border-line my-3"></div>
         <%= link_to new_user_session_path,
             class: "block px-4 py-3 font-ui text-[11px] font-medium uppercase tracking-[0.18em] text-text-secondary hover:text-text-primary hover:bg-bg-secondary transition-colors",
             data: { action: "click->mobile-menu#close" } do %>
           Connexion
         <% end %>
         <%= link_to new_user_registration_path,
-            class: "block px-4 py-3 font-ui text-[11px] font-medium uppercase tracking-[0.18em] text-accent-red hover:bg-bg-secondary transition-colors",
+            class: "block px-4 py-3 font-ui text-[11px] font-medium uppercase tracking-[0.18em] text-racing-bright hover:bg-bg-secondary transition-colors",
             data: { action: "click->mobile-menu#close" } do %>
-          Créer un compte
+          Mettre en vente
         <% end %>
       <% end %>
     </nav>
