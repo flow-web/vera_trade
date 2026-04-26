@@ -21,19 +21,19 @@
         </h2>
       </div>
 
-      <div class="relative z-10 border-t border-line pt-8 grid grid-cols-3 gap-6">
-        <div>
-          <p class="font-mono text-[22px] text-text-primary mb-1">412</p>
-          <p class="label-micro">Annonces vérifiées</p>
-        </div>
-        <div>
-          <p class="font-mono text-[22px] text-text-primary mb-1">6 200</p>
-          <p class="label-micro">Collectionneurs</p>
-        </div>
-        <div>
-          <p class="font-mono text-[22px] text-text-primary mb-1">0 %</p>
-          <p class="label-micro">Commission dépôt</p>
-        </div>
+      <div class="relative z-10 border-t border-line pt-8 space-y-6">
+        <%# Trust pillars en miroir de la home — pas de chiffres inventés %>
+        <% home_trust_pillars.first(3).each do |p| %>
+          <div class="flex items-start gap-3">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" class="flex-shrink-0 text-gold mt-0.5">
+              <%= raw p[:svg] %>
+            </svg>
+            <div>
+              <div class="font-ui text-[11px] font-semibold uppercase tracking-[0.15em] text-text-primary"><%= p[:title] %></div>
+              <div class="font-body text-[13px] text-text-muted mt-0.5"><%= p[:sub] %></div>
+            </div>
+          </div>
+        <% end %>
       </div>
     </aside>
 
