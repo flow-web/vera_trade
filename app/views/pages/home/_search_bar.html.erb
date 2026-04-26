@@ -1,0 +1,50 @@
+<%# ============================================================================
+    SEARCH BAR — multi-cell éditorial, posée en chevauchement du hero
+    ============================================================================ %>
+<div class="relative z-10 max-w-[1280px] mx-auto -mt-11 px-6">
+  <%= form_with url: listings_path, method: :get, class: "vera-search-bar", local: true do |f| %>
+    <div class="cell">
+      <span class="label-micro">Segment</span>
+      <%= f.select :segment,
+            options_for_select([["Tous", ""]] + Listing::SEGMENT_YEAR_RANGES.keys.map { |k| [segment_label(k), k] }),
+            {},
+            class: "bg-transparent border-0 text-text-primary font-body text-[0.95rem] outline-none p-0 mt-1 cursor-pointer" %>
+    </div>
+
+    <div class="cell">
+      <span class="label-micro">Marque · Modèle</span>
+      <%= f.text_field :q, placeholder: "ex. Porsche 964, Honda CRX, BMW M3…" %>
+    </div>
+
+    <div class="cell">
+      <span class="label-micro">Année</span>
+      <span class="font-body text-[0.95rem] text-text-muted italic mt-1">1980 — 2010</span>
+    </div>
+
+    <div class="cell">
+      <span class="label-micro">Budget</span>
+      <span class="font-body text-[0.95rem] text-text-muted italic mt-1">10 K — 100 K €</span>
+    </div>
+
+    <div class="cell">
+      <span class="label-micro">État</span>
+      <span class="font-body text-[0.95rem] text-text-muted italic mt-1">Tous</span>
+    </div>
+
+    <div class="cell search-cta">
+      <%= button_tag type: :submit do %>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        Rechercher
+      <% end %>
+    </div>
+  <% end %>
+
+  <div class="flex flex-wrap items-center gap-x-4 gap-y-2 mt-4 justify-center">
+    <span class="label-small text-text-faint self-center">Recherches populaires</span>
+    <% home_popular_searches.each do |s| %>
+      <%= link_to listings_path(s[:path_query]), class: "vera-pill" do %>
+        <%= s[:label] %>
+      <% end %>
+    <% end %>
+  </div>
+</div>

@@ -1,0 +1,44 @@
+<%# ============================================================================
+    EDITOR'S CHOICE — grille 12-col asymétrique (1 feature 2x + N standard)
+    Réutilise le composant existant components/_listing_card via :feature/:medium
+    ============================================================================ %>
+<% return unless @curated_listings.any? %>
+
+<section class="section-editorial">
+  <div class="max-w-[1680px] mx-auto">
+
+    <div class="section-head">
+      <div class="flex flex-col gap-2">
+        <span class="chapter-num">— III.</span>
+        <span class="eyebrow-racing">Le choix de la rédaction · cette semaine</span>
+        <h2 class="playfair-italic font-medium text-[clamp(1.8rem,3.2vw,2.8rem)] tracking-[-0.015em]">
+          <%= @curated_listings.count %> voitures, <span class="italic">choisies à la main</span>.
+        </h2>
+      </div>
+      <div class="flex flex-col items-start lg:items-end gap-3 max-w-md">
+        <p class="text-text-muted text-[0.95rem] leading-relaxed">
+          Pas d'algorithme. La rédaction lit les annonces, regarde les photos, échange avec les vendeurs. Voici ce qui nous a accroché.
+        </p>
+        <%= link_to "Tout le catalogue (#{@listings_count})", listings_path, class: "btn-vera-racing-ghost" %>
+      </div>
+    </div>
+
+    <% curated = @curated_listings.to_a %>
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
+
+      <%# --- 1 feature 2x (col-span-8) --- %>
+      <% if curated[0] %>
+        <div class="lg:col-span-8 lg:row-span-2">
+          <%= render "components/listing_card", listing: curated[0], size: :large, show_desc: true %>
+        </div>
+      <% end %>
+
+      <%# --- 4 standards (col-span-4) --- %>
+      <% curated[1..4].to_a.each do |listing| %>
+        <div class="lg:col-span-4">
+          <%= render "components/listing_card", listing: listing, size: :medium %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</section>

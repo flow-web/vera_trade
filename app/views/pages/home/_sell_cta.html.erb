@@ -1,0 +1,42 @@
+<%# ============================================================================
+    SELL CTA — split éditorial : pitch + 4 étapes du wizard
+    ============================================================================ %>
+<section class="py-24 lg:py-32 px-6 bg-bg-primary border-b border-line">
+  <div class="max-w-[1680px] mx-auto">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-20 items-center">
+
+      <%# --- Pitch --- %>
+      <div>
+        <span class="eyebrow-racing">Vendre sur Vera Trade</span>
+        <h2 class="playfair-italic font-medium text-[clamp(2rem,4vw,3.6rem)] leading-[1.05] tracking-[-0.015em] mt-3">
+          Votre voiture mérite un <span class="italic text-racing-bright">article</span>, pas un <span class="italic">listing</span>.
+        </h2>
+        <p class="text-text-secondary text-lg leading-[1.65] mt-6 max-w-xl">
+          On rédige avec vous une fiche éditoriale : photographie pro recommandée, rust-map interactive, timeline de provenance, documents scannés et OCR. Chaque annonce est traitée comme un article.
+        </p>
+        <div class="flex flex-wrap items-center gap-4 mt-10">
+          <%= link_to (user_signed_in? ? "Publier une annonce" : "Estimer ma voiture · gratuit"),
+                (user_signed_in? ? new_listing_wizard_path : new_user_registration_path),
+                class: "btn-vera-racing" %>
+          <a href="#" class="font-ui text-[11px] font-semibold uppercase tracking-[0.2em] text-text-primary hover:text-racing-bright transition-colors">
+            Voir le déroulé en 4 étapes →
+          </a>
+        </div>
+      </div>
+
+      <%# --- Steps --- %>
+      <div class="flex flex-col border-t border-line">
+        <% home_sell_steps.each do |step| %>
+          <div class="grid grid-cols-[60px_1fr_auto] gap-6 py-6 border-b border-line items-start">
+            <span class="font-mono text-[11px] text-racing-bright tracking-[0.1em] mt-1"><%= step[:number] %></span>
+            <div>
+              <div class="playfair-italic font-medium text-xl leading-tight"><%= step[:title] %></div>
+              <div class="text-text-muted text-[0.95rem] leading-[1.6] mt-1.5"><%= step[:desc] %></div>
+            </div>
+            <span class="font-mono text-[11px] text-text-faint mt-1.5 whitespace-nowrap"><%= step[:time] %></span>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</section>

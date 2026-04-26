@@ -1,0 +1,45 @@
+<%# ============================================================================
+    SEGMENTS — 4 chapitres "par culture mécanique" basés sur SEGMENT_YEAR_RANGES
+    Hairlines, ghost wordmark déco, hover racing-bright
+    ============================================================================ %>
+<section class="section-editorial pt-0 border-t-0">
+  <div class="max-w-[1680px] mx-auto">
+
+    <div class="section-head">
+      <div class="flex flex-col gap-2">
+        <span class="chapter-num">— II.</span>
+        <span class="eyebrow-racing">Le catalogue par segment</span>
+        <h2 class="playfair-italic font-medium text-[clamp(1.8rem,3.2vw,2.8rem)] tracking-[-0.015em]">
+          Quatre familles, <span class="italic">une grammaire</span> par voiture.
+        </h2>
+      </div>
+      <div class="max-w-md">
+        <p class="text-text-muted text-[0.95rem] leading-relaxed">
+          Chez Vera Trade, on ne range pas par marque ni par carrosserie. On range par culture mécanique.
+        </p>
+      </div>
+    </div>
+
+    <div class="cat-grid">
+      <% home_segments.each do |seg| %>
+        <%= link_to listings_path(segment: seg[:key]), class: "cat-cell" do %>
+          <div class="flex flex-col gap-2">
+            <span class="font-mono text-[10px] text-text-faint"><%= seg[:number] %></span>
+            <span class="playfair-italic font-medium text-[1.4rem] tracking-[-0.01em] leading-tight"><%= seg[:name] %></span>
+            <span class="font-ui text-[11px] text-text-muted tracking-wide leading-relaxed"><%= raw seg[:examples] %></span>
+          </div>
+          <div class="flex justify-between items-end gap-4 relative z-10">
+            <span class="font-mono text-[0.85rem] text-text-secondary">
+              <% count = (@segment_counts || {})[seg[:key]] || 0 %>
+              <%= count %> voiture<%= count > 1 ? "s" : "" %>
+            </span>
+            <span class="cat-arrow">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
+            </span>
+          </div>
+          <div class="cat-deco"><%= seg[:deco] %></div>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+</section>

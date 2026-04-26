@@ -1,0 +1,74 @@
+<%# ============================================================================
+    AUCTIONS LIVE — format BaT, 7 jours, anti-snipe, commentaires publics
+    Affichée seulement si @auctions_enabled (ENV ENABLE_AUCTIONS=true OU
+    Auction.active.any?) — sinon section masquée pour ne pas survendre.
+    ============================================================================ %>
+<% return unless @auctions_enabled %>
+
+<section class="section-editorial bg-bg-secondary">
+  <div class="max-w-[1680px] mx-auto">
+
+    <div class="section-head">
+      <div class="flex flex-col gap-2">
+        <span class="chapter-num">— IV.</span>
+        <span class="eyebrow-racing">Enchères en direct · format BaT</span>
+        <h2 class="playfair-italic font-medium text-[clamp(1.8rem,3.2vw,2.8rem)] tracking-[-0.015em]">
+          Sept jours, <span class="italic">une vente</span>. La communauté pose les questions.
+        </h2>
+      </div>
+      <div>
+        <%= link_to "Toutes les enchères", "#", class: "btn-vera-racing-ghost" %>
+      </div>
+    </div>
+
+    <% if @live_auctions.any? %>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <% @live_auctions.each do |auction| %>
+          <% l = auction.listing; v = l&.vehicle %>
+          <%= link_to l, class: "acard" do %>
+            <div class="relative aspect-[16/10] bg-bg-tertiary overflow-hidden">
+              <% if l&.photos&.attached? %>
+                <%= image_tag photo_url(l.photos.first, width: 800),
+                      class: "absolute inset-0 w-full h-full object-cover",
+                      alt: l.title, loading: "lazy", width: 800, height: 500 %>
+              <% else %>
+                <div class="absolute inset-0 ph-striped ph-striped--cool"></div>
+              <% end %>
+              <div class="absolute top-4 left-4 live-pulse">
+                <span class="live-pulse-dot"></span>
+                <%= time_ago_in_words(auction.ends_at, scope: "datetime.distance_in_words.short") rescue "Live" %> restantes
+              </div>
+            </div>
+            <div class="p-5 flex flex-col gap-3">
+              <h3 class="playfair-italic font-medium text-xl leading-tight"><%= l.title %></h3>
+              <span class="label-small">
+                <%= listing_reference(l) if l.respond_to?(:reference) || l.respond_to?(:id) %>
+                <% if listing_location_tag(l) %> · <%= listing_location_tag(l) %><% end %>
+              </span>
+              <div class="grid grid-cols-2 gap-2 border-t border-line pt-4">
+                <div>
+                  <div class="font-mono text-base text-text-primary">
+                    <%= number_to_currency(auction.current_price || auction.starting_price, unit: "€", separator: ",", delimiter: " ", format: "%n %u", precision: 0) %>
+                  </div>
+                  <div class="label-small mt-1"><%= auction.bids_count %> offre<%= auction.bids_count > 1 ? "s" : "" %></div>
+                </div>
+                <div>
+                  <div class="font-mono text-base text-text-primary"><%= listing_price_fr(v) %></div>
+                  <div class="label-small mt-1">Prix vendeur</div>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+    <% else %>
+      <%# Placeholder éditorial quand pas encore d'enchère mais fonction activée %>
+      <div class="border border-line bg-bg-primary p-12 text-center">
+        <span class="eyebrow-racing">Bientôt</span>
+        <p class="font-body italic text-lg text-text-secondary mt-4 max-w-2xl mx-auto leading-relaxed">
+          La première vente aux enchères ouvre le mois prochain. Format BaT — 7 jours, commentaires publics, anti-snipe.
+        </p>
+      </div>
+    <% end %>
+  </div>
+</section>

@@ -1,0 +1,70 @@
+<%# ============================================================================
+    EXCHANGE PITCH — split éditorial : différenciant échange véhicule + soulte
+    + Magazine teaser (cohabite dans la même grille)
+    ============================================================================ %>
+<section class="section-editorial">
+  <div class="max-w-[1680px] mx-auto">
+
+    <div class="section-head">
+      <div class="flex flex-col gap-2">
+        <span class="chapter-num">— V.</span>
+        <span class="eyebrow-racing">Différenciant Vera Trade</span>
+        <h2 class="playfair-italic font-medium text-[clamp(1.8rem,3.2vw,2.8rem)] tracking-[-0.015em]">
+          Et si vous échangiez votre <span class="italic">996 Turbo</span> contre une <span class="italic">E46 M3</span> avec soulte ?
+        </h2>
+      </div>
+      <div class="max-w-md">
+        <p class="text-text-muted text-[0.95rem] leading-relaxed">
+          Personne ne fait ça correctement aujourd'hui. C'est notre territoire — vue côte à côte, valeur estimée, soulte transparente, escrow.
+        </p>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-0 border border-line">
+
+      <%# --- Cell A : comment ça marche --- %>
+      <div class="p-8 lg:p-12 border-b lg:border-b-0 lg:border-r border-line flex flex-col gap-5 justify-between min-h-[380px] relative overflow-hidden">
+        <div class="aspect-video bg-bg-tertiary border border-line ph-striped flex items-end justify-start p-4 mb-3">
+          <span class="px-3 py-1.5 bg-bg-primary/60 border border-line text-text-faint text-[10px] tracking-[0.1em]">
+            [ Mockup interface échange — vue côte à côte deux véhicules ]
+          </span>
+        </div>
+        <div class="flex flex-col gap-4">
+          <span class="eyebrow-racing">Comment ça marche</span>
+          <h3 class="playfair-italic font-medium text-2xl leading-tight tracking-[-0.01em]">Trois clics, deux véhicules, une soulte.</h3>
+          <p class="text-text-secondary text-base leading-[1.65] max-w-lg">
+            Vous repérez une voiture qui vous plaît, vous proposez la vôtre en échange. Notre système calcule la différence de valeur basée sur les côtes argus + les comparables marchés Vera Trade. Le vendeur reçoit votre proposition, contre-propose si besoin, accepte. Les fonds passent par escrow, pas par PayPal.
+          </p>
+        </div>
+        <%= link_to listings_path, class: "inline-flex items-center gap-2 text-racing-bright font-ui text-[11px] font-semibold uppercase tracking-[0.2em]" do %>
+          Lire le déroulé complet
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
+        <% end %>
+      </div>
+
+      <%# --- Cell B : Magazine teaser --- %>
+      <div class="p-8 lg:p-12 flex flex-col gap-5 justify-between min-h-[380px] relative overflow-hidden">
+        <div class="aspect-video bg-bg-tertiary border border-line ph-striped ph-striped--warm flex items-end justify-start p-4 mb-3">
+          <span class="px-3 py-1.5 bg-bg-primary/60 border border-line text-text-faint text-[10px] tracking-[0.1em]">
+            [ Photo lifestyle — clé de garage + carnet d'origine + montre ]
+          </span>
+        </div>
+        <div class="flex flex-col gap-3">
+          <div class="flex items-center gap-3 flex-wrap">
+            <span class="eyebrow-racing">Le numéro de cette semaine</span>
+            <span class="font-mono text-[11px] text-text-faint">14 min de lecture</span>
+          </div>
+          <h3 class="playfair-italic font-medium text-2xl leading-tight tracking-[-0.01em]">Reconnaître une vraie E30 M3 — guide pratique</h3>
+          <p class="text-text-secondary text-base leading-[1.65] max-w-lg">
+            Cinq points de vérification que tous les acheteurs sérieux font, et que personne ne vous explique. Bas de caisse, soudures de capot, numéro de châssis frappé, bouchons d'aile, joints de pare-brise.
+          </p>
+          <span class="font-mono text-[11px] text-text-faint">Par Antoine V. · Restaurateur agréé BMW Classic depuis 1998</span>
+        </div>
+        <a href="#" class="inline-flex items-center gap-2 text-racing-bright font-ui text-[11px] font-semibold uppercase tracking-[0.2em]">
+          Lire le guide
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>

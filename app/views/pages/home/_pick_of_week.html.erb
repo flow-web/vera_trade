@@ -1,0 +1,113 @@
+<%# ============================================================================
+    PICK OF THE WEEK — l'annonce vedette traitée comme un article éditorial
+    Affichée seulement s'il y a un featured_listing
+    ============================================================================ %>
+<% return unless local_assigns[:listing] || @featured_listing %>
+<% pick = local_assigns[:listing] || @featured_listing %>
+<% pv = pick.vehicle %>
+
+<section class="section-editorial">
+  <div class="max-w-[1680px] mx-auto">
+
+    <%# --------- Section head --------- %>
+    <div class="section-head">
+      <div class="flex flex-col gap-2">
+        <span class="chapter-num">— I.</span>
+        <span class="eyebrow-racing">Pick of the Week · <%= l(Date.current, format: "%-d %b %Y") %></span>
+        <h2 class="playfair-italic font-medium text-[clamp(1.8rem,3.2vw,2.8rem)] tracking-[-0.015em]">
+          La sélection éditoriale <span class="italic">de la semaine</span>.
+        </h2>
+      </div>
+      <div class="flex flex-col items-start lg:items-end gap-3 max-w-md">
+        <p class="text-text-muted text-[0.95rem] leading-relaxed">
+          Chaque semaine, la rédaction met en avant une voiture dont l'histoire mérite mieux qu'un listing.
+        </p>
+        <%= link_to "Toutes les sélections", listings_path, class: "btn-vera-racing-ghost" %>
+      </div>
+    </div>
+
+    <%# --------- Split editorial article --------- %>
+    <article class="potw-split">
+      <%# Image col --- %>
+      <div class="relative min-h-[420px] lg:min-h-[560px] overflow-hidden bg-bg-tertiary">
+        <% if pick.photos.attached? %>
+          <%= image_tag photo_url(pick.photos.first, width: 1400),
+                class: "absolute inset-0 w-full h-full object-cover",
+                alt: pick.title, loading: "lazy",
+                width: 1400, height: 933 %>
+        <% else %>
+          <div class="absolute inset-0 ph-striped flex items-end justify-start p-6">
+            <span class="px-3 py-2 bg-bg-primary/60 border border-line text-text-faint text-[11px] tracking-[0.1em]">
+              [ <%= pick.title %> — vue 3/4 avant atelier ]
+            </span>
+          </div>
+        <% end %>
+
+        <div class="absolute top-6 left-6 flex flex-col gap-2 z-10">
+          <span class="badge-vera badge-vera-gold">Annonce vedette</span>
+          <% if pv&.kilometers && pv.kilometers < 100_000 %>
+            <span class="badge-vera">Faible kilométrage</span>
+          <% end %>
+        </div>
+      </div>
+
+      <%# Body col --- %>
+      <div class="p-8 lg:p-12 flex flex-col gap-6 justify-between">
+        <div class="flex flex-col gap-5">
+          <div class="flex items-center gap-3 flex-wrap">
+            <span class="eyebrow-racing">Reportage</span>
+            <span class="font-mono text-[11px] text-text-faint tracking-[0.1em]">
+              <%= listing_reference(pick) %>
+              <% if listing_location_tag(pick) %> · <%= listing_location_tag(pick) %><% end %>
+            </span>
+          </div>
+
+          <h3 class="playfair-italic font-medium text-[clamp(1.6rem,2.4vw,2.4rem)] leading-[1.05] tracking-[-0.015em]">
+            <%= pick.title %>
+          </h3>
+
+          <% if pick.description.present? %>
+            <div class="text-text-secondary text-[1.02rem] leading-[1.65]">
+              <p><%= pick.description.to_s.truncate(420) %></p>
+            </div>
+          <% end %>
+        </div>
+
+        <div>
+          <div class="grid grid-cols-3 gap-4 border-t border-line pt-5">
+            <% if pv&.kilometers %>
+              <div>
+                <div class="font-mono text-base text-text-primary"><%= listing_kilometers_fr(pv.kilometers) %></div>
+                <div class="label-small mt-1">Kilométrage</div>
+              </div>
+            <% end %>
+            <% if pv&.year %>
+              <div>
+                <div class="font-mono text-base text-text-primary"><%= pv.year %></div>
+                <div class="label-small mt-1">Année</div>
+              </div>
+            <% end %>
+            <% if pv&.transmission.present? %>
+              <div>
+                <div class="font-mono text-base text-text-primary"><%= pv.transmission %></div>
+                <div class="label-small mt-1">Boîte</div>
+              </div>
+            <% end %>
+          </div>
+
+          <div class="flex flex-wrap items-end justify-between gap-5 mt-5 pt-5 border-t border-line">
+            <div>
+              <span class="label-small">Prix vendeur</span>
+              <div class="playfair-italic text-4xl text-racing-bright leading-none mt-1"><%= listing_price_fr(pv) %></div>
+              <span class="font-mono text-[11px] text-text-muted mt-2 block">Inspection incluse</span>
+            </div>
+            <div class="flex flex-wrap gap-3">
+              <%= link_to "Proposer un échange", pick, class: "btn-vera-racing-ghost" %>
+              <%= link_to "Lire l'annonce", pick, class: "btn-vera-racing" %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>

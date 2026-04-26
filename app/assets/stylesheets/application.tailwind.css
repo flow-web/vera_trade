@@ -37,6 +37,11 @@
   --color-racing:          #004225;
   --color-gold:            #B8860B;
 
+  /* -- Racing palette (homepage Cinematic Archivist v2 — primary accent) -- */
+  --color-racing-deep:    #004225;
+  --color-racing-mid:     #3a8c5e;
+  --color-racing-bright:  #5fb585;
+
   /* -- Lignes ------------------------------------------------------------- */
   --color-line:        #2A2A2A;
   --color-line-strong: #3A3A3A;
@@ -320,4 +325,362 @@
     pointer-events: none;
     text-transform: uppercase;
   }
+
+  /* =============================================================================
+     RACING PALETTE — Homepage Cinematic Archivist v2 (2026-04)
+     British Racing Green primary, rosso reserved for échange + live auction only
+     ============================================================================= */
+
+  /* ----- Buttons racing ------------------------------------------------ */
+  .btn-vera-racing {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.875rem 2rem;
+    background-color: var(--color-racing-mid);
+    color: var(--color-text-primary);
+    font-family: var(--font-ui);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-label-wide);
+    border: 1px solid var(--color-racing-mid);
+    transition: background-color 300ms cubic-bezier(0.4, 0, 0.2, 1),
+                border-color 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .btn-vera-racing:hover {
+    background-color: var(--color-racing-deep);
+    border-color: var(--color-racing-deep);
+  }
+  .btn-vera-racing:focus-visible {
+    outline: 2px solid var(--color-racing-bright);
+    outline-offset: 3px;
+  }
+
+  .btn-vera-racing-ghost {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.875rem 2rem;
+    background-color: transparent;
+    color: var(--color-text-primary);
+    font-family: var(--font-ui);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-label-wide);
+    border: 1px solid var(--color-line-strong);
+    transition: background-color 300ms cubic-bezier(0.4, 0, 0.2, 1),
+                border-color 300ms cubic-bezier(0.4, 0, 0.2, 1),
+                color 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .btn-vera-racing-ghost:hover {
+    background-color: var(--color-text-primary);
+    color: var(--color-bg-primary);
+    border-color: var(--color-text-primary);
+  }
+
+  .btn-vera-cream {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.875rem 2rem;
+    background-color: var(--color-text-primary);
+    color: var(--color-bg-primary);
+    font-family: var(--font-ui);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-label-wide);
+    border: 1px solid var(--color-text-primary);
+    transition: background-color 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .btn-vera-cream:hover { background-color: #ffffff; }
+
+  /* ----- Eyebrow racing (default eyebrow stays rosso for backward-compat) */
+  .eyebrow-racing {
+    font-family: var(--font-ui);
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-label-wide);
+    color: var(--color-racing-bright);
+  }
+
+  /* ----- Text colors ---------------------------------------------------- */
+  .text-racing        { color: var(--color-racing-mid); }
+  .text-racing-bright { color: var(--color-racing-bright); }
+  .text-racing-deep   { color: var(--color-racing-deep); }
+  .border-racing      { border-color: var(--color-racing-mid); }
+  .bg-racing-deep     { background-color: var(--color-racing-deep); }
+
+  /* ----- Section structure (editorial chapter) ------------------------- */
+  .section-editorial {
+    padding-top: 5.5rem;
+    padding-bottom: 5.5rem;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    border-bottom: 1px solid var(--color-line);
+  }
+  @media (min-width: 1024px) {
+    .section-editorial {
+      padding-top: 7rem;
+      padding-bottom: 7rem;
+      padding-left: 2.5rem;
+      padding-right: 2.5rem;
+    }
+  }
+  .section-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 2rem;
+    flex-wrap: wrap;
+    margin-bottom: 3rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--color-line);
+  }
+  .chapter-num {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--color-text-faint);
+    letter-spacing: 0.1em;
+    display: block;
+    margin-bottom: 0.6rem;
+  }
+
+  /* ----- Hairline rule -------------------------------------------------- */
+  .hairline { border: 0; height: 1px; background: var(--color-line); margin: 0; }
+  .hairline-strong { background: var(--color-line-strong); }
+
+  /* ----- Pill (search shortcut, badge) --------------------------------- */
+  .vera-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--font-ui);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: var(--color-text-muted);
+    padding: 0.5rem 0.9rem;
+    border: 1px solid var(--color-line);
+    transition: color 300ms cubic-bezier(0.4, 0, 0.2, 1),
+                border-color 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .vera-pill:hover {
+    color: var(--color-text-primary);
+    border-color: var(--color-line-strong);
+  }
+  .vera-pill .ct {
+    color: var(--color-text-faint);
+    margin-left: 0.4rem;
+  }
+
+  /* ----- Badge "Échange ouvert" (legitimate rosso usage) --------------- */
+  .badge-vera-echange {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.375rem 0.75rem;
+    font-family: var(--font-ui);
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-label);
+    border: 1px solid var(--color-accent-red);
+    color: var(--color-accent-red);
+    background: transparent;
+  }
+
+  /* ----- Live auction pulse (legitimate rosso usage) ------------------- */
+  .live-pulse {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0.65rem;
+    background: rgba(10, 10, 10, 0.85);
+    border: 1px solid var(--color-accent-red);
+    font-family: var(--font-ui);
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-label);
+    color: var(--color-rosso-bright);
+  }
+  .live-pulse-dot {
+    width: 6px;
+    height: 6px;
+    background: var(--color-rosso-bright);
+    border-radius: 9999px;
+    animation: vera-pulse 1.4s infinite;
+  }
+  @keyframes vera-pulse {
+    0%, 100% { opacity: 1; }
+    50%      { opacity: 0.3; }
+  }
+
+  /* ----- Striped placeholder (no image yet) ---------------------------- */
+  .ph-striped {
+    background: repeating-linear-gradient(135deg, #1a1814 0, #1a1814 2px, #161410 2px, #161410 12px);
+    color: var(--color-text-faint);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+  }
+  .ph-striped--warm {
+    background: repeating-linear-gradient(135deg, #1f1612 0, #1f1612 2px, #1a120e 2px, #1a120e 12px);
+  }
+  .ph-striped--cool {
+    background: repeating-linear-gradient(135deg, #14181c 0, #14181c 2px, #10141a 2px, #10141a 12px);
+  }
+  .ph-striped--green {
+    background: repeating-linear-gradient(135deg, #121a14 0, #121a14 2px, #0e1610 2px, #0e1610 12px);
+  }
+
+  /* ----- Hero grain overlay (cinematic) -------------------------------- */
+  .hero-grain {
+    position: absolute;
+    inset: 0;
+    opacity: 0.5;
+    mix-blend-mode: overlay;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .9 0 0 0 0 .85 0 0 0 0 .75 0 0 0 .5 0'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='.3'/></svg>");
+  }
+
+  /* ----- Search bar (multi-cell editorial) ----------------------------- */
+  .vera-search-bar {
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-line-strong);
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  @media (min-width: 1024px) {
+    .vera-search-bar {
+      grid-template-columns: auto 1fr auto auto auto auto;
+    }
+  }
+  .vera-search-bar > .cell {
+    padding: 1.25rem 1.4rem;
+    border-bottom: 1px solid var(--color-line);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  @media (min-width: 1024px) {
+    .vera-search-bar > .cell {
+      border-bottom: 0;
+      border-right: 1px solid var(--color-line);
+    }
+    .vera-search-bar > .cell:last-of-type { border-right: 0; }
+  }
+  .vera-search-bar input {
+    background: transparent;
+    border: 0;
+    color: var(--color-text-primary);
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    outline: none;
+    padding: 0;
+    margin-top: 0.2rem;
+  }
+  .vera-search-bar input::placeholder {
+    color: var(--color-text-muted);
+    font-style: italic;
+  }
+  .vera-search-bar .search-cta {
+    padding: 0;
+    border-right: 0;
+    border-bottom: 0;
+  }
+  .vera-search-bar .search-cta button {
+    width: 100%;
+    height: 100%;
+    padding: 1rem 1.6rem;
+    background: var(--color-racing-mid);
+    color: var(--color-text-primary);
+    font-family: var(--font-ui);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-label-wide);
+    border: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    cursor: pointer;
+    transition: background 300ms;
+  }
+  .vera-search-bar .search-cta button:hover { background: var(--color-racing-deep); }
+
+  /* ----- Pick of the Week split ---------------------------------------- */
+  .potw-split {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+    border: 1px solid var(--color-line);
+    background: var(--color-bg-secondary);
+  }
+  @media (min-width: 1024px) {
+    .potw-split { grid-template-columns: 1.45fr 1fr; }
+  }
+
+  /* ----- Categories grid (segments par culture) ------------------------ */
+  .cat-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+    border-top: 1px solid var(--color-line);
+    border-bottom: 1px solid var(--color-line);
+  }
+  @media (min-width: 640px) { .cat-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1024px) { .cat-grid { grid-template-columns: repeat(3, 1fr); } }
+  @media (min-width: 1280px) { .cat-grid { grid-template-columns: repeat(6, 1fr); } }
+  .cat-cell {
+    position: relative;
+    padding: 2.25rem 1.5rem 2rem;
+    border-right: 1px solid var(--color-line);
+    border-bottom: 1px solid var(--color-line);
+    min-height: 220px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 1.5rem;
+    transition: background 400ms;
+    overflow: hidden;
+  }
+  .cat-cell:hover { background: var(--color-bg-secondary); }
+  .cat-cell .cat-deco {
+    position: absolute;
+    right: -30px;
+    bottom: -30px;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 8rem;
+    color: rgba(255, 255, 255, 0.025);
+    line-height: 1;
+    pointer-events: none;
+    font-weight: 700;
+  }
+  .cat-cell .cat-arrow {
+    color: var(--color-text-faint);
+    transition: color 300ms, transform 300ms;
+  }
+  .cat-cell:hover .cat-arrow {
+    color: var(--color-racing-bright);
+    transform: translateX(4px);
+  }
+
+  /* ----- Auction card --------------------------------------------------- */
+  .acard {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--color-line);
+    background: var(--color-bg-secondary);
+    transition: border-color 400ms;
+  }
+  .acard:hover { border-color: var(--color-line-strong); }
 }

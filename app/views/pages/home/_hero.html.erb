@@ -1,0 +1,110 @@
+<%# ============================================================================
+    HERO — featured listing en mise en scène cinématique 21:9 (ou état vide)
+    ============================================================================ %>
+<header class="relative overflow-hidden border-b border-line">
+  <div class="relative h-[760px] max-h-[88vh] min-h-[580px]">
+
+    <%# --------- Image de fond --------- %>
+    <div class="absolute inset-0 bg-bg-secondary">
+      <% if @featured_listing&.photos&.attached? %>
+        <%= image_tag photo_url(@featured_listing.photos.first, width: 2400),
+              class: "absolute inset-0 w-full h-full object-cover",
+              alt: @featured_listing.title,
+              loading: "eager", fetchpriority: "high",
+              width: 2400, height: 1029 %>
+      <% else %>
+        <div class="absolute inset-0 ph-striped ph-striped--warm flex items-end justify-start p-8">
+          <span class="px-3 py-2 bg-bg-primary/60 border border-line text-text-faint text-[11px] tracking-[0.1em]">
+            [ HERO 21:9 — annonce vedette de la semaine — placeholder ]
+          </span>
+        </div>
+      <% end %>
+    </div>
+
+    <%# --------- Gradients de lisibilité --------- %>
+    <div class="absolute inset-0 bg-gradient-to-t from-bg-primary/95 via-bg-primary/30 to-bg-primary/40"></div>
+    <div class="hero-grain"></div>
+
+    <%# --------- Contenu --------- %>
+    <div class="relative h-full max-w-[1680px] mx-auto px-6 lg:px-10 pt-10 pb-12 flex flex-col justify-end">
+
+      <% if @featured_listing %>
+        <% fv = @featured_listing.vehicle %>
+
+        <div class="flex flex-wrap items-center gap-x-6 gap-y-2 text-text-secondary mb-5">
+          <span class="eyebrow-racing">Annonce de la semaine · <%= listing_reference(@featured_listing) %></span>
+          <span class="w-[5px] h-[5px] bg-racing-deep inline-block rounded-full"></span>
+          <% if listing_location_tag(@featured_listing) %>
+            <span class="label-small"><%= listing_location_tag(@featured_listing) %></span>
+          <% end %>
+        </div>
+
+        <h1 class="playfair-italic font-medium leading-[0.95] tracking-[-0.02em] text-text-primary
+                   text-[clamp(2.5rem,6vw,5.5rem)] max-w-5xl">
+          <%= @featured_listing.title %>
+        </h1>
+
+        <% if @featured_listing.description.present? %>
+          <p class="font-body text-text-secondary mt-5 max-w-2xl text-lg leading-relaxed">
+            <%= @featured_listing.description.to_s.truncate(220) %>
+          </p>
+        <% end %>
+
+        <div class="flex flex-wrap items-end justify-between gap-8 mt-10">
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-6 lg:gap-10 flex-1 min-w-[280px] border-t border-line-strong pt-6">
+            <% if fv&.kilometers %>
+              <div>
+                <div class="font-mono text-2xl text-text-primary tracking-wide"><%= listing_kilometers_fr(fv.kilometers) %></div>
+                <div class="label-small mt-1.5">Kilométrage</div>
+              </div>
+            <% end %>
+            <% if fv&.year %>
+              <div>
+                <div class="font-mono text-2xl text-text-primary tracking-wide"><%= fv.year %></div>
+                <div class="label-small mt-1.5">Année</div>
+              </div>
+            <% end %>
+            <% if fv&.transmission.present? %>
+              <div>
+                <div class="font-mono text-2xl text-text-primary tracking-wide"><%= fv.transmission %></div>
+                <div class="label-small mt-1.5">Transmission</div>
+              </div>
+            <% end %>
+            <div>
+              <div class="font-mono text-2xl text-racing-bright tracking-wide"><%= listing_price_fr(fv) %></div>
+              <div class="label-small mt-1.5">Prix vendeur</div>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap gap-3">
+            <%= link_to @featured_listing, class: "btn-vera-racing" do %>
+              Découvrir l'annonce
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
+            <% end %>
+            <%= link_to "Le catalogue", listings_path, class: "btn-vera-racing-ghost" %>
+          </div>
+        </div>
+
+      <% else %>
+        <%# --------- État vide éditorial --------- %>
+        <div class="max-w-3xl">
+          <div class="eyebrow-racing mb-4">Bientôt en ligne</div>
+          <h1 class="playfair-italic text-5xl md:text-7xl text-text-primary leading-[0.95] tracking-[-0.02em] mb-6">
+            Le catalogue est en cours d'assemblage.
+          </h1>
+          <p class="font-body italic text-lg text-text-secondary leading-relaxed mb-8 max-w-xl">
+            Nos archivistes réunissent en ce moment la première sélection de youngtimers et véhicules de collection. Revenez dans quelques jours, ou publiez vous-même la première annonce.
+          </p>
+          <div class="flex flex-wrap gap-3">
+            <% if user_signed_in? %>
+              <%= link_to "Publier une annonce", new_listing_wizard_path, class: "btn-vera-racing" %>
+            <% else %>
+              <%= link_to "Créer un compte vendeur", new_user_registration_path, class: "btn-vera-racing" %>
+            <% end %>
+            <%= link_to "Parcourir le catalogue", listings_path, class: "btn-vera-racing-ghost" %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</header>

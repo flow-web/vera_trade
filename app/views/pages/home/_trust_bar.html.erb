@@ -1,0 +1,18 @@
+<%# ============================================================================
+    TRUST BAR — 5 piliers de réassurance, fond bg primary, hairline top/bottom
+    ============================================================================ %>
+<section class="mt-16 border-y border-line py-5 px-6 bg-bg-primary">
+  <div class="max-w-[1680px] mx-auto flex flex-wrap items-center justify-between gap-x-8 gap-y-5">
+    <% home_trust_pillars.each do |p| %>
+      <div class="flex items-start gap-3">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" class="flex-shrink-0 text-gold mt-0.5">
+          <%= raw p[:svg] %>
+        </svg>
+        <div>
+          <div class="font-ui text-[11px] font-semibold uppercase tracking-[0.15em] text-text-primary"><%= p[:title] %></div>
+          <div class="text-xs text-text-muted mt-0.5"><%= p[:sub] %></div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</section>
