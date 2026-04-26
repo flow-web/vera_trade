@@ -28,11 +28,16 @@
   /* -- Signals ------------------------------------------------------------ */
   --color-patina:         #6B8E7F;
   --color-amber:          #C89B3C;
-  --color-rosso-bright:   #E8344F;
+  /* Was rosso #E8344F — kept as alias to racing-bright for full racing migration. */
+  --color-rosso-bright:   #5fb585;
 
   /* -- Accents ------------------------------------------------------------ */
-  --color-accent-red:      #C41E3A;
-  --color-accent-red-dark: #8B0000;
+  /* FULL RACING GREEN MIGRATION (2026-04-26) :
+     accent-red and accent-red-dark literals were swapped to racing values
+     so all 43 view files using text-accent-red / bg-accent-red / border-accent-red
+     cascade to racing green automatically without per-file edits. */
+  --color-accent-red:      #004225;  /* was #C41E3A — now racing-deep */
+  --color-accent-red-dark: #002E18;  /* was #8B0000 — now deeper racing */
   --color-chrome:          #8B8680;
   --color-racing:          #004225;
   --color-gold:            #B8860B;
@@ -47,10 +52,12 @@
   --color-line-strong: #3A3A3A;
 
   /* -- Rust Map (sémantique corrosion) ----------------------------------- */
+  /* Full racing green migration : perforation passe du rouge à un orange vif
+     pour conserver l'escalade visuelle vert→jaune→ambre→alarme sans rouge. */
   --color-rust-ok:          #4A7C59;
   --color-rust-surface:     #B8860B;
   --color-rust-deep:        #8B6914;
-  --color-rust-perforation: #C41E3A;
+  --color-rust-perforation: #E85D1A;  /* was #C41E3A — now vivid burnt orange */
 
   /* -- Typographies ------------------------------------------------------- */
   --font-display: "Playfair Display", Georgia, serif;
@@ -237,7 +244,7 @@
   .input-vera:focus {
     outline: none;
     border-color: var(--color-accent-red);
-    box-shadow: 0 0 0 3px rgba(196, 30, 58, 0.15);
+    box-shadow: 0 0 0 3px rgba(0, 66, 37, 0.18);
   }
   .input-vera::placeholder {
     color: var(--color-text-muted);
@@ -283,7 +290,7 @@
   .rust-dot-ok          { background-color: var(--color-rust-ok);          box-shadow: 0 0 6px rgba(74, 124, 89, 0.6); }
   .rust-dot-surface     { background-color: var(--color-rust-surface);     box-shadow: 0 0 6px rgba(184, 134, 11, 0.6); }
   .rust-dot-deep        { background-color: var(--color-rust-deep);        box-shadow: 0 0 6px rgba(139, 105, 20, 0.6); }
-  .rust-dot-perforation { background-color: var(--color-rust-perforation); box-shadow: 0 0 10px rgba(196, 30, 58, 0.8); }
+  .rust-dot-perforation { background-color: var(--color-rust-perforation); box-shadow: 0 0 10px rgba(232, 93, 26, 0.8); }
 
   /* ----- Windshield glass (glassmorphism dark) ------------------------- */
   .windshield-glass {
