@@ -38,7 +38,9 @@
 !/app/assets/builds/.keep
 
 /node_modules
+/vendor/bundle
 backups/*.sql.gz
+backups/*.log
 design-system/
 package-lock.json
 
